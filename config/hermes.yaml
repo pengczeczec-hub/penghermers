@@ -1,9 +1,10 @@
 # Hermes 編排設定（不含密鑰；密鑰僅來自環境變數）
 
 github:
-  # 測試推送與部署目標倉庫
-  repo_url: https://github.com/pengczeczec-hub/auto-news-site.git
+  # 推送與部署目標（須在 GitHub 已建立此倉庫）
+  repo_url: https://github.com/pengczeczec-hub/penghermers.git
   branch: main
+  # 若改為 auto-news-site，請先在 GitHub 建立空倉庫再改網址
   # 本機 git remote 名稱（測試腳本可新增 deploy 指向 repo_url）
   remote_name: deploy
 

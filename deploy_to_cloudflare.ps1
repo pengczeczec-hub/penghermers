@@ -14,8 +14,9 @@ Write-Host "  output: dist/"
 Write-Host ""
 
 if (-not $SkipPush) {
-    if (-not $env:GITHUB_TOKEN) {
-        Write-Host "WARN: GITHUB_TOKEN not set. Push may fail." -ForegroundColor Yellow
+    # 失效的 .env GITHUB_TOKEN 會干擾 gh；Hermes 會自動改用 gh auth
+    if ($env:GITHUB_TOKEN) {
+        Write-Host "Note: GITHUB_TOKEN in env; Hermes falls back to gh if invalid." -ForegroundColor DarkGray
     }
     if ($DryRun) {
         Write-Host '(dry-run) python tools/test_github_push.py --dry-run'

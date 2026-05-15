@@ -30,13 +30,17 @@ def _verify_token_raw(token: str) -> dict:
 
 
 def _token_from_gh() -> str:
+    """取得 gh 登入 token；略過環境變數內失效的 GITHUB_TOKEN。"""
     if not shutil.which("gh"):
         return ""
+    env = os.environ.copy()
+    env.pop("GITHUB_TOKEN", None)
     proc = subprocess.run(
         ["gh", "auth", "token"],
         capture_output=True,
         text=True,
         timeout=30,
+        env=env,
     )
     if proc.returncode != 0:
         return ""
@@ -44,13 +48,15 @@ def _token_from_gh() -> str:
 
 
 def resolve_github_token() -> tuple[str, str]:
-    """回傳 (token, 來源說明)。優先有效的 GITHUB_TOKEN，否則改用 gh auth token。"""
+    """回傳 (token, 來源)。有效的 GITHUB_TOKEN 優先；否則用 gh（不受失效 .env 干擾）。"""
     load_dotenv()
     env_tok = os.environ.get("GITHUB_TOKEN", "").strip()
     if env_tok:
         check = _verify_token_raw(env_tok)
         if check.get("ok"):
             return env_tok, "GITHUB_TOKEN"
+        # 失效的 .env token 會干擾 gh；暫時移出環境
+        os.environ.pop("GITHUB_TOKEN", None)
 
     gh_tok = _token_from_gh()
     if gh_tok:
@@ -58,9 +64,7 @@ def resolve_github_token() -> tuple[str, str]:
         if check.get("ok"):
             return gh_tok, "gh auth login"
 
-    if env_tok:
-        return env_tok, "GITHUB_TOKEN（已失效，請更新 .env 或刪除後改用 gh）"
-    return "", "未設定"
+    return "", "未設定（請 gh auth login，或更新 .env 的 GITHUB_TOKEN）"
 
 
 def github_token() -> str:
@@ -146,7 +150,15 @@ def git_push(
 
     # gh 已登入時，直接 push（使用 gh 的 git 憑證助手）
     if source == "gh auth login":
-        subprocess.run(push_cmd, cwd=root, env=env, check=True)
+        proc = subprocess.run(push_cmd, cwd=root, env=env, capture_output=True, text=True)
+        if proc.returncode != 0:
+            err = (proc.stderr or proc.stdout or "").strip()
+            if "not found" in err.lower():
+                raise RuntimeError(
+                    f"遠端倉庫不存在：{cfg.github_repo_url}\n"
+                    "請到 GitHub 建立同名空倉庫，或修改 config/hermes.yaml 的 repo_url。"
+                ) from None
+            raise RuntimeError(err)
         return subprocess.CompletedProcess(push_cmd, 0, "pushed via gh", "")
 
     if not token:
