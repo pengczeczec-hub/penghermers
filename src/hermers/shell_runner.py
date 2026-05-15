@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
-import sys
 from pathlib import Path
 
 import httpx
@@ -12,15 +12,9 @@ from hermers.hermes_config import HermesConfig, load_hermes_config
 from hermers.paths import repo_root
 
 
-def github_token() -> str:
-    load_dotenv()
-    return os.environ.get("GITHUB_TOKEN", "").strip()
-
-
-def verify_github_token() -> dict:
-    token = github_token()
+def _verify_token_raw(token: str) -> dict:
     if not token:
-        return {"ok": False, "error": "GITHUB_TOKEN 未設定"}
+        return {"ok": False, "error": "token 為空"}
     with httpx.Client(timeout=30.0) as client:
         resp = client.get(
             "https://api.github.com/user",
@@ -33,6 +27,63 @@ def verify_github_token() -> dict:
         return {"ok": False, "error": f"HTTP {resp.status_code}", "body": resp.text[:200]}
     data = resp.json()
     return {"ok": True, "login": data.get("login"), "name": data.get("name")}
+
+
+def _token_from_gh() -> str:
+    if not shutil.which("gh"):
+        return ""
+    proc = subprocess.run(
+        ["gh", "auth", "token"],
+        capture_output=True,
+        text=True,
+        timeout=30,
+    )
+    if proc.returncode != 0:
+        return ""
+    return proc.stdout.strip()
+
+
+def resolve_github_token() -> tuple[str, str]:
+    """回傳 (token, 來源說明)。優先有效的 GITHUB_TOKEN，否則改用 gh auth token。"""
+    load_dotenv()
+    env_tok = os.environ.get("GITHUB_TOKEN", "").strip()
+    if env_tok:
+        check = _verify_token_raw(env_tok)
+        if check.get("ok"):
+            return env_tok, "GITHUB_TOKEN"
+
+    gh_tok = _token_from_gh()
+    if gh_tok:
+        check = _verify_token_raw(gh_tok)
+        if check.get("ok"):
+            return gh_tok, "gh auth login"
+
+    if env_tok:
+        return env_tok, "GITHUB_TOKEN（已失效，請更新 .env 或刪除後改用 gh）"
+    return "", "未設定"
+
+
+def github_token() -> str:
+    token, _ = resolve_github_token()
+    return token
+
+
+def verify_github_token() -> dict:
+    token, source = resolve_github_token()
+    if not token:
+        return {
+            "ok": False,
+            "error": "未設定有效 token。請執行 gh auth login 或更新 .env 的 GITHUB_TOKEN",
+        }
+    info = _verify_token_raw(token)
+    if info.get("ok"):
+        info["source"] = source
+        return info
+    return {
+        "ok": False,
+        "error": f"{info.get('error')}（來源: {source}）",
+        "hint": "建議：Remove-Item Env:GITHUB_TOKEN; gh auth login; 或 .env 填入 gh auth token 輸出",
+    }
 
 
 def ensure_git_remote(cfg: HermesConfig | None = None) -> str:
@@ -63,9 +114,7 @@ def git_push(
 ) -> subprocess.CompletedProcess[str]:
     cfg = cfg or load_hermes_config()
     root = repo_root()
-    token = github_token()
-    if not token:
-        raise RuntimeError("GITHUB_TOKEN 未設定")
+    token, source = resolve_github_token()
 
     remote = ensure_git_remote(cfg)
     env = os.environ.copy()
@@ -74,29 +123,35 @@ def git_push(
     if dry_run:
         print("+", "git", "add", "-A")
         print("+", "git", "commit", "-m", message)
-    else:
-        subprocess.run(["git", "add", "-A"], cwd=root, env=env, check=False)
-        status = subprocess.run(
-            ["git", "status", "--porcelain"],
+        print("+", "git", "push", remote, cfg.github_branch, f"  # auth: {source}")
+        return subprocess.CompletedProcess([], 0, "", "")
+
+    subprocess.run(["git", "add", "-A"], cwd=root, env=env, check=False)
+    status = subprocess.run(
+        ["git", "status", "--porcelain"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+        env=env,
+    )
+    if status.stdout.strip():
+        subprocess.run(
+            ["git", "commit", "-m", message],
             cwd=root,
-            capture_output=True,
-            text=True,
             env=env,
+            check=False,
         )
-        if status.stdout.strip():
-            subprocess.run(
-                ["git", "commit", "-m", message],
-                cwd=root,
-                env=env,
-                check=False,
-            )
 
     push_cmd = ["git", "push", remote, cfg.github_branch]
-    if dry_run:
-        print("+", " ".join(push_cmd))
-        return subprocess.CompletedProcess(push_cmd, 0, "", "")
 
-    # 使用 Bearer token 作為 HTTPS 認證（不寫入 remote URL 永久儲存）
+    # gh 已登入時，直接 push（使用 gh 的 git 憑證助手）
+    if source == "gh auth login":
+        subprocess.run(push_cmd, cwd=root, env=env, check=True)
+        return subprocess.CompletedProcess(push_cmd, 0, "pushed via gh", "")
+
+    if not token:
+        raise RuntimeError("無有效 GitHub 認證。請 gh auth login 或設定 GITHUB_TOKEN。")
+
     host_url = cfg.github_repo_url.replace("https://", f"https://x-access-token:{token}@")
     subprocess.run(
         ["git", "push", host_url, f"HEAD:{cfg.github_branch}"],

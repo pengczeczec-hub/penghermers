@@ -32,8 +32,10 @@ def main() -> None:
     info = verify_github_token()
     if not info.get("ok"):
         print(f"FAIL: {info.get('error')}")
+        if info.get("hint"):
+            print(f"提示: {info.get('hint')}")
         sys.exit(1)
-    print(f"OK: GITHUB_TOKEN 有效，帳號 login={info.get('login')}\n")
+    print(f"OK: GitHub 認證有效，login={info.get('login')}（來源: {info.get('source')}）\n")
 
     remote = ensure_git_remote(cfg)
     print(f"OK: git remote '{remote}' → {cfg.github_repo_url}\n")
