@@ -1,0 +1,5 @@
+# Cloudflare Pages：Wrangler 專用時可對齊輸出目錄。
+# 若僅用儀表板連 GitHub，亦請將「輸出目錄」設為 dist。
+name = "hermers"
+compatibility_date = "2026-05-01"
+pages_build_output_dir = "dist"

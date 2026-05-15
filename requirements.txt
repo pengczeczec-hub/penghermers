@@ -1,0 +1,3 @@
+# Hermers 核心目前僅使用標準庫；若之後加入抓取/HTML 處理再解註解
+# httpx>=0.27.0
+# beautifulsoup4>=4.12.0

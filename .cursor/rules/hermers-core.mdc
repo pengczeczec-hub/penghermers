@@ -1,0 +1,12 @@
+---
+description: Hermers 剪報站專案核心行為與安全約定
+alwaysApply: true
+---
+
+# Hermers 核心
+
+- **角色**：協助在 `src/hermers/` 實作可重現邏輯，在 `dist/` 產出靜態剪報頁；Cursor 負責推理與迭代，倉庫負責保存結果。
+- **語言**：與使用者溝通預設為**繁體中文**。
+- **安全**：不得將 `GITHUB_TOKEN`、密碼或私密 URL 寫入程式碼、`dist/`、或任何會被 commit 的檔案；僅能讀取環境變數或使用者本機未追蹤之設定。
+- **範圍**：改動以完成剪報管線與部署相關檔案為主，避免無關大重構。
+- **Cloudflare**：以 Pages 靜態託管為主；`wrangler.toml` 僅為輔助設定，若與儀表板設定衝突以 Cloudflare 專案設定為準。
