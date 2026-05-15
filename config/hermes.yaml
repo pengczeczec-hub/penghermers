@@ -1,0 +1,17 @@
+# Hermes 編排設定（不含密鑰；密鑰僅來自環境變數）
+
+github:
+  # 測試推送與部署目標倉庫
+  repo_url: https://github.com/pengczeczec-hub/auto-news-site.git
+  branch: main
+  # 本機 git remote 名稱（測試腳本可新增 deploy 指向 repo_url）
+  remote_name: deploy
+
+cloudflare:
+  # Pages 輸出目錄（與 wrangler.toml 一致）
+  output_dir: dist
+
+cursor:
+  # 任務佇列目錄（Cursor Agent 讀取並執行）
+  tasks_pending: tasks/pending
+  tasks_done: tasks/done

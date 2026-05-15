@@ -1,0 +1,18 @@
+---
+description: Hermes 任務佇列 — Cursor 為唯一 AI 執行引擎
+alwaysApply: true
+---
+
+# Cursor 驅動 Hermes
+
+- **禁止**在 Hermes 程式內呼叫 OpenAI / Claude 等外部 LLM API 完成內容生成。
+- **推理與改碼**由 Cursor Agent 在本工作區完成。
+- 當 `tasks/pending/*/CURSOR_SPEC.md` 存在時，優先讀取並依其步驟在**終端機**執行。
+- Git 認證僅讀 `$env:GITHUB_TOKEN` 或 `gh auth`；勿將 token 寫入程式或 commit。
+- 完成任務後執行：`python hermes_interface.py complete <task_id>`
+
+任務類型：
+- `digest_pipeline` → pipeline + 審核 staging
+- `git_publish` → `python tools/test_github_push.py` 再 `git_publish` / push
+- `deploy_cloudflare` → `deploy_to_cloudflare.ps1`
+- `user_request` → 依使用者原文處理

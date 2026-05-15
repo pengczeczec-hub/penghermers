@@ -8,28 +8,25 @@ Hermers「大腦」接點：在 Cursor 外也可被 CLI / CI 呼叫的薄層。
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 from hermers import __version__
-
-
-def repo_root() -> Path:
-    """專案根目錄（假設從倉庫根執行，以目前檔案位置向上推算）。"""
-    return Path(__file__).resolve().parents[2]
-
-
-def dist_dir() -> Path:
-    return repo_root() / "dist"
+from hermers.paths import dist_dir, pending_dir, posts_dir, repo_root
+from hermers.telegram_notify import status_text as telegram_status
 
 
 def status_text() -> str:
     root = repo_root()
     d = dist_dir()
     index = d / "index.html"
+    pending = len(list(pending_dir().glob("*/meta.json"))) if pending_dir().is_dir() else 0
+    published = len(list(posts_dir().glob("*.html"))) if posts_dir().is_dir() else 0
     return (
         f"Hermers {__version__}\n"
         f"  repo_root: {root}\n"
         f"  dist:      {d} ({'ok' if index.is_file() else 'missing index.html'})\n"
+        f"  pending:   {pending} 則待審（staging/pending/）\n"
+        f"  published: {published} 則已通過（dist/posts/）\n"
+        f"  {telegram_status()}\n"
     )
 
 

@@ -11,3 +11,11 @@ venv/
 *.log
 .DS_Store
 Thumbs.db
+staging/pending/
+staging/rejected/
+staging/review.html
+data/
+tasks/pending/*/
+!tasks/pending/.gitkeep
+tasks/done/*/
+!tasks/done/.gitkeep

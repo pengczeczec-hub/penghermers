@@ -1,41 +1,51 @@
-# Hermers — Cursor 作為大腦
+# Hermers / Hermes — Cursor 為唯一 AI 引擎
 
-本專案是 **AI 自動化剪報站** 的骨架。邏輯與產線之「推理、拆解、改稿」由 **Cursor 內的 Agent／Composer** 擔任；此倉庫只保存**可重現的程式、靜態產出與設定**，不把對話當成唯一真相來源。
+## 核心邏輯
+
+- **Hermes（本倉庫程式）**：任務編排 — 收 Telegram、產生任務清單、呼叫本機終端機（git、部署腳本）。
+- **Cursor（您開啟的 IDE Agent）**：唯一推理引擎 — 讀 `tasks/pending/*/CURSOR_SPEC.md` 並在工作區執行。
+- **不**在 Hermes 內呼叫 OpenAI / Claude 等外部 LLM API。
 
 ## 目錄
 
 | 路徑 | 說明 |
 |------|------|
-| `src/hermers/` | 可執行的編排與工具（抓取、組版、呼叫外部 API 等之後擴充） |
-| `dist/` | 給 Cloudflare Pages 的靜態輸出（`index.html` 等） |
-| `tools/` | 一次性腳本（例如 Git 推送） |
-| `.cursor/rules/` | 給 Cursor 的專案規則，讓每次對話對齊同一套目標 |
+| `hermes_interface.py` | 編排 CLI：建立 / 列出 / 完成任務 |
+| `tasks/pending/` | 待 Cursor 執行的任務（含 CURSOR_SPEC.md） |
+| `tasks/done/` | 已完成任務 |
+| `config/hermes.yaml` | GitHub 目標倉庫、Cloudflare 輸出目錄 |
+| `src/hermers/` | 管線、Telegram、任務產生器 |
+| `dist/` | 靜態站輸出 |
+| `deploy_to_cloudflare.ps1` | 部署輔助（由 Cursor 在終端機執行） |
 
-## 與老闆協作方式
+## 工作流程
 
-1. **需求與新聞網址**：在 Cursor 對話或 Composer 中說明；由 Agent 依本倉庫結構改 `src/`、更新 `dist/`。
-2. **機密**：`GITHUB_TOKEN` 等只放在環境變數或本機 `.env`（已列入 `.gitignore`），永不寫入程式碼或 commit。
-3. **部署**：靜態檔在 `dist/`；Cloudflare Pages 連結此 GitHub 倉庫後，以 `dist` 為輸出目錄（見 `wrangler.toml` 註解與官方文件）。
+1. **指令接收**：Telegram → `telegram-bot.bat` → 建立 `tasks/pending/<id>/`
+2. **大腦推演**：您在 **Cursor** 開啟任務內 `CURSOR_SPEC.md`，由 Agent 執行
+3. **系統執行**：Agent 在終端機跑 git / pipeline / `deploy_to_cloudflare.ps1`（讀 `$env:GITHUB_TOKEN`）
+4. **審核**：剪報仍走 `staging/` 待審，通過後才發布
+5. **完成**：`python hermes_interface.py complete <task_id>`
 
-## 本機常用指令
+## 本機 .bat（精簡後）
 
-**Windows（雙擊或 cmd）：**
-
-| 檔案 | 說明 |
+| 檔案 | 用途 |
 |------|------|
-| `install.bat` | `pip install -e .` |
-| `brain.bat` | 狀態檢查（`hermers.brain`） |
-| `publish-dry.bat` | 預覽 git add / commit / push |
-| `publish.bat` | 實際推送；可帶訊息：`publish.bat chore: update` |
+| `install.bat` | 安裝 Python 套件 |
+| `hermes.bat` | 編排 CLI（status / task / test-github） |
+| `telegram-bot.bat` | Telegram → 建立 Cursor 任務（需常駐） |
 
-雙擊執行時視窗會停在「按任意鍵」；若在已開啟的終端機不想暫停，可先設 `$env:HERMERS_NO_PAUSE=1`。
-
-**PowerShell / 終端機：**
+## 常用指令
 
 ```powershell
 python -m pip install -e .
-python -m hermers.brain
-python tools/git_publish.py --dry-run
+python hermes_interface.py status
+python hermes_interface.py task new -k digest_pipeline -t "今日剪報"
+python hermes_interface.py task list
+python tools/test_github_push.py          # 驗證 GITHUB_TOKEN
+python tools/test_github_push.py --push   # 推送到 config/hermes.yaml 倉庫
 ```
 
-首次建立遠端後再執行 `publish.bat` 或 `git_publish.py`（見腳本內說明）。
+## 密鑰
+
+- `GITHUB_TOKEN`、`TELEGRAM_*` 僅來自環境變數或 `.env`（不 commit）。
+- 預設推送目標：`config/hermes.yaml` → `auto-news-site`（可改）。

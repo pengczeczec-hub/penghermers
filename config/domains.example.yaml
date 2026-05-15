@@ -1,0 +1,11 @@
+# 複製為 config/domains.yaml 後依領域修改
+# max_items: 每次管線最多產生幾則待審草稿
+max_items: 5
+
+domains:
+  - id: tech
+    name: 科技熱門
+    keywords: []  # 可填 AI, 晶片 等，空白表示不過濾標題
+    rss:
+      - https://hnrss.org/frontpage
+      - https://feeds.arstechnica.com/arstechnica/index

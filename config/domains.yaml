@@ -1,0 +1,9 @@
+max_items: 5
+
+domains:
+  - id: tech
+    name: 科技熱門
+    keywords: []
+    rss:
+      - https://hnrss.org/frontpage
+      - https://feeds.arstechnica.com/arstechnica/index
