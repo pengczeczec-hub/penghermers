@@ -1,6 +1,6 @@
 # Cloudflare Python Worker（pywrangler deploy）
 # 靜態 Pages（wrangler pages deploy dist）已停用；剪報產物請改由 CI 推送或由 Worker 經 R2/D1 提供。
-name = "penghermers"
+name = "penghermes"
 main = "main.py"
 compatibility_date = "2026-05-16"
 compatibility_flags = ["python_workers"]
