@@ -15,7 +15,8 @@ dependencies = [
   "pyyaml>=6.0.0",
 ]
 
-# Cloudflare Python Worker：`deploy_to_cloudflare.ps1` 會執行 `uv sync --extra cloudflare`
+# Cloudflare Python Worker（可選）：本機若要用 `uv run pywrangler dev` 可 `uv sync --extra cloudflare`；
+# 建議開發／部署一律使用：`uvx --from workers-py pywrangler dev|deploy`（見 deploy_to_cloudflare.ps1）。
 [project.optional-dependencies]
 cloudflare = [
   "workers-py",

@@ -42,6 +42,6 @@ python hermes_main.py agent 幫我部署網站並說明做了什麼
 
 ## Cloudflare（Python Worker）
 
-- 部署腳本：`deploy_to_cloudflare.ps1`（`uv sync --extra cloudflare` → `uv run pywrangler deploy`）
+- 部署腳本：`deploy_to_cloudflare.ps1`（**`uvx --from workers-py pywrangler deploy`**；無須事先在 venv 安裝 pywrangler）
 - Worker 入口：根目錄 `main.py`（轉匯 `hermers.cf_worker.Default`）
 - 架構說明與剪報整合指引：`docs/CLOUDFLARE_WORKER.md`

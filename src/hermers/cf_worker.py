@@ -1,7 +1,7 @@
 """
 Cloudflare Python Worker 實作（僅在 pywrangler / Workers 執行環境載入）。
 
-本機請用：`uv run pywrangler dev`。
+本機請用：`uvx --from workers-py pywrangler dev`（或 `uv tool run --from workers-py pywrangler dev`）。
 勿在一般 `python -c "import hermers.cf_worker"` 測試（需 Workers 執行期）。
 """
 

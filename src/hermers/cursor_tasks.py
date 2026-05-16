@@ -34,9 +34,9 @@ PROMPTS: dict[str, str] = {
 """,
     "deploy_cloudflare": """# Cursor 任務：部署到 Cloudflare（Python Worker）
 
-1. 安裝 `uv` 與 Node.js；專案根：`uv sync --extra cloudflare`
+1. 安裝 `uv`（含 uvx）與 Node.js；專案根目錄無須先安裝 pywrangler
 2. 在終端機執行：`powershell -ExecutionPolicy Bypass -File .\\deploy_to_cloudflare.ps1`
-3. 部署使用 `uv run pywrangler deploy`；行為見 `docs/CLOUDFLARE_WORKER.md` 與 `src/hermers/cf_worker.py`
+3. 部署使用 **`uvx --from workers-py pywrangler deploy`**；行為見 `docs/CLOUDFLARE_WORKER.md` 與 `src/hermers/cf_worker.py`
 4. 回報 Workers 儀表板版本與路由結果
 """,
     "user_request": """# Cursor 任務：使用者自訂需求
