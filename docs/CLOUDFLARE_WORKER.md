@@ -120,12 +120,17 @@ Cloudflare 會在偵測到 `requirements.txt` 時自動執行 `pip install -r re
 
 ### 4. 改用具保險的 Deploy command（強制刪殘留檔）
 
-將 **Deploy command**（或 Build command，依你專案畫面為準）改為使用倉庫根目錄的腳本：
+在 [Workers & Pages](https://dash.cloudflare.com/?to=/:account/workers-and-pages) → 選 **penghermers** → **Settings** → **Build**：
 
-- **生產（main）**：`bash cloudflare-build.sh`
-- **預覽環境**：`bash cloudflare-build.sh --env preview`
+| 欄位 | 填入值 |
+|------|--------|
+| **Deploy command**（生產分支，通常 `main`） | `bash cloudflare-build.sh` |
+| **Non-production branch deploy command**（若有啟用非生產分支建置） | `bash cloudflare-build.sh --env preview` |
+| **Build command** | 留空（或刪掉 `pip install` 類指令） |
 
-腳本會在執行 `uvx … pywrangler deploy` 前執行 `rm -f requirements.txt`，可消除快取殘留檔。
+腳本會在 `uvx … pywrangler deploy` 前執行 `rm -f requirements.txt`。`wrangler.toml` 已含 `[env.preview]`（`penghermers-preview`）。
+
+**注意：** 按舊 deployment 的 **Retry** 仍會用「當時的 commit 與建置設定」；改完設定後請 **Clear build cache**，並用 **新 push** 或 **Create deployment** 觸發，並確認日誌 commit 為 **`4e32bef`** 或更新。
 
 ### 5. 倉庫與分支
 
