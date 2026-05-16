@@ -16,7 +16,8 @@ Hermers 已改為以 **`uvx --from workers-py pywrangler deploy`** 部署 **Pyth
 | `main.py` | Wrangler 入口；轉匯 `hermers.cf_worker.Default` |
 | `src/hermers/cf_worker.py` | `WorkerEntrypoint`：`fetch`（HTTP）、`scheduled`（定時） |
 | `src/hermers/worker_edge.py` | **僅含可在邊緣執行的輕量邏輯**；勿 import `pipeline` / `paths.repo_root` |
-| `deploy_to_cloudflare.ps1` | 可選 git push → **`uvx --from workers-py pywrangler deploy`** |
+| `deploy_to_cloudflare.ps1` | 可選 git push → **`uvx --from workers-py pywrangler deploy`**（或 preview） |
+| `cloudflare-build.sh` | **Cloudflare 建置機用**：先 `rm -f requirements.txt` 再 `uvx … deploy`（可傳 `--env preview`） |
 | `pyproject.toml` | 專案依賴；可選 `[project.optional-dependencies] cloudflare` 供本機 `uv sync --extra cloudflare` 後使用 `uv run pywrangler dev`（非必須，開發可用上列 `uvx … dev`） |
 
 ## 部署指令
@@ -25,6 +26,7 @@ Hermers 已改為以 **`uvx --from workers-py pywrangler deploy`** 部署 **Pyth
 cd "專案根目錄"
 uvx --from workers-py pywrangler dev     # 本機開發
 uvx --from workers-py pywrangler deploy  # 上線（CI／建置機建議用此，不需事先安裝 pywrangler）
+bash cloudflare-build.sh                 # 等同 deploy，並先刪除殘留的 requirements.txt（Linux／CF 建置）
 ```
 
 若環境沒有 `uvx` 指令（較舊 uv），可改用：
@@ -96,12 +98,42 @@ uv tool run --from workers-py pywrangler deploy
 
 ## 疑難：建置日誌仍出現 `requirements.txt exists`
 
-若 GitHub `main` 已刪除該檔（網頁上確認沒有 `requirements.txt`），但 Cloudflare 仍報錯，請依序檢查：
+GitHub 上 **`main` 最新 commit 的檔案樹裡已不應有 `requirements.txt`**（請在網頁上確認）。若日誌仍出現 `pip install -r requirements.txt` 且 pywrangler 報錯，常見原因與處理如下。
 
-1. **Workers / Pages 連到的倉庫與分支**是否為 **`pengczeczec-hub/penghermers`** 的 **`main`**（不是 fork、不是別名倉庫）。
-2. **清除建置快取**：Cloudflare 儀表板該專案 → Builds / Deployments → **Clear build cache**（或重新連線 Git 後再部署）。
-3. 日誌時間是否為**舊次建置**（成功刪檔前的 commit）；請對最新 commit 再跑一次部署並對照 **commit SHA** 是否為 GitHub 上最新一筆。
-4. 本專案已將 **`requirements.txt` 列入 `.gitignore`**，避免本機再產生並被誤 `git add`。
+### 1. 「重試」仍釘在舊 commit
+
+儀表板上的 **Retry** 常會對**同一個 Git SHA** 重跑，不會自動拉最新 `main`。請改為：**推送新 commit 觸發新建置**，或斷開再連 Git，並確認日誌裡的 commit 與 GitHub **最新一筆**一致。
+
+### 2. 建置快取殘留工作目錄
+
+在 Workers 專案 → **Settings → Builds**（或 Deployments）使用 **Clear build cache**，再觸發新建置。
+
+### 3. 建置變數：跳過自動 pip（建議）
+
+Cloudflare 會在偵測到 `requirements.txt` 時自動執行 `pip install -r requirements.txt`。在 **Settings → Build → Build variables and secrets** 新增：
+
+| Name | Value |
+|------|--------|
+| `SKIP_DEPENDENCY_INSTALL` | `1` |
+
+改由 **pywrangler** 依 `pyproject.toml` 處理依賴，並避免與舊流程打架。說明見官方 [Build image — Skip dependency install](https://developers.cloudflare.com/workers/ci-cd/builds/build-image/#skip-dependency-install)。
+
+### 4. 改用具保險的 Deploy command（強制刪殘留檔）
+
+將 **Deploy command**（或 Build command，依你專案畫面為準）改為使用倉庫根目錄的腳本：
+
+- **生產（main）**：`bash cloudflare-build.sh`
+- **預覽環境**：`bash cloudflare-build.sh --env preview`
+
+腳本會在執行 `uvx … pywrangler deploy` 前執行 `rm -f requirements.txt`，可消除快取殘留檔。
+
+### 5. 倉庫與分支
+
+確認連線的是 **`pengczeczec-hub/penghermers`** 的 **`main`**（非 fork、非錯誤分支）。
+
+### 6. `.gitignore`
+
+本專案已將 **`requirements.txt` 列入 `.gitignore`**，避免本機再產生並被誤提交。
 
 ## 參考文件
 

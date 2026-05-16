@@ -98,6 +98,13 @@ if (-not $uv) {
     exit 1
 }
 
+# pywrangler：若根目錄存在 requirements.txt 會直接失敗（與 pyproject.toml 互斥）
+$reqPath = Join-Path $PSScriptRoot "requirements.txt"
+if (Test-Path $reqPath) {
+    Remove-Item -Force $reqPath
+    Write-Host "[Hermes] 已刪除本機 requirements.txt（避免與 pywrangler 衝突）" -ForegroundColor DarkYellow
+}
+
 $pyArgs = Build-PywranglerArgs -IsProduction $isProduction
 $cmdLine = "uvx --from workers-py pywrangler $($pyArgs -join ' ')"
 if (-not (Get-Command uvx -ErrorAction SilentlyContinue)) {
