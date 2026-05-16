@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from time import mktime
+from email.utils import parsedate_to_datetime
 
-import feedparser
+import httpx
 
 from hermers.config_load import DomainConfig
 
@@ -19,11 +20,70 @@ class FeedItem:
     source: str
 
 
-def _parse_date(entry: feedparser.FeedParserDict) -> datetime | None:
-    parsed = entry.get("published_parsed") or entry.get("updated_parsed")
-    if not parsed:
+def _parse_date_text(text: str | None) -> datetime | None:
+    if not text:
         return None
-    return datetime.fromtimestamp(mktime(parsed), tz=timezone.utc)
+    text = text.strip()
+    try:
+        return parsedate_to_datetime(text).astimezone(timezone.utc)
+    except (TypeError, ValueError):
+        pass
+    try:
+        iso = text.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(iso)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+    except ValueError:
+        return None
+
+
+def _local_tag(tag: str) -> str:
+    if "}" in tag:
+        return tag.rsplit("}", 1)[-1]
+    return tag
+
+
+def _child_text(node: ET.Element, names: tuple[str, ...]) -> str:
+    for child in node:
+        if _local_tag(child.tag) in names:
+            if child.text:
+                return child.text.strip()
+            if child.attrib.get("href"):
+                return child.attrib["href"].strip()
+    return ""
+
+
+def _entry_published(node: ET.Element) -> datetime | None:
+    for name in ("pubDate", "published", "updated", "date"):
+        for child in node:
+            if _local_tag(child.tag) == name:
+                parsed = _parse_date_text(child.text)
+                if parsed:
+                    return parsed
+    return None
+
+
+def _feed_nodes(root: ET.Element) -> list[ET.Element]:
+    for tag in ("item", "entry"):
+        nodes = [el for el in root.iter() if _local_tag(el.tag) == tag]
+        if nodes:
+            return nodes
+    return []
+
+
+def _feed_source_title(root: ET.Element, fallback: str) -> str:
+    for container in ("channel", "feed"):
+        for el in root.iter():
+            if _local_tag(el.tag) != container:
+                continue
+            for child in el:
+                if _local_tag(child.tag) == "title" and child.text:
+                    return child.text.strip()
+    for el in root.iter():
+        if _local_tag(el.tag) == "title" and el.text:
+            return el.text.strip()
+    return fallback
 
 
 def _matches_keywords(title: str, keywords: list[str]) -> bool:
@@ -35,25 +95,31 @@ def _matches_keywords(title: str, keywords: list[str]) -> bool:
 
 def discover_domain(domain: DomainConfig, *, limit: int) -> list[FeedItem]:
     items: list[FeedItem] = []
-    for feed_url in domain.rss:
-        parsed = feedparser.parse(feed_url)
-        source = parsed.feed.get("title") or feed_url
-        for entry in parsed.entries[: limit * 2]:
-            title = (entry.get("title") or "").strip()
-            url = (entry.get("link") or "").strip()
-            if not title or not url:
-                continue
-            if not _matches_keywords(title, domain.keywords):
-                continue
-            items.append(
-                FeedItem(
-                    domain_id=domain.id,
-                    domain_name=domain.name,
-                    title=title,
-                    url=url,
-                    published=_parse_date(entry),
-                    source=source,
+    with httpx.Client(timeout=30.0, follow_redirects=True) as client:
+        for feed_url in domain.rss:
+            response = client.get(feed_url)
+            response.raise_for_status()
+            root = ET.fromstring(response.text)
+            source = _feed_source_title(root, feed_url)
+            for node in _feed_nodes(root)[: limit * 2]:
+                title = _child_text(node, ("title",))
+                url = _child_text(node, ("link",))
+                if not title or not url:
+                    continue
+                if not _matches_keywords(title, domain.keywords):
+                    continue
+                items.append(
+                    FeedItem(
+                        domain_id=domain.id,
+                        domain_name=domain.name,
+                        title=title,
+                        url=url,
+                        published=_entry_published(node),
+                        source=source,
+                    )
                 )
-            )
-    items.sort(key=lambda x: x.published or datetime.min.replace(tzinfo=timezone.utc), reverse=True)
+    items.sort(
+        key=lambda x: x.published or datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
     return items[:limit]
