@@ -20,3 +20,6 @@ tasks/pending/*/
 !tasks/pending/.gitkeep
 tasks/done/*/
 !tasks/done/.gitkeep
+
+# Cloudflare Python Workers（pywrangler）：根目錄不可有 requirements.txt，避免誤提交與建置衝突
+requirements.txt

@@ -94,6 +94,15 @@ uv tool run --from workers-py pywrangler deploy
 - [ ] 專案根目錄**沒有** `requirements.txt`（pywrangler 僅允許 `pyproject.toml`，若兩者並存會建置失敗）
 - [ ] Python 版本：本機建議 **3.12+**（與 Cloudflare Python Workers 生態一致）
 
+## 疑難：建置日誌仍出現 `requirements.txt exists`
+
+若 GitHub `main` 已刪除該檔（網頁上確認沒有 `requirements.txt`），但 Cloudflare 仍報錯，請依序檢查：
+
+1. **Workers / Pages 連到的倉庫與分支**是否為 **`pengczeczec-hub/penghermers`** 的 **`main`**（不是 fork、不是別名倉庫）。
+2. **清除建置快取**：Cloudflare 儀表板該專案 → Builds / Deployments → **Clear build cache**（或重新連線 Git 後再部署）。
+3. 日誌時間是否為**舊次建置**（成功刪檔前的 commit）；請對最新 commit 再跑一次部署並對照 **commit SHA** 是否為 GitHub 上最新一筆。
+4. 本專案已將 **`requirements.txt` 列入 `.gitignore`**，避免本機再產生並被誤 `git add`。
+
 ## 參考文件
 
 - [Python Workers](https://developers.cloudflare.com/workers/languages/python/)
