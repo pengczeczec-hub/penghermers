@@ -1,0 +1,8 @@
+{
+  "name": "hermes-cursor-brain",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@cursor/sdk": "latest"
+  }
+}

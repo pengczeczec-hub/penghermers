@@ -1,51 +1,41 @@
-# Hermers / Hermes — Cursor 為唯一 AI 引擎
+# Hermers — 專屬員工（Cursor API 大腦）
 
-## 核心邏輯
+## 大腦 = Cursor，不是 GPT
 
-- **Hermes（本倉庫程式）**：任務編排 — 收 Telegram、產生任務清單、呼叫本機終端機（git、部署腳本）。
-- **Cursor（您開啟的 IDE Agent）**：唯一推理引擎 — 讀 `tasks/pending/*/CURSOR_SPEC.md` 並在工作區執行。
-- **不**在 Hermes 內呼叫 OpenAI / Claude 等外部 LLM API。
+- 自然語言推理透過 **`CURSOR_API_KEY`** + 官方 **`@cursor/sdk`**
+- 在本機對 **Hermers 專案目錄** 執行 Agent（`composer-2` 等 Cursor 模型）
+- **消耗 Cursor 帳號額度**，不使用 OpenAI API Key
 
-## 目錄
-
-| 路徑 | 說明 |
-|------|------|
-| `hermes_interface.py` | 編排 CLI：建立 / 列出 / 完成任務 |
-| `tasks/pending/` | 待 Cursor 執行的任務（含 CURSOR_SPEC.md） |
-| `tasks/done/` | 已完成任務 |
-| `config/hermes.yaml` | GitHub 目標倉庫、Cloudflare 輸出目錄 |
-| `src/hermers/` | 管線、Telegram、任務產生器 |
-| `dist/` | 靜態站輸出 |
-| `deploy_to_cloudflare.ps1` | 部署輔助（由 Cursor 在終端機執行） |
-
-## 工作流程
-
-1. **指令接收**：Telegram → `telegram-bot.bat` → 建立 `tasks/pending/<id>/`
-2. **大腦推演**：您在 **Cursor** 開啟任務內 `CURSOR_SPEC.md`，由 Agent 執行
-3. **系統執行**：Agent 在終端機跑 git / pipeline / `deploy_to_cloudflare.ps1`（讀 `$env:GITHUB_TOKEN`）
-4. **審核**：剪報仍走 `staging/` 待審，通過後才發布
-5. **完成**：`python hermes_interface.py complete <task_id>`
-
-## 本機 .bat（精簡後）
-
-| 檔案 | 用途 |
-|------|------|
-| `install.bat` | 安裝 Python 套件 |
-| `hermes.bat` | 編排 CLI（status / task / test-github） |
-| `telegram-bot.bat` | Telegram → 建立 Cursor 任務（需常駐） |
-
-## 常用指令
+## 安裝 Cursor 大腦
 
 ```powershell
+# 1. Cursor 儀表板 → Integrations → 建立 User API Key
+# 2. 寫入 .env：
+#    CURSOR_API_KEY=cursor_...
+#    HERMES_LLM_PROVIDER=cursor
+
+install-cursor-brain.bat   # 安裝 Node 依賴 @cursor/sdk
 python -m pip install -e .
-python hermes_interface.py status
-python hermes_interface.py task new -k digest_pipeline -t "今日剪報"
-python hermes_interface.py task list
-python tools/test_github_push.py          # 驗證 GITHUB_TOKEN
-python tools/test_github_push.py --push   # 推送到 config/hermes.yaml 倉庫
+telegram-bot.bat             # 常駐
 ```
 
-## 密鑰
+## 運作方式
 
-- `GITHUB_TOKEN`、`TELEGRAM_*` 僅來自環境變數或 `.env`（不 commit）。
-- 預設推送目標：`config/hermes.yaml` → `auto-news-site`（可改）。
+```
+Telegram 自然語言
+  → Hermes Agent（Cursor SDK 選工具）
+  → 本機執行 pipeline / deploy / 擷取網址…
+  → 結果回 Telegram
+```
+
+無 Cursor Key 時退回**關鍵字規則**（部署、剪報、貼網址仍可用）。
+
+## 擴充技能
+
+在 `src/hermers/agent/tools.py` 註冊新工具。
+
+## CLI
+
+```powershell
+python hermes_main.py agent 幫我部署網站並說明做了什麼
+```

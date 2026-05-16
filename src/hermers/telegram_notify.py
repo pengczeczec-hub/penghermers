@@ -33,6 +33,7 @@ def send_message(text: str, *, disable_preview: bool = True) -> bool:
     payload = {
         "chat_id": chat_id,
         "text": text[:4000],
+        "parse_mode": "HTML",
         "disable_web_page_preview": disable_preview,
     }
     with httpx.Client(timeout=30.0) as client:

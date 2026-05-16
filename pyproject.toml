@@ -21,6 +21,7 @@ hermers-review = "hermers.review:main"
 hermers-telegram = "hermers.telegram_cli:main"
 hermers-telegram-bot = "hermers.telegram_bot:main"
 hermes = "hermers.hermes_entry:main"
+hermes-main = "hermers.hermes_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

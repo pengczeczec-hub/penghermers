@@ -18,7 +18,7 @@ if errorlevel 1 (
 )
 
 echo.
-echo [Hermers] 完成。可執行 brain.bat 檢查狀態。
+echo [Hermers] 完成。請執行 install-cursor-brain.bat 並設定 CURSOR_API_KEY。
 goto :end
 
 :end

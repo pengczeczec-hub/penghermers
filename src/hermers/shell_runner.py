@@ -8,6 +8,7 @@ from pathlib import Path
 import httpx
 
 from hermers.env_load import load_dotenv
+from hermers.subprocess_utf8 import run as sp_run
 from hermers.hermes_config import HermesConfig, load_hermes_config
 from hermers.paths import repo_root
 
@@ -35,7 +36,7 @@ def _token_from_gh() -> str:
         return ""
     env = os.environ.copy()
     env.pop("GITHUB_TOKEN", None)
-    proc = subprocess.run(
+    proc = sp_run(
         ["gh", "auth", "token"],
         capture_output=True,
         text=True,
@@ -97,16 +98,16 @@ def ensure_git_remote(cfg: HermesConfig | None = None) -> str:
     url = cfg.github_repo_url
     if not url:
         raise ValueError("config/hermes.yaml 未設定 github.repo_url")
-    proc = subprocess.run(
+    proc = sp_run(
         ["git", "remote", "get-url", name],
         cwd=root,
         capture_output=True,
         text=True,
     )
     if proc.returncode != 0:
-        subprocess.run(["git", "remote", "add", name, url], cwd=root, check=True)
+        sp_run(["git", "remote", "add", name, url], cwd=root, check=True)
     else:
-        subprocess.run(["git", "remote", "set-url", name, url], cwd=root, check=True)
+        sp_run(["git", "remote", "set-url", name, url], cwd=root, check=True)
     return name
 
 
@@ -130,8 +131,8 @@ def git_push(
         print("+", "git", "push", remote, cfg.github_branch, f"  # auth: {source}")
         return subprocess.CompletedProcess([], 0, "", "")
 
-    subprocess.run(["git", "add", "-A"], cwd=root, env=env, check=False)
-    status = subprocess.run(
+    sp_run(["git", "add", "-A"], cwd=root, env=env, check=False)
+    status = sp_run(
         ["git", "status", "--porcelain"],
         cwd=root,
         capture_output=True,
@@ -139,7 +140,7 @@ def git_push(
         env=env,
     )
     if status.stdout.strip():
-        subprocess.run(
+        sp_run(
             ["git", "commit", "-m", message],
             cwd=root,
             env=env,
@@ -150,7 +151,7 @@ def git_push(
 
     # gh 已登入時，直接 push（使用 gh 的 git 憑證助手）
     if source == "gh auth login":
-        proc = subprocess.run(push_cmd, cwd=root, env=env, capture_output=True, text=True)
+        proc = sp_run(push_cmd, cwd=root, env=env, capture_output=True, text=True)
         if proc.returncode != 0:
             err = (proc.stderr or proc.stdout or "").strip()
             if "not found" in err.lower():
@@ -165,7 +166,7 @@ def git_push(
         raise RuntimeError("無有效 GitHub 認證。請 gh auth login 或設定 GITHUB_TOKEN。")
 
     host_url = cfg.github_repo_url.replace("https://", f"https://x-access-token:{token}@")
-    subprocess.run(
+    sp_run(
         ["git", "push", host_url, f"HEAD:{cfg.github_branch}"],
         cwd=root,
         env=env,

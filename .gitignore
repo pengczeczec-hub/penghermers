@@ -15,6 +15,7 @@ staging/pending/
 staging/rejected/
 staging/review.html
 data/
+tools/cursor_brain/node_modules/
 tasks/pending/*/
 !tasks/pending/.gitkeep
 tasks/done/*/

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Erlang/OTP 29.0 - Erlang/OTP</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.65; }
+    .tag { color: #666; font-size: 0.9rem; }
+    a { color: #06c; }
+  </style>
+</head>
+<body>
+  <p class="tag">科技熱門 · 待審草稿</p>
+  <h1>Erlang/OTP 29.0 - Erlang/OTP</h1>
+  <p>來源：<a href="https://www.erlang.org/news/188" rel="noopener noreferrer">https://www.erlang.org/news/188</a></p>
+  <hr />
+  <p>Erlang/OTP 29 is a new major release with new features, improvements as well as a few incompatibilities. Some of the new features are highlighted below.</p><p>Added support for -unsafe attributes for marking functions as unsafe to use. The compiler will by default now generate warnings for calls to functions in Erlang/OTP known to be always unsafe. Furthermore, xref can now be used to find calls to unsafe functions and functions that lack documentation.</p><p>The SSH daemon now defaults to disabled for shell and exec services, implementing the “secure by default” principle. This prevents authenticated users from executing arbitrary Erlang code unless explicitly configured.</p><p>The SFTP subsystem is no longer enabled by default when starting an SSH daemon.</p><p>In SSL, the post quantum hybrid algorithm x25519mlkem768 is now the most preferred key exchange group in the default configuration.</p><p>The module io_ansi allows the user to emit Virtual Terminal Sequences (also known as ANSI sequences) to the terminal in order to add colors/styling to text or to create fully fledged terminal applications.</p><p>The new ct_doctest module allows the user to test documentation examples in Erlang module docs and documentation files.</p><p>The ignore_xref attribute has been handled as a post-analysis filter by build tools such as Rebar3. In this release, [xref] itself does the filtering, ensuring that all tooling that calls xref for any purpose can rely on these declarations to just work.</p>
+  <hr />
+  <p><small>自動擷取摘要；審核通過後才會進入 dist/ 並可推送 GitHub。</small></p>
+</body>
+</html>

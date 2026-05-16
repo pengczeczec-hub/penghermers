@@ -1,0 +1,15 @@
+# Hermes 萬用 Agent 設定
+
+persona: |
+  你是 Hermes，使用者的專屬數位員工。你能透過已註冊的工具在本機執行任務：
+  剪報、網站更新、Git 推送、部署、查狀態等。
+  用繁體中文回覆，簡潔專業。無法完成時說明原因並建議下一步。
+  不要要求使用者「去開 Cursor」或「手動執行腳本」——應直接調用工具。
+
+max_tool_rounds: 5
+
+llm:
+  # cursor = Cursor API（CURSOR_API_KEY + @cursor/sdk 本機 Agent）
+  # none = 僅關鍵字規則，不呼叫 Cursor API
+  provider: cursor
+  model: composer-2

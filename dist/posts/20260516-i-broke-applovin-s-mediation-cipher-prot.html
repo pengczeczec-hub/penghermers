@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>I broke AppLovin&#x27;s mediation cipher protocol.</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.65; }
+    .tag { color: #666; font-size: 0.9rem; }
+    a { color: #06c; }
+  </style>
+</head>
+<body>
+  <p class="tag">科技熱門 · 待審草稿</p>
+  <h1>I broke AppLovin&#x27;s mediation cipher protocol.</h1>
+  <p>來源：<a href="https://www.buchodi.com/i-broke-applovins-mediation-cipher-protocol/" rel="noopener noreferrer">https://www.buchodi.com/i-broke-applovins-mediation-cipher-protocol/</a></p>
+  <hr />
+  <p>I broke the cipher AppLovin wraps around its ad-mediation traffic and decrypted several thousand real requests captured on my consented mobile-traffic research panel. The conclusion is straightforward: The encrypted bid request carries enough device data to deterministically re-identify the same iPhone across apps from different publishers, even when user denies ATT. That payload reaches AppLovin plus around 12 downstream ad networks on every banner load, every ~30 seconds, for as long as the user is playing. The assumption that ATT is the only way to deterministically identify a user is wrong. Fingerprinting the device works just as well.</p><p>Every AppLovin mediation request is HTTPS POST sent to ms4.applovin.com/1.0/mediate. Inside the TLS layer, the payload is wrapped in a second cipher AppLovin built. After base64 decoding, the wire envelope is:</p><p>Three colon-separated fields then ciphertext:</p><p>The cipher takes two ingredients: a salt and that SDK key. The salt is a 32-byte constant baked into every AppLovin SDK binary, 21 meaningful bytes followed by 11 zero bytes. The bytes are identical across every IPA and APK I checked (Solitaire Associations Journey, Hypermarket3D, Ludo Star, Yik Yak on iOS; Hypermarket3D on Android). The 40-character protocol-id field on the wire is sha1(salt).hex().</p><p>The decrypted plaintext is gzip-compressed JSON with about thirty top-level keys. Two of them carry the privacy weight:</p><p>A real device_info from one ATT-denied request:</p><p>Plus another 35 fields: screen safe-area insets, free memory, carrier code, country code, locale, orientation, status bar height, monotonic clock, battery flags, secure-connection state. Effectively every system property iOS exposes to third-party code.</p><p>The user denied ATT. IDFA is zeroed. Everything else flows.</p>
+  <hr />
+  <p><small>自動擷取摘要；審核通過後才會進入 dist/ 並可推送 GitHub。</small></p>
+</body>
+</html>
