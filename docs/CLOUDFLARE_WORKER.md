@@ -1,10 +1,10 @@
 # Cloudflare Python Worker（路線二）
 
-Hermers 已改為以 **`uv run pywrangler deploy`** 部署 **Python Worker**（`WorkerEntrypoint`），不再使用 `wrangler pages deploy dist`。
+Hermers 已改為以 **`uvx --from workers-py pywrangler deploy`** 部署 **Python Worker**（`WorkerEntrypoint`），不再使用 `wrangler pages deploy dist`。
 
 ## 你需要具備
 
-- [uv](https://docs.astral.sh/uv/)（建議：`winget install astral-sh.uv`）
+- [uv](https://docs.astral.sh/uv/)（內建 **`uvx`**；建議：`winget install astral-sh.uv`）
 - Node.js（pywrangler 依賴）
 - Cloudflare 帳號並完成 `wrangler login`（或 CI 使用 `CLOUDFLARE_API_TOKEN`）
 
@@ -13,22 +13,30 @@ Hermers 已改為以 **`uv run pywrangler deploy`** 部署 **Python Worker**（`
 | 檔案 | 用途 |
 |------|------|
 | `wrangler.toml` | Worker 名稱、`main.py`、`compatibility_flags = ["python_workers"]`、可選 `[triggers]` cron |
-| `main.py` | Wrangler 入口；`class Default` 來自 `hermers/cf_worker.py` |
+| `main.py` | Wrangler 入口；轉匯 `hermers.cf_worker.Default` |
 | `src/hermers/cf_worker.py` | `WorkerEntrypoint`：`fetch`（HTTP）、`scheduled`（定時） |
 | `src/hermers/worker_edge.py` | **僅含可在邊緣執行的輕量邏輯**；勿 import `pipeline` / `paths.repo_root` |
-| `deploy_to_cloudflare.ps1` | 可選 git push → `uv sync --extra cloudflare` → `uv run pywrangler deploy` |
-| `pyproject.toml` | `[project.optional-dependencies] cloudflare = ["workers-py"]` |
+| `deploy_to_cloudflare.ps1` | 可選 git push → **`uvx --from workers-py pywrangler deploy`** |
+| `pyproject.toml` | 專案依賴；可選 `[project.optional-dependencies] cloudflare` 供本機 `uv sync --extra cloudflare` 後使用 `uv run pywrangler dev`（非必須，開發可用上列 `uvx … dev`） |
 
 ## 部署指令
 
 ```powershell
 cd "專案根目錄"
-uv sync --extra cloudflare
-uv run pywrangler dev          # 本機開發
-uv run pywrangler deploy       # 上線（或由腳本呼叫）
+uvx --from workers-py pywrangler dev     # 本機開發
+uvx --from workers-py pywrangler deploy  # 上線（CI／建置機建議用此，不需事先安裝 pywrangler）
 ```
 
-本機一鍵（含 push）：`.\deploy_to_cloudflare.ps1`
+若環境沒有 `uvx` 指令（較舊 uv），可改用：
+
+```powershell
+uv tool run --from workers-py pywrangler deploy
+```
+
+本機一鍵（含 push）：`.\deploy_to_cloudflare.ps1`  
+（目前 git 分支若等於 `config/hermes.yaml` 的 **`github.branch`**（預設 `main`）→ 生產部署；否則加上 **`--env preview`**。可傳 **`-ProductionBranch develop`** 覆寫生產分支名稱。）
+
+**為什麼用 `uvx`：** `uv run pywrangler` 依賴專案 venv 內已安裝的 `pywrangler`；許多 CI／建置映像沒有先 `uv sync --extra cloudflare`。`uvx --from workers-py` 會從 `workers-py` 取得並執行 `pywrangler`，符合 [Cloudflare Python Workers](https://developers.cloudflare.com/workers/languages/python/) 文件做法。
 
 ## 定時任務（scheduled）
 
@@ -82,7 +90,8 @@ uv run pywrangler deploy       # 上線（或由腳本呼叫）
 - [ ] `compatibility_flags` 含 **`python_workers`**
 - [ ] `main` 指向 **`main.py`**
 - [ ] `name` 與 Cloudflare 專案名稱一致（目前為 **`penghermers`**，可視需求修改）
-- [ ] 已執行 **`uv sync --extra cloudflare`** 再 deploy
+- [ ] 已安裝 **uv**（含 uvx），且能執行 **`uvx --from workers-py pywrangler deploy`**
+- [ ] 專案根目錄**沒有** `requirements.txt`（pywrangler 僅允許 `pyproject.toml`，若兩者並存會建置失敗）
 - [ ] Python 版本：本機建議 **3.12+**（與 Cloudflare Python Workers 生態一致）
 
 ## 參考文件
