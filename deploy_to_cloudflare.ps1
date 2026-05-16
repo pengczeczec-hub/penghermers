@@ -13,6 +13,11 @@ if (Test-Path "requirements.txt") {
     Write-Host "[Hermes] 已刪除 requirements.txt（避免與 pywrangler 衝突）" -ForegroundColor DarkYellow
 }
 
+if (-not (Get-Command uvx -ErrorAction SilentlyContinue) -and -not (Get-Command uv -ErrorAction SilentlyContinue)) {
+    Write-Host "找不到 uv/uvx。請安裝：https://docs.astral.sh/uv/  或 winget install astral-sh.uv" -ForegroundColor Red
+    exit 1
+}
+
 Write-Host "[Hermes] 正在將代碼推送到 GitHub..." -ForegroundColor Cyan
 git add .
 git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "chore: sync and deploy via local script" 2>$null
