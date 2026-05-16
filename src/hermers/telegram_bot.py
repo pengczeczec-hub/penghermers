@@ -126,8 +126,10 @@ def run_bot(*, poll_seconds: float = 2.0) -> None:
                 reply = handle_message(text)
             except Exception as exc:  # noqa: BLE001
                 reply = f"<b>系統錯誤，需介入</b>\n<code>{html.escape(str(exc))}</code>"
-            send_message(reply)
-            print("→ 已回覆")
+            if send_message(reply):
+                print("→ 已回覆")
+            else:
+                print("→ 回覆產生成功，但 Telegram 發送失敗（見上方錯誤說明）")
         _save_offset(offset)
         time.sleep(poll_seconds)
 

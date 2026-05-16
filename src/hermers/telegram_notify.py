@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import html
 import json
 import os
+import re
 
 import httpx
 
@@ -22,6 +24,13 @@ def is_configured() -> bool:
     return bool(os.environ.get("TELEGRAM_BOT_TOKEN") and os.environ.get("TELEGRAM_CHAT_ID"))
 
 
+def _html_to_plain(text: str) -> str:
+    text = re.sub(r"<br\s*/?>", "\n", text, flags=re.I)
+    text = re.sub(r"</p>\s*", "\n", text, flags=re.I)
+    text = re.sub(r"<[^>]+>", "", text)
+    return html.unescape(text).strip()
+
+
 def send_message(text: str, *, disable_preview: bool = True) -> bool:
     load_dotenv()
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
@@ -29,18 +38,47 @@ def send_message(text: str, *, disable_preview: bool = True) -> bool:
     if not token or not chat_id:
         return False
 
+    body = (text or "").strip() or "(空回覆)"
     url = f"https://api.telegram.org/bot{token}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": text[:4000],
-        "parse_mode": "HTML",
-        "disable_web_page_preview": disable_preview,
-    }
-    with httpx.Client(timeout=30.0) as client:
-        resp = client.post(url, json=payload)
-        resp.raise_for_status()
-        data = resp.json()
-    return bool(data.get("ok"))
+
+    def _post(payload: dict) -> httpx.Response:
+        with httpx.Client(timeout=30.0) as client:
+            return client.post(url, json=payload)
+
+    payloads: list[dict] = [
+        {
+            "chat_id": chat_id,
+            "text": body[:4000],
+            "parse_mode": "HTML",
+            "disable_web_page_preview": disable_preview,
+        },
+        {
+            "chat_id": chat_id,
+            "text": _html_to_plain(body)[:4000],
+            "disable_web_page_preview": disable_preview,
+        },
+    ]
+
+    last_desc = ""
+    for idx, payload in enumerate(payloads):
+        try:
+            resp = _post(payload)
+            if resp.status_code == 200:
+                data = resp.json()
+                return bool(data.get("ok"))
+            try:
+                data = resp.json()
+                last_desc = str(data.get("description") or resp.text[:200])
+            except Exception:  # noqa: BLE001
+                last_desc = resp.text[:200]
+            if resp.status_code != 400 or idx == len(payloads) - 1:
+                print(f"Telegram sendMessage 失敗 ({resp.status_code}): {last_desc}")
+                return False
+        except httpx.HTTPError as exc:
+            print(f"Telegram 連線錯誤：{exc}")
+            return False
+
+    return False
 
 
 def _pending_lines(limit: int = 8) -> list[str]:
@@ -51,7 +89,7 @@ def _pending_lines(limit: int = 8) -> list[str]:
         meta = json.loads(meta_path.read_text(encoding="utf-8"))
         draft_id = meta.get("id", meta_path.parent.name)
         title = (meta.get("title") or "")[:50]
-        lines.append(f"• <code>{draft_id}</code>\n  {title}")
+        lines.append(f"• <code>{draft_id}</code>\n  {html.escape(title)}")
     return lines
 
 
@@ -64,10 +102,10 @@ def notify_pipeline_done(*, created: int, dry_run: bool = False) -> bool:
         "<b>Hermers</b>",
         f"管線完成：新增 <b>{created}</b> 則待審" + ("（dry-run）" if dry_run else ""),
         "",
-        f"本機審核頁：\n<code>{review}</code>",
+        f"本機審核頁：\n<code>{html.escape(str(review))}</code>",
     ]
     if site:
-        lines.append(f"\n網站：{site}")
+        lines.append(f"\n網站：<code>{html.escape(site)}</code>")
     pending = _pending_lines()
     if pending:
         lines.append("\n<b>待審 ID（approve.bat）：</b>")
@@ -79,13 +117,16 @@ def notify_pipeline_done(*, created: int, dry_run: bool = False) -> bool:
 def notify_review_action(*, action: str, draft_id: str, title: str = "") -> bool:
     if not _enabled():
         return False
-    title_line = f"\n{title[:80]}" if title else ""
+    title_line = f"\n{html.escape(title[:80])}" if title else ""
     extra = (
         "\n請執行 <code>publish.bat</code> 推送到 GitHub。"
         if action == "通過審核"
         else ""
     )
-    text = f"<b>Hermers</b>\n已<b>{action}</b>：<code>{draft_id}</code>{title_line}{extra}"
+    text = (
+        f"<b>Hermers</b>\n已<b>{html.escape(action)}</b>："
+        f"<code>{html.escape(draft_id)}</code>{title_line}{extra}"
+    )
     return send_message(text)
 
 

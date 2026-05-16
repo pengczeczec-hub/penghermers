@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import re
 from pathlib import Path
 from typing import Any
 
@@ -11,6 +12,15 @@ from hermers.agent.rules import route as rules_route
 from hermers.agent.tools import run_tool, tools_schema_text
 from hermers.executor import RunResult
 from hermers.paths import repo_root
+
+
+def _telegram_html(text: str) -> str:
+    t = (text or "").strip()
+    if not t:
+        return "（無文字回覆）"
+    if re.search(r"</?(?:b|code|pre|i|a|ul|li)\b", t, re.I):
+        return t
+    return html.escape(t)
 
 
 def _persona() -> str:
@@ -76,7 +86,7 @@ class AgentRunner:
                 )
 
             if action.get("action") == "reply":
-                reply = str(action.get("text") or "")
+                reply = _telegram_html(str(action.get("text") or ""))
                 return RunResult(True, reply)
 
             if action.get("action") == "tool":

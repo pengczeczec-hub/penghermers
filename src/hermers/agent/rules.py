@@ -11,6 +11,7 @@ _DEPLOY = re.compile(r"部署|上線|cloudflare|發布網站", re.I)
 _PUBLISH = re.compile(r"推送|push|publish|上傳\s*git", re.I)
 _PIPELINE = re.compile(r"剪報|digest|pipeline|rss|熱門", re.I)
 _STATUS = re.compile(r"狀態|status|健康", re.I)
+_SITE = re.compile(r"網址|網站|域名|有網址|上線了嗎|部署好了嗎|workers\.dev", re.I)
 _HELP = re.compile(r"幫我做什麼|能做什麼|可以做什麼|如何使用|怎麼用|說明|help|指令", re.I)
 
 
@@ -31,6 +32,8 @@ def route(text: str) -> RunResult | None:
         return run_tool("run_digest_pipeline", {"push": bool(_PUBLISH.search(t))})
     if _STATUS.search(t):
         return run_tool("system_status", {})
+    if _SITE.search(t):
+        return run_tool("site_url_info", {})
     if _HELP.search(t):
         return run_tool("list_capabilities", {})
 
