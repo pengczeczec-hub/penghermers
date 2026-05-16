@@ -1,0 +1,12 @@
+# 勿打包進 Worker 腳本本體（縮小體積、避免啟動失敗）
+tools/cursor_brain/node_modules
+node_modules
+.venv
+.venv-workers
+staging
+data
+tasks
+.git
+__pycache__
+*.egg-info
+dist/posts/*.json

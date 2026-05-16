@@ -1,19 +1,17 @@
 # Cloudflare Python Worker（pywrangler deploy）
-# 靜態 Pages（wrangler pages deploy dist）已停用；剪報產物請改由 CI 推送或由 Worker 經 R2/D1 提供。
-name = "penghermes"
+name = "penghermers"
 main = "main.py"
 compatibility_date = "2026-05-16"
 compatibility_flags = ["python_workers"]
 
-# 靜態剪報站（dist/）；API 路徑仍由 Worker fetch 處理
+# 剪報靜態站：dist/ 上傳為 Assets；Worker 轉交 ASSETS.fetch（見 worker_app.py）
 [assets]
 directory = "dist"
-run_worker_first = ["/api/*"]
+binding = "ASSETS"
+run_worker_first = true
 
-# 需要定時任務時取消註解並調整 UTC cron（可寫多條）
 # [triggers]
 # crons = ["0 2 * * *"]
 
-# 非 main 分支建置時：cloudflare-build.sh --env preview
 [env.preview]
 name = "penghermers-preview"

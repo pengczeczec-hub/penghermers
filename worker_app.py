@@ -1,7 +1,8 @@
 """
-Cloudflare Worker 入口邏輯（與 main.py 同目錄，供 pywrangler 打包）。
+Cloudflare Worker 入口（main.py 轉匯）。
 
-勿 import hermers.*（src 套件不會自動進 Worker）；本機 Telegram / pipeline 仍用 hermers。
+靜態剪報由 wrangler [assets] directory=dist 提供；本 Worker 處理 /api/*，
+其餘路徑轉交 env.ASSETS.fetch(request)。
 """
 
 from __future__ import annotations
@@ -40,10 +41,7 @@ async def scheduled_tick(*, source: str, env: object | None = None) -> dict[str,
                 }
         except Exception as exc:  # noqa: BLE001
             return {"source": source, "webhook_error": str(exc)}
-    return {
-        "source": source,
-        "hint": "未設定 PIPELINE_WEBHOOK_URL",
-    }
+    return {"source": source, "hint": "未設定 PIPELINE_WEBHOOK_URL"}
 
 
 def _env_str(env: object | None, key: str) -> str:
@@ -53,6 +51,14 @@ def _env_str(env: object | None, key: str) -> str:
     if raw is None:
         return ""
     return str(raw).strip()
+
+
+def _json(body: dict, *, status: int = 200) -> Response:
+    return Response(
+        json.dumps(body, ensure_ascii=False),
+        status=status,
+        headers={"Content-Type": "application/json; charset=utf-8"},
+    )
 
 
 def _content_type(path: Path) -> str:
@@ -79,58 +85,23 @@ def _read_dist(rel: str) -> tuple[str, str] | None:
     return path.read_text(encoding="utf-8"), _content_type(path)
 
 
-def _resolve_static(url_path: str) -> str | None:
-    path = url_path or "/"
+def _local_static_response(path: str) -> Response | None:
+    """本機 pywrangler dev：從 dist/ 讀檔（雲端請用 ASSETS）。"""
+    rel = "index.html" if path in ("/", "/index.html") else path.lstrip("/")
     if path in ("/", "/index.html"):
-        return "index.html"
-    if path.startswith("/posts/"):
-        rel = path.lstrip("/")
-        if rel.endswith((".html", ".json")):
-            return rel
-        return f"{rel}.html"
-    if path.startswith("/") and "." in Path(path).name:
-        return path.lstrip("/")
-    return None
-
-
-def _load_home() -> tuple[str, str] | None:
-    hit = _read_dist("index.html")
-    if hit:
-        return hit
-    return _read_dist(_FALLBACK_POST)
-
-
-def _json(body: dict, *, status: int = 200) -> Response:
-    return Response(
-        json.dumps(body, ensure_ascii=False),
-        status=status,
-        headers={"Content-Type": "application/json; charset=utf-8"},
-    )
+        loaded = _read_dist("index.html") or _read_dist(_FALLBACK_POST)
+    else:
+        loaded = _read_dist(rel)
+    if not loaded:
+        return None
+    body, ctype = loaded
+    return Response(body, headers={"Content-Type": ctype})
 
 
 class Default(WorkerEntrypoint):
     async def fetch(self, request):
         parsed = urlparse(request.url)
         path = parsed.path or "/"
-        url_str = str(request.url)
-
-        is_home = path in ("/", "/index.html") or url_str.rstrip("/").endswith(".dev")
-        if is_home:
-            loaded = _load_home()
-            if loaded:
-                body, ctype = loaded
-                return Response(body, headers={"Content-Type": ctype})
-            return Response(
-                "<h1>Hermers</h1><p>dist/index.html 尚未產生。</p>",
-                headers={"Content-Type": "text/html; charset=utf-8"},
-            )
-
-        static_rel = _resolve_static(path)
-        if static_rel:
-            loaded = _read_dist(static_rel)
-            if loaded:
-                body, ctype = loaded
-                return Response(body, headers={"Content-Type": ctype})
 
         if path == "/api/health":
             return Response.json({"ok": True, **worker_info()})
@@ -144,8 +115,13 @@ class Default(WorkerEntrypoint):
             result = await scheduled_tick(source="http", env=self.env)
             return Response.json({"ok": True, "result": result})
 
-        if path == "/favicon.ico":
-            return Response("", headers={"Content-Type": "image/x-icon"})
+        assets = getattr(self.env, "ASSETS", None)
+        if assets is not None:
+            return await assets.fetch(request)
+
+        local = _local_static_response(path)
+        if local is not None:
+            return local
 
         return _json({"ok": False, "error": "not_found", "path": path}, status=404)
 
