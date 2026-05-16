@@ -110,7 +110,14 @@ GitHub 上 **`main` 最新 commit 的檔案樹裡已不應有 `requirements.txt`
 
 ### 3. 建置變數：跳過自動 pip（建議）
 
-Cloudflare 會在偵測到 `requirements.txt` 時自動執行 `pip install -r requirements.txt`。在 **Settings → Build → Build variables and secrets** 新增：
+**可選自動化：** 在 `.env` 設定 `CLOUDFLARE_API_TOKEN` 與 `CLOUDFLARE_ACCOUNT_ID` 後執行：
+
+```powershell
+python tools/configure_cloudflare_builds.py
+python tools/configure_cloudflare_builds.py --trigger-build   # 設定後觸發生產建置
+```
+
+Cloudflare 會在偵測到 `requirements.txt` 時自動執行 `pip install -r requirements.txt`。在 **Settings → Build → Build variables and secrets** 新增（或由上列腳本代設）：
 
 | Name | Value |
 |------|--------|
