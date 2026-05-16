@@ -1,8 +1,5 @@
 """
 Cloudflare Python Worker 實作（僅在 pywrangler / Workers 執行環境載入）。
-
-本機請用：`uvx --from workers-py pywrangler dev`（或 `uv tool run --from workers-py pywrangler dev`）。
-勿在一般 `python -c "import hermers.cf_worker"` 測試（需 Workers 執行期）。
 """
 
 from __future__ import annotations
@@ -13,6 +10,7 @@ from urllib.parse import urlparse
 from workers import WorkerEntrypoint, Response
 
 from hermers.worker_edge import scheduled_tick, worker_info
+from hermers.worker_static import load_home_or_fallback, read_dist_text, resolve_static_path
 
 
 def _json(body: dict, *, status: int = 200) -> Response:
@@ -25,18 +23,29 @@ def _json(body: dict, *, status: int = 200) -> Response:
 
 class Default(WorkerEntrypoint):
     async def fetch(self, request):
-        url = urlparse(request.url)
-        path = url.path or "/"
+        parsed = urlparse(request.url)
+        path = parsed.path or "/"
+        url_str = str(request.url)
 
-        if path in ("/", "/index.html"):
-            body = (
-                "<!DOCTYPE html><html lang=\"zh-Hant\"><head><meta charset=\"utf-8\"/>"
-                "<title>Hermers Worker</title></head><body>"
-                f"<h1>{worker_info()['title']}</h1>"
-                "<p>Cloudflare Python Worker 已上線。API：<code>/api/health</code></p>"
-                "</body></html>"
+        # 首頁：dist/index.html，失敗則回傳預設剪報文章
+        is_home = path in ("/", "/index.html") or url_str.rstrip("/").endswith(".dev")
+        if is_home:
+            loaded = load_home_or_fallback()
+            if loaded:
+                body, ctype = loaded
+                return Response(body, headers={"Content-Type": ctype})
+            return Response(
+                "<h1>Hermers</h1><p>dist/index.html 尚未產生，請在本機執行 pipeline。</p>",
+                headers={"Content-Type": "text/html; charset=utf-8"},
             )
-            return Response(body, headers={"Content-Type": "text/html; charset=utf-8"})
+
+        # 其他靜態檔：/posts/*.html 等
+        static_rel = resolve_static_path(path)
+        if static_rel:
+            loaded = read_dist_text(static_rel)
+            if loaded:
+                body, ctype = loaded
+                return Response(body, headers={"Content-Type": ctype})
 
         if path == "/api/health":
             return Response.json({"ok": True, **worker_info()})
