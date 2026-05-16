@@ -8,4 +8,5 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT"
 rm -f requirements.txt
+uv sync
 exec uvx --from workers-py pywrangler deploy "$@"

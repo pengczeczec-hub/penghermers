@@ -20,12 +20,18 @@ if (-not (Get-Command uvx -ErrorAction SilentlyContinue) -and -not (Get-Command 
 
 Write-Host "[Hermes] 正在將代碼推送到 GitHub..." -ForegroundColor Cyan
 git add .
-git commit --trailer "Co-authored-by: Cursor <cursoragent@cursor.com>" -m "chore: sync and deploy via local script" 2>$null
+git commit -m "chore: sync and deploy via local script" 2>$null
 if ($LASTEXITCODE -ne 0) {
     Write-Host "[Hermes] 無新變更可提交，略過 commit。" -ForegroundColor DarkGray
 }
 git push origin main
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+Write-Host "[Hermes] 正在同步 Python 依賴 (uv sync)..." -ForegroundColor Cyan
+if (Get-Command uv -ErrorAction SilentlyContinue) {
+    uv sync
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+}
 
 Write-Host "[Hermes] 正在執行 Cloudflare 部署指令..." -ForegroundColor Cyan
 if (Get-Command uvx -ErrorAction SilentlyContinue) {
