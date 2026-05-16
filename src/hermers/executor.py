@@ -190,5 +190,5 @@ class HermesExecutor:
             True,
             "<b>部署完成</b>\n"
             + pub.message
-            + "\n\nCloudflare：若 Pages 已連 GitHub，請在儀表板確認建置。",
+            + "\n\nCloudflare：Python Worker（pywrangler）。請在儀表板確認 Workers 版本與路由。",
         )

@@ -9,7 +9,8 @@ github:
   remote_name: deploy
 
 cloudflare:
-  # Pages 輸出目錄（與 wrangler.toml 一致）
+  # 剪報靜態輸出目錄（本機 / CI 的 hermers-pipeline、review 仍使用）
+  # Worker 部署改走 pywrangler，見 wrangler.toml 與 docs/CLOUDFLARE_WORKER.md
   output_dir: dist
 
 cursor:

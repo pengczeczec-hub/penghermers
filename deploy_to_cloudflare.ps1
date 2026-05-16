@@ -1,5 +1,6 @@
-# Hermes - Cloudflare Pages deploy helper
-# Run from Cursor terminal. Secrets from env only.
+# Hermers - Cloudflare Python Worker 部署（uv + pywrangler）
+# 需安裝：https://docs.astral.sh/uv/ 與 Node.js（pywrangler 依賴）
+# 密鑰僅透過環境變數 / wrangler secret，勿寫入腳本。
 
 param(
     [switch]$DryRun,
@@ -9,12 +10,12 @@ param(
 $ErrorActionPreference = "Stop"
 Set-Location $PSScriptRoot
 
-Write-Host "[Hermes] Cloudflare deploy" -ForegroundColor Cyan
-Write-Host "  output: dist/"
+Write-Host "[Hermes] Cloudflare Python Worker deploy" -ForegroundColor Cyan
+Write-Host "  command: uv run pywrangler deploy"
+Write-Host "  entry:   main.py (WorkerEntrypoint)"
 Write-Host ""
 
 if (-not $SkipPush) {
-    # 失效的 .env GITHUB_TOKEN 會干擾 gh；Hermes 會自動改用 gh auth
     if ($env:GITHUB_TOKEN) {
         Write-Host "Note: GITHUB_TOKEN in env; Hermes falls back to gh if invalid." -ForegroundColor DarkGray
     }
@@ -27,21 +28,24 @@ if (-not $SkipPush) {
     }
 }
 
-$wrangler = Get-Command wrangler -ErrorAction SilentlyContinue
-if ($wrangler) {
+$uv = Get-Command uv -ErrorAction SilentlyContinue
+if (-not $uv) {
     Write-Host ""
-    if ($DryRun) {
-        Write-Host '(dry-run) wrangler pages deploy dist'
-    }
-    else {
-        wrangler pages deploy dist
-    }
+    Write-Host "找不到 uv。請安裝：https://docs.astral.sh/uv/" -ForegroundColor Yellow
+    Write-Host "Windows 可選：winget install astral-sh.uv"
+    exit 1
+}
+
+Write-Host ""
+if ($DryRun) {
+    Write-Host '(dry-run) uv sync --extra cloudflare'
+    Write-Host '(dry-run) uv run pywrangler deploy'
 }
 else {
-    Write-Host ""
-    Write-Host "wrangler CLI not found." -ForegroundColor Yellow
-    Write-Host "If Pages is linked to GitHub, push triggers build in dashboard."
-    Write-Host "Set build output directory to dist."
+    uv sync --extra cloudflare
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    uv run pywrangler deploy
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
 Write-Host ""

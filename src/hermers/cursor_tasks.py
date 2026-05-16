@@ -32,12 +32,12 @@ PROMPTS: dict[str, str] = {
 
 若 token 未設定，請提示使用者在 PowerShell 設定 `$env:GITHUB_TOKEN` 或 `gh auth login`。
 """,
-    "deploy_cloudflare": """# Cursor 任務：部署到 Cloudflare Pages
+    "deploy_cloudflare": """# Cursor 任務：部署到 Cloudflare（Python Worker）
 
-1. 確認 `dist/` 已更新且已 push 到 GitHub（若需要）
+1. 安裝 `uv` 與 Node.js；專案根：`uv sync --extra cloudflare`
 2. 在終端機執行：`powershell -ExecutionPolicy Bypass -File .\\deploy_to_cloudflare.ps1`
-3. 若僅用 Git 連動 Pages，說明在 Cloudflare 儀表板查看部署狀態
-4. 回報結果
+3. 部署使用 `uv run pywrangler deploy`；行為見 `docs/CLOUDFLARE_WORKER.md` 與 `src/hermers/cf_worker.py`
+4. 回報 Workers 儀表板版本與路由結果
 """,
     "user_request": """# Cursor 任務：使用者自訂需求
 

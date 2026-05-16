@@ -15,6 +15,12 @@ dependencies = [
   "pyyaml>=6.0.0",
 ]
 
+# Cloudflare Python Worker：`deploy_to_cloudflare.ps1` 會執行 `uv sync --extra cloudflare`
+[project.optional-dependencies]
+cloudflare = [
+  "workers-py",
+]
+
 [project.scripts]
 hermers-pipeline = "hermers.pipeline:main"
 hermers-review = "hermers.review:main"
