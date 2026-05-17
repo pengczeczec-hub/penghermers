@@ -133,13 +133,13 @@ def rebuild_index() -> None:
     )
     base = public_base_url()
     index_canonical = f"{base}/" if base else ""
-    og_title = "Hermers 剪報站 | Hermers Digest"
-    idx_title_zh = "Hermers 剪報站"
-    idx_title_en = "Hermers Digest"
+    og_title = "Hermers 台股資訊 | Taiwan Equities Digest"
+    idx_title_zh = "Hermers 台股資訊"
+    idx_title_en = "Hermers · Taiwan Equities"
     idx_title_zh_attr = html.escape(idx_title_zh, quote=True)
     idx_title_en_attr = html.escape(idx_title_en, quote=True)
-    desc_zh = "已審核通過的剪報索引，版面清楚、來源可追溯。"
-    desc_en = "Curated digest of approved clippings with clear layout and traceable sources."
+    desc_zh = "台股與集中市場相關剪報，已審核、版面清楚、來源可追溯。"
+    desc_en = "Curated Taiwan stock-market clippings—reviewed, readable, with traceable sources."
     head_seo = seo_block(
         canonical_url=index_canonical,
         og_title=og_title,
@@ -169,9 +169,9 @@ def rebuild_index() -> None:
   {lang_switcher_html()}
   <main>
     <header class="masthead">
-      <h1><span data-i18n-zh="Hermers 剪報站" data-i18n-en="Hermers Digest"></span></h1>
-      <p class="sub"><span data-i18n-zh="已審核通過的剪報條目；版面清楚、來源可追溯。"
-        data-i18n-en="Approved clippings only—clean layout with traceable sources."></span></p>
+      <h1><span data-i18n-zh="Hermers 台股資訊" data-i18n-en="Hermers · Taiwan Equities"></span></h1>
+      <p class="sub"><span data-i18n-zh="台股與集中市場相關剪報；已審核、版面清楚、來源可追溯。"
+        data-i18n-en="Taiwan stock-market clippings—reviewed, readable, traceable sources."></span></p>
       <div class="stats">
         <span class="pill"><span data-i18n-zh="待審" data-i18n-en="Pending"></span>
           <strong>{pending_count}</strong>
