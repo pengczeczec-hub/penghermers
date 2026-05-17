@@ -162,6 +162,119 @@ def css_index_specific() -> str:
     font-size: 0.78rem;
     color: var(--muted2);
   }
+  .date-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    margin: 1.25rem 0 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+  }
+  .date-toolbar label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .date-toolbar input[type="date"] {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .date-toolbar .date-mode-btn {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.42rem 0.95rem;
+    border-radius: 999px;
+    line-height: 1.2;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .date-toolbar .date-mode-btn:hover { color: var(--accent-hover); }
+  .date-toolbar .date-mode-btn[aria-pressed="true"] {
+    background: rgba(15, 118, 110, 0.14);
+    color: var(--ink);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
+  .weekly-spotlight {
+    margin-bottom: 1.5rem;
+    padding: 1.15rem 1.2rem 0.35rem;
+    background: linear-gradient(145deg, rgba(15, 118, 110, 0.1), rgba(15, 118, 110, 0.02));
+    border: 1px solid rgba(15, 118, 110, 0.22);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .weekly-spotlight h2 {
+    margin: 0 0 0.85rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .spotlight-grid {
+    display: grid;
+    gap: 0.65rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  @media (min-width: 640px) {
+    .spotlight-grid { grid-template-columns: 1fr; }
+  }
+  .spotlight-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.85rem 0.95rem;
+    background: var(--surface-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .spotlight-card:hover {
+    border-color: rgba(15, 118, 110, 0.35);
+    box-shadow: 0 2px 12px rgba(15, 118, 110, 0.08);
+  }
+  .spotlight-card a {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.35;
+  }
+  .spotlight-card a:hover { color: var(--accent-hover); }
+  .spotlight-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-hover);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .spotlight-meta {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.78rem;
+    color: var(--muted2);
+  }
+  .weekly-spotlight[hidden],
+  .spotlight-card[hidden] { display: none !important; }
   .market-tabs {
     display: flex;
     flex-wrap: wrap;

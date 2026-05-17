@@ -3,7 +3,7 @@ from __future__ import annotations
 import html
 import json
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from hermers.draft import (
@@ -21,6 +21,14 @@ from hermers.i18n_ui import (
     public_base_url,
     seo_block,
     strip_empty_seo_placeholders,
+)
+from hermers.home_index import (
+    HOME_ARCHIVE_DAYS,
+    enrich_entry,
+    entry_calendar_date,
+    in_archive_window,
+    pick_weekly_top5,
+    week_start,
 )
 from hermers.paths import dist_dir, pending_dir, posts_dir
 from hermers.segment import analyze_site_segment, dual_tw_us_for_home, infer_site_segment
@@ -63,6 +71,143 @@ def _index_market_tabs_html() -> str:
   <button type="button" role="tab" data-hermers-market="us" aria-selected="false"><span data-i18n-zh="美股" data-i18n-en="US stocks"></span></button>
   <button type="button" role="tab" data-hermers-market="crypto" aria-selected="false"><span data-i18n-zh="加密貨幣" data-i18n-en="Crypto"></span></button>
 </nav>"""
+
+
+def _index_date_filter_script(
+    *,
+    week_start_iso: str,
+    today_iso: str,
+    dates_available: list[str],
+) -> str:
+    dates_json = json.dumps(dates_available, ensure_ascii=False)
+    return f"""<script>
+(function () {{
+  var WEEK_START = {json.dumps(week_start_iso)};
+  var TODAY = {json.dumps(today_iso)};
+  var DATES = {dates_json};
+
+  function applyDateFilter(mode, dayIso) {{
+    var weekMode = mode === "week";
+    document.querySelectorAll(".post-list li[data-hermers-date]").forEach(function (li) {{
+      var d = li.getAttribute("data-hermers-date") || "";
+      var inWeek = li.getAttribute("data-hermers-in-week") === "1";
+      var show = weekMode ? inWeek : (dayIso && d === dayIso);
+      li.hidden = !show;
+    }});
+    document.querySelectorAll(".spotlight-card[data-hermers-date]").forEach(function (card) {{
+      var d = card.getAttribute("data-hermers-date") || "";
+      var inWeek = card.getAttribute("data-hermers-in-week") === "1";
+      var show = weekMode ? inWeek : (dayIso && d === dayIso);
+      card.hidden = !show;
+    }});
+    var spotlight = document.getElementById("hermers-weekly-spotlight");
+    if (spotlight) {{
+      var anyCard = false;
+      spotlight.querySelectorAll(".spotlight-card").forEach(function (c) {{
+        if (!c.hidden) anyCard = true;
+      }});
+      spotlight.hidden = !anyCard;
+    }}
+    document.querySelectorAll(".list-wrap .category-block").forEach(function (block) {{
+      var lis = block.querySelectorAll("li[data-hermers-date]");
+      var showBlock = false;
+      lis.forEach(function (li) {{ if (!li.hidden) showBlock = true; }});
+      block.hidden = !showBlock;
+    }});
+    var emptyDay = document.getElementById("hermers-day-empty");
+    if (emptyDay) {{
+      var hasVisible = document.querySelector(".post-list li[data-hermers-date]:not([hidden])");
+      emptyDay.hidden = weekMode || !dayIso || !!hasVisible;
+    }}
+    if (window.hermersApplyMarketTab) window.hermersApplyMarketTab(
+      (function () {{
+        try {{ return sessionStorage.getItem("hermers_market_tab") || "all"; }} catch (e) {{ return "all"; }}
+      }})()
+    );
+  }}
+
+  function setModeButtons(weekOn) {{
+    document.querySelectorAll("[data-hermers-date-mode]").forEach(function (btn) {{
+      var m = btn.getAttribute("data-hermers-date-mode");
+      btn.setAttribute("aria-pressed", (weekOn && m === "week") || (!weekOn && m === "day") ? "true" : "false");
+    }});
+  }}
+
+  document.addEventListener("DOMContentLoaded", function () {{
+    var input = document.getElementById("hermers-date-pick");
+    var minD = DATES.length ? DATES[DATES.length - 1] : WEEK_START;
+    var maxD = DATES.length ? DATES[0] : TODAY;
+    if (input) {{
+      input.min = minD;
+      input.max = maxD;
+      input.value = TODAY;
+    }}
+    applyDateFilter("week", null);
+    setModeButtons(true);
+
+    document.querySelectorAll("[data-hermers-date-mode]").forEach(function (btn) {{
+      btn.addEventListener("click", function () {{
+        var mode = btn.getAttribute("data-hermers-date-mode");
+        if (mode === "week") {{
+          if (input) input.value = TODAY;
+          applyDateFilter("week", null);
+          setModeButtons(true);
+        }}
+      }});
+    }});
+
+    if (input) {{
+      input.addEventListener("change", function () {{
+        var v = input.value;
+        if (!v) return;
+        applyDateFilter("day", v);
+        setModeButtons(false);
+      }});
+    }}
+  }});
+}})();
+</script>"""
+
+
+def _index_date_toolbar_html(*, today_iso: str) -> str:
+    return f"""<motion class="date-toolbar" aria-label="日期瀏覽">
+  <label for="hermers-date-pick"><span data-i18n-zh="選擇日期" data-i18n-en="Pick a date"></span></label>
+  <input type="date" id="hermers-date-pick" name="hermers-date" value="{html.escape(today_iso)}" />
+  <button type="button" class="date-mode-btn" data-hermers-date-mode="week" aria-pressed="true">
+    <span data-i18n-zh="本週精選" data-i18n-en="This week"></span>
+  </button>
+</motion>""".replace("<motion", "<div", 1).replace("</motion>", "</div>", 1)
+
+
+def _spotlight_card_html(rank: int, e: dict) -> str:
+    date_iso = html.escape(e.get("post_date_iso") or "")
+    in_week = "1" if e.get("in_week") else "0"
+    tz, te = bilingual_headings_plain(e["title"], title_en_hint=e.get("title_en"))
+    tag = html.escape(e["domain"]) if e.get("domain") else ""
+    date_disp = html.escape(e.get("post_date_iso") or "")
+    meta_line = f"{tag} · {date_disp}" if tag and date_disp else (tag or date_disp or "—")
+    return (
+        f'<li class="spotlight-card" data-hermers-date="{date_iso}" '
+        f'data-hermers-in-week="{in_week}">'
+        f'<span class="spotlight-rank" aria-hidden="true">{rank}</span>'
+        f'<div><a href="{html.escape(e["href"])}">'
+        f'<span class="hermers-i18n-zh">{html.escape(tz)}</span>'
+        f'<span class="hermers-i18n-en">{html.escape(te)}</span></a>'
+        f'<span class="spotlight-meta">{meta_line}</span></div></li>\n'
+    )
+
+
+def _weekly_spotlight_html(top5: list[dict]) -> str:
+    if not top5:
+        return ""
+    cards = "".join(_spotlight_card_html(i + 1, e) for i, e in enumerate(top5))
+    return (
+        '<section class="weekly-spotlight" id="hermers-weekly-spotlight">\n'
+        '  <h2><span data-i18n-zh="本週焦點精選（Weekly Top 5）" '
+        'data-i18n-en="Weekly Top 5 Highlights"></span></h2>\n'
+        f'  <ol class="spotlight-grid">\n{cards}  </ol>\n'
+        "</section>\n"
+    )
 
 
 def _index_segment_tabs_script() -> str:
@@ -283,27 +428,37 @@ def rebuild_index() -> None:
                 title_en_meta = te.strip()
         sec_zh, sec_en = _resolved_section_labels(meta)
         analysis = analyze_site_segment(meta, slug=path.stem)
-        entries.append(
-            {
-                "href": f"posts/{path.name}",
-                "title": title,
-                "title_en": title_en_meta,
-                "published": published,
-                "domain": domain,
-                "section_zh": sec_zh,
-                "section_en": sec_en,
-                "segment": infer_site_segment(meta, slug=path.stem),
-                "cross_tw_us": dual_tw_us_for_home(analysis),
-            }
-        )
+        row = {
+            "href": f"posts/{path.name}",
+            "title": title,
+            "title_en": title_en_meta,
+            "published": published,
+            "domain": domain,
+            "section_zh": sec_zh,
+            "section_en": sec_en,
+            "segment": infer_site_segment(meta, slug=path.stem),
+            "cross_tw_us": dual_tw_us_for_home(analysis),
+        }
+        row = enrich_entry(row, meta, path.stem)
+        if in_archive_window(row.get("post_date")):
+            entries.append(row)
 
     for ri, row in enumerate(entries):
         row["global_rank"] = ri + 1
 
-    pending_count = len(list(pending_dir().glob("*/meta.json"))) if pending_dir().is_dir() else 0
+    today = datetime.now(timezone.utc).date()
+    week_start_iso = week_start(today).isoformat()
+    today_iso = today.isoformat()
+    dates_available = sorted(
+        {e["post_date_iso"] for e in entries if e.get("post_date_iso")},
+        reverse=True,
+    )
+    top5 = pick_weekly_top5(entries, today=today)
+    spotlight_block = _weekly_spotlight_html(top5)
+    date_toolbar = _index_date_toolbar_html(today_iso=today_iso)
 
     def _entry_li_html(e: dict) -> str:
-        date = e["published"][:10] if e["published"] else ""
+        date = e.get("post_date_iso") or (e["published"][:10] if e["published"] else "")
         tag = html.escape(e["domain"]) if e["domain"] else ""
         sep = " · " if tag and date else ""
         meta_line = f"{tag}{sep}{html.escape(date)}".strip()
@@ -324,8 +479,11 @@ def rebuild_index() -> None:
         cross_attr = ""
         if e.get("cross_tw_us") and int(e.get("global_rank") or 999) <= 10:
             cross_attr = ' data-hermers-tw-us-cross="1"'
+        date_iso = html.escape(e.get("post_date_iso") or "")
+        in_week = "1" if e.get("in_week") else "0"
         return (
-            f'<li data-hermers-segment="{seg_esc}"{cross_attr}><a href="{html.escape(e["href"])}">'
+            f'<li data-hermers-segment="{seg_esc}" data-hermers-date="{date_iso}" '
+            f'data-hermers-in-week="{in_week}"{cross_attr}><a href="{html.escape(e["href"])}">'
             f'<span class="hermers-i18n-zh">{title_zh_esc}</span>'
             f'<span class="hermers-i18n-en">{title_en_esc}</span></a>{meta_block}</li>\n'
         )
@@ -380,15 +538,19 @@ def rebuild_index() -> None:
         description_en=desc_en,
     )
     empty_msg = (
-        "<p class=\"empty\"><span data-i18n-zh=\"尚無已發布文章。請先完成待審流程。\""
-        ' data-i18n-en="No published items yet. Complete the review workflow first."></span></p>'
+        '<p class="empty"><span data-i18n-zh="尚無已發布文章。" '
+        'data-i18n-en="No published stories yet."></span></p>'
     )
     market_empty_hint = """<p id="hermers-market-empty" class="empty" hidden>
       <span data-i18n-zh="目前此市場標籤下沒有文章，請改選「全部」或試其他區塊。"
         data-i18n-en="No posts under this market tab. Switch to All or try another beat."></span>
     </p>"""
+    day_empty_hint = """<p id="hermers-day-empty" class="empty" hidden>
+      <span data-i18n-zh="此日期沒有剪報，請選其他日期或返回本週。"
+        data-i18n-en="No clippings on this date. Pick another day or return to this week."></span>
+    </p>"""
     if entries:
-        list_block = market_empty_hint + list_inner
+        list_block = market_empty_hint + day_empty_hint + list_inner
     else:
         list_block = empty_msg
     tabs_strip = _index_market_tabs_html() if entries else ""
@@ -407,25 +569,20 @@ def rebuild_index() -> None:
   <main>
     <header class="masthead">
       <h1><span data-i18n-zh="Hermers 市場剪報" data-i18n-en="Hermers Market Digest"></span></h1>
-      <p class="sub"><span data-i18n-zh="台股、美股、加密貨幣新聞剪報；標籤可依區塊擴充。兼涉台／美兩市之重點稿若名列全站前十名，會於兩標籤並列。"
-        data-i18n-en="Taiwan, U.S., and crypto headlines—tabs scale with more beats. Stories strongly tied to both TW and US equity markets also appear under both tabs when in the site-wide top ten."></span></p>
-      <div class="stats">
-        <span class="pill"><span data-i18n-zh="待審" data-i18n-en="Pending"></span>
-          <strong>{pending_count}</strong>
-          <span data-i18n-zh="則" data-i18n-en="items"></span></span>
-        <span class="pill"><span data-i18n-zh="已發布" data-i18n-en="Published"></span>
-          <strong>{len(entries)}</strong>
-          <span data-i18n-zh="則" data-i18n-en="items"></span></span>
-      </div>
+      <p class="sub"><span data-i18n-zh="台股、美股、加密貨幣新聞剪報；預設顯示近 7 日，可用日期選擇器瀏覽歷史。"
+        data-i18n-en="Taiwan, U.S., and crypto digests—last 7 days by default; use the date picker for archives."></span></p>
+      {date_toolbar}
       {tabs_strip}
     </header>
+    {spotlight_block}
     <div class="list-wrap">
       {list_block}
     </div>
     <footer class="time"><span data-i18n-zh="更新時間（UTC）·" data-i18n-en="Last update (UTC)·"></span>
-      {html.escape(datetime.utcnow().isoformat(timespec="seconds"))}</footer>
+      {html.escape(datetime.now(timezone.utc).isoformat(timespec="seconds"))}</footer>
   </main>
 {i18n_runtime_script()}
+{_index_date_filter_script(week_start_iso=week_start_iso, today_iso=today_iso, dates_available=dates_available)}
 {_index_segment_tabs_script()}
 </body>
 </html>

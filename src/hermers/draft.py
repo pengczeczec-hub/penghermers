@@ -202,6 +202,9 @@ def write_pending(
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     meta["site_segment"] = infer_site_segment(meta, slug=draft_id)
+    from hermers.ranking import market_impact_score
+
+    meta["importance_score"] = round(market_impact_score(item), 2)
     (folder / "meta.json").write_text(
         json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8"
     )
