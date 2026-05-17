@@ -47,6 +47,8 @@ def lang_switcher_css() -> str:
     background: var(--accent-soft, rgba(15, 118, 110, 0.12));
     color: var(--ink, #1c1917);
   }
+  html[lang="en"] .hermers-i18n-zh { display: none !important; }
+  html[lang="zh-Hant"] .hermers-i18n-en { display: none !important; }
 """
 
 

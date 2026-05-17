@@ -9,6 +9,7 @@ from hermers.discover import FeedItem
 from hermers.fetch import ArticleExtract
 from hermers.i18n_ui import i18n_runtime_script, lang_switcher_css, lang_switcher_html, seo_block
 from hermers.static_skin import css_article_specific, css_base, css_shell
+from hermers.translate_body import zh_paragraphs_from_extract, zh_title_from_extract
 
 
 def write_pending(
@@ -48,7 +49,7 @@ def _cursor_task(meta: dict, summary: str) -> str:
 待審草稿：`{meta["id"]}`
 原文：{meta["url"]}
 
-請在通過審核前，視需要改寫同資料夾內 `draft.html`（繁體中文、剪報體、保留來源連結）。
+請在通過審核前，視需要改寫同資料夾內 `draft.html`（`.hermers-i18n-zh` 為繁體、`hermers-i18n-en` 為英文摘要；剪報體、保留來源連結）。
 
 ## 擷取摘要（自動）
 
@@ -56,18 +57,42 @@ def _cursor_task(meta: dict, summary: str) -> str:
 """
 
 
+def _paragraph_chunks_to_ps(parts: list[str]) -> str:
+    chunks: list[str] = []
+    for raw in parts:
+        for piece in (s.strip() for s in raw.split("\n\n")):
+            if piece:
+                chunks.append(f"<p>{html.escape(piece)}</p>")
+    return "".join(chunks)
+
+
+def _bilingual_headings(title_raw: str) -> tuple[str, str]:
+    """回傳 (title_zh_esc, title_en_esc)。中文來源標題時兩側先相同，留待人工補英文。"""
+    esc = html.escape(title_raw)
+    if any("\u4e00" <= c <= "\u9fff" for c in title_raw):
+        return esc, esc
+    zh_plain = zh_title_from_extract(title_raw) or title_raw
+    return html.escape(zh_plain), esc
+
+
 def _draft_html(meta: dict, extract: ArticleExtract) -> str:
     title_raw = meta["title"]
-    title_esc = html.escape(title_raw)
+    title_zh_esc, title_en_esc = _bilingual_headings(title_raw)
     url = html.escape(meta["url"])
     domain = html.escape(meta["domain_name"])
-    body = "".join(f"<p>{html.escape(p)}</p>" for p in extract.paragraphs[:8])
-    if not body:
-        body = (
-            "<p><em><span data-i18n-zh=\"（未能擷取內文，請依上方原文連結手動撰寫後再送審。）\""
-            ' data-i18n-en="(No body extracted—please draft from the source link above before review.)">'
-            "</span></em></p>"
-        )
+    paras_en = extract.paragraphs[:8]
+    body_en = _paragraph_chunks_to_ps(list(paras_en))
+    body_zh = _paragraph_chunks_to_ps(zh_paragraphs_from_extract(paras_en)) if paras_en else ""
+    empty_inner = (
+        "<p><em><span data-i18n-zh=\"（未能擷取內文，請依上方原文連結手動撰寫後再送審。）\""
+        ' data-i18n-en="(No body extracted—please draft from the source link above before review.)">'
+        "</span></em></p>"
+    )
+    if not body_en:
+        body_zh = empty_inner
+        body_en = empty_inner
+    body = f"""      <div class="hermers-i18n-zh">{body_zh}</div>
+      <div class="hermers-i18n-en">{body_en}</div>"""
     desc_zh = f"「{title_raw}」剪報草稿（待審），來源連結於文內。"
     desc_en = f'Clipping draft (pending): "{title_raw}". Source link inside.'
     head_seo = seo_block(
@@ -80,13 +105,14 @@ def _draft_html(meta: dict, extract: ArticleExtract) -> str:
     css_a = "".join(
         [css_base(), lang_switcher_css(), css_shell(narrow=True), css_article_specific()]
     )
+    title_tab = html.escape(title_raw)
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
-{head_seo}  <title>{title_esc}</title>
+{head_seo}  <title>{title_tab}</title>
   <style>{css_a}
   </style>
 </head>
@@ -95,7 +121,7 @@ def _draft_html(meta: dict, extract: ArticleExtract) -> str:
   <main>
     <article class="prose">
       <p class="eyebrow">{domain} · <span data-i18n-zh="待審草稿" data-i18n-en="Pending draft"></span></p>
-      <h1>{title_esc}</h1>
+      <h1><span class="hermers-i18n-zh">{title_zh_esc}</span><span class="hermers-i18n-en">{title_en_esc}</span></h1>
       <div class="source-box"><span data-i18n-zh="來源：" data-i18n-en="Source:"></span><a href="{url}" rel="noopener noreferrer">{url}</a></div>
       <hr />
       {body}
