@@ -6,6 +6,8 @@ from dataclasses import dataclass
 import httpx
 from bs4 import BeautifulSoup
 
+from hermers.title_clean import clean_news_title
+
 USER_AGENT = "Hermers/0.1 (+https://github.com/pengczeczec-hub/penghermers)"
 
 
@@ -33,6 +35,7 @@ def fetch_article(url: str, *, timeout: float = 25.0) -> ArticleExtract:
     og = soup.find("meta", property="og:title")
     if og and og.get("content"):
         title = og["content"].strip()
+    title = clean_news_title(title)
 
     paragraphs: list[str] = []
     for p in soup.find_all("p"):

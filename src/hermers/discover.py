@@ -8,6 +8,7 @@ from email.utils import parsedate_to_datetime
 import httpx
 
 from hermers.config_load import DomainConfig
+from hermers.title_clean import clean_news_title
 
 
 @dataclass
@@ -104,7 +105,7 @@ def discover_domain(domain: DomainConfig, *, limit: int) -> list[FeedItem]:
             root = ET.fromstring(response.text)
             source = _feed_source_title(root, feed_url)
             for node in _feed_nodes(root)[: limit * 2]:
-                title = _child_text(node, ("title",))
+                title = clean_news_title(_child_text(node, ("title",)))
                 url = _child_text(node, ("link",))
                 if not title or not url:
                     continue

@@ -11,6 +11,7 @@ from hermers.discover import FeedItem
 from hermers.fetch import ArticleExtract
 from hermers.i18n_ui import i18n_runtime_script, lang_switcher_css, lang_switcher_html, seo_block
 from hermers.static_skin import css_article_specific, css_base, css_shell
+from hermers.title_clean import clean_news_title
 from hermers.translate_body import (
     en_paragraphs_from_zh_sequence,
     snippet_looks_mostly_english,
@@ -108,9 +109,16 @@ def _fallback_bullet_lists(paras: list[str], merged: str) -> tuple[list[str], li
     return bullets_zh[:n], bullets_en[:n]
 
 
+def _sanitize_digest_titles(digest: dict[str, Any]) -> dict[str, Any]:
+    for key in ("title_zh", "title_en"):
+        if digest.get(key):
+            digest[key] = clean_news_title(str(digest[key]))
+    return digest
+
+
 def _fallback_clipping_digest(item: FeedItem, extract: ArticleExtract) -> dict[str, Any]:
-    rss = (item.title or "").strip()
-    page = (extract.title or "").strip()
+    rss = clean_news_title(item.title or "")
+    page = clean_news_title(extract.title or "")
     headline_src = page or rss
 
     paras = _clip_paragraphs_for_digest(extract.paragraphs)
@@ -141,12 +149,12 @@ def _compute_clipping_digest(item: FeedItem, extract: ArticleExtract) -> dict[st
     from hermers.translate_llm import llm_bilingual_clipping_digest
 
     digest = llm_bilingual_clipping_digest(
-        rss_title=item.title or "",
-        page_title=extract.title or "",
+        rss_title=clean_news_title(item.title or ""),
+        page_title=clean_news_title(extract.title or ""),
         paragraphs=list(extract.paragraphs),
     )
     if digest:
-        return digest
+        return _sanitize_digest_titles(digest)
     return _fallback_clipping_digest(item, extract)
 
 
@@ -230,7 +238,7 @@ def bilingual_headings_plain(
     title_raw: str, *, title_en_hint: str | None = None
 ) -> tuple[str, str]:
     """回傳 (title_zh_plain, title_en_plain)。英文來源：繁中標題／英文原文；中文來源：原文／英文標題（可帶入已改寫的 title_en_hint）。"""
-    raw = title_raw.strip()
+    raw = clean_news_title(title_raw)
     hint = (title_en_hint or "").strip()
     if any("\u4e00" <= c <= "\u9fff" for c in raw):
         zh_plain = raw
