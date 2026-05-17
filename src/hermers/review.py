@@ -31,7 +31,7 @@ def list_pending() -> int:
     return 0
 
 
-def approve(draft_id: str) -> int:
+def approve(draft_id: str, *, notify: bool = True) -> int:
     folder = _pending_folder(draft_id)
     meta = json.loads((folder / "meta.json").read_text(encoding="utf-8"))
     draft_html = folder / "draft.html"
@@ -48,9 +48,10 @@ def approve(draft_id: str) -> int:
     shutil.rmtree(folder)
     rebuild_index()
     write_review_page()
-    notify_review_action(action="通過審核", draft_id=draft_id, title=meta.get("title", ""))
+    if notify:
+        notify_review_action(action="通過審核", draft_id=draft_id, title=meta.get("title", ""))
     print(f"已通過審核 → dist/posts/{draft_id}.html")
-    print("若要上線 GitHub，請執行 publish.bat（不會自動推送）。")
+    print("若要上線 Cloudflare，請執行 deploy_to_cloudflare.ps1 或 Telegram /deploy。")
     return 0
 
 

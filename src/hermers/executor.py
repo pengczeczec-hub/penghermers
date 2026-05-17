@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import html
 import io
+import os
 import re
 import sys
 from contextlib import redirect_stderr, redirect_stdout
@@ -17,12 +18,14 @@ from hermers.discover import FeedItem
 from hermers.subprocess_utf8 import run as sp_run
 from hermers.draft import write_pending
 from hermers.fetch import fetch_article
+from hermers.env_load import load_dotenv
 from hermers.hermes_config import HermesConfig, load_hermes_config
 from hermers.paths import pending_dir, repo_root
 from hermers.pipeline import run_pipeline
 from hermers.review import approve, list_pending
 from hermers.shell_runner import git_push, verify_github_token
 from hermers.site import rebuild_index
+from hermers.site_live import check_site_live, public_site_url, site_live_html_block
 
 
 @dataclass
@@ -62,16 +65,29 @@ class HermesExecutor:
             gh_line = f"GitHub: {html.escape(str(gh.get('login')))} ({html.escape(str(gh.get('source', '')))})"
         else:
             gh_line = html.escape(str(gh.get("error", "未設定")))
+        site_url = public_site_url()
+        live = check_site_live(site_url)
         text = (
             "<b>Hermes 執行器</b>\n"
             f"{gh_line}\n"
+            f"{site_live_html_block(live)}\n"
             f"待審 staging: {pending} 則\n"
             f"目標: <code>{html.escape(self.cfg.github_repo_url)}</code>"
         )
         return RunResult(True, text)
 
     def ingest_url(self, url: str, *, push: bool = False) -> RunResult:
+        from hermers.url_policy import is_own_site_url
+
         url = url.strip().rstrip(".,)")
+        if is_own_site_url(url):
+            live = check_site_live(url)
+            msg = "<b>這是 Hermers 自己的網站</b>，不會再做成剪報。\n" + site_live_html_block(live)
+            if live.online:
+                msg += "\n若要同步本機 dist 變更到雲端，請傳 <code>/deploy</code>。"
+            else:
+                msg += "\n若剛部署完仍顯示離線，請稍候再試或傳 <code>/status</code>。"
+            return RunResult(True, msg)
         try:
             extract = fetch_article(url)
         except Exception as exc:  # noqa: BLE001
@@ -93,7 +109,7 @@ class HermesExecutor:
         folder = pending_dir() / draft_id
         write_pending(folder, item=item, extract=extract, draft_id=draft_id)
         try:
-            approve(draft_id)
+            approve(draft_id, notify=False)
         except SystemExit as exc:
             return RunResult(
                 False,
@@ -110,7 +126,15 @@ class HermesExecutor:
             pub = self.publish("chore: digest from telegram url")
             lines.append(pub.message)
             return RunResult(pub.ok, "\n".join(lines))
-        lines.append("（未推送）傳 /publish 或 /deploy 上線。")
+        live = check_site_live()
+        lines.append("已寫入本機 dist。")
+        lines.append(site_live_html_block(live))
+        if not live.online:
+            lines.append("雲端尚未就緒時請傳 <code>/deploy</code>。")
+        elif push:
+            pass
+        else:
+            lines.append("本機與雲端內容可能不同步；要推送請傳 <code>/deploy</code>。")
         return RunResult(True, "\n".join(lines))
 
     def run_pipeline(self, *, push: bool = False) -> RunResult:

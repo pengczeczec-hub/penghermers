@@ -110,7 +110,7 @@ def notify_pipeline_done(*, created: int, dry_run: bool = False) -> bool:
     if pending:
         lines.append("\n<b>待審 ID（approve.bat）：</b>")
         lines.extend(pending)
-    lines.append("\n通過後請在本機執行 <code>publish.bat</code> 才會上 GitHub。")
+    lines.append("\n通過後傳 Telegram <code>/deploy</code> 或執行 deploy_to_cloudflare.ps1 上線。")
     return send_message("\n".join(lines))
 
 
@@ -119,7 +119,7 @@ def notify_review_action(*, action: str, draft_id: str, title: str = "") -> bool
         return False
     title_line = f"\n{html.escape(title[:80])}" if title else ""
     extra = (
-        "\n請執行 <code>publish.bat</code> 推送到 GitHub。"
+        "\n上線請傳 <code>/deploy</code> 或執行 deploy_to_cloudflare.ps1。"
         if action == "通過審核"
         else ""
     )

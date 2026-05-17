@@ -9,6 +9,8 @@ from typing import Any, Callable
 from hermers.env_load import load_dotenv
 from hermers.executor import HermesExecutor, RunResult
 from hermers.hermes_config import load_hermes_config
+from hermers.site_live import check_site_live, public_site_url, site_live_html_block
+from hermers.url_policy import is_own_site_url
 
 ToolFn = Callable[[dict[str, Any]], RunResult]
 
@@ -76,20 +78,18 @@ def _tool_help(_: dict) -> RunResult:
 
 
 def _tool_site_url(_: dict) -> RunResult:
-    load_dotenv()
-    site = os.environ.get("SITE_PUBLIC_URL", "").strip()
     cfg = load_hermes_config()
-    lines = ["<b>網站／網址</b>"]
-    if site:
-        lines.append(f"對外網址（.env）：\n<code>{html.escape(site)}</code>")
-    else:
+    site_url = public_site_url()
+    live = check_site_live(site_url)
+    lines = ["<b>網站／網址</b>", site_live_html_block(live)]
+    load_dotenv()
+    if not os.environ.get("SITE_PUBLIC_URL", "").strip():
         lines.append(
-            "尚未設定 <code>SITE_PUBLIC_URL</code>。\n"
-            "Cloudflare Worker 部署成功後，請在 .env 填入 Workers 網址，例如：\n"
-            "<code>https://penghermers.你的子網域.workers.dev</code>"
+            "\n（未設 <code>SITE_PUBLIC_URL</code>，使用預設 Workers 網址檢查；"
+            "建議在 .env 寫入正式網址。）"
         )
     lines.append(f"\nGitHub：\n<code>{html.escape(cfg.github_repo_url)}</code>")
-    lines.append("\n查狀態請傳 <code>/status</code> 或「狀態」。")
+    lines.append("\n完整狀態請傳 <code>/status</code>。")
     return RunResult(True, "\n".join(lines))
 
 

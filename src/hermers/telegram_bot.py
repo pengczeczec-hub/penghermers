@@ -85,6 +85,12 @@ def handle_message(text: str) -> str:
             if urls:
                 return _EXEC.ingest_url(urls[0], push=True).message
             return _EXEC.deploy().message
+        if cmd in ("/cancel", "/reset"):
+            return (
+                "<b>已重置</b>\n"
+                "本輪不會再重跑舊指令。一般對話可直接輸入需求；"
+                "查網址請傳 <code>/status</code> 或問「網站網址」。"
+            )
         return "未知指令。傳 /help"
 
     return _AGENT.handle(text).message
@@ -120,8 +126,6 @@ def run_bot(*, poll_seconds: float = 2.0) -> None:
             if chat_id is None or not _authorized(int(chat_id), allowed):
                 continue
             print(f"← {text[:80]}")
-            if not text.startswith("/") and len(text) > 2:
-                send_message("⏳ Hermes 正在透過 <b>Cursor</b> 思考並執行…")
             try:
                 reply = handle_message(text)
             except Exception as exc:  # noqa: BLE001

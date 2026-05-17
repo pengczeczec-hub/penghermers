@@ -57,12 +57,14 @@ class AgentRunner:
             _, hint = cursor_ready()
             return RunResult(
                 True,
-                "<b>Hermes</b>（規則模式）\n"
-                "可理解：部署、推送、剪報、貼網址、狀態。\n\n"
-                "啟用 Cursor 大腦：\n"
-                "1. 到 Cursor 儀表板 Integrations 建立 <code>CURSOR_API_KEY</code>\n"
-                "2. 寫入 .env\n"
-                "3. 執行 <code>install-cursor-brain.bat</code>\n"
+                "<b>Hermes</b>（規則模式，無法理解一般對話）\n"
+                f"您的訊息：<i>{html.escape(text[:120])}</i>\n\n"
+                "規則模式僅支援：/deploy、/publish、剪報、貼新聞網址、"
+                "<code>/status</code>、明確問「網站網址」。\n\n"
+                "若要「美化網站」等自由指令，請啟用 <b>Cursor 大腦</b>：\n"
+                "1. Cursor 儀表板 Integrations → <code>CURSOR_API_KEY</code>\n"
+                "2. 寫入 .env，<code>HERMES_LLM_PROVIDER=cursor</code>\n"
+                "3. 執行 <code>install-cursor-brain.bat</code> 後重啟 Bot\n"
                 f"（{html.escape(hint)}）",
             )
 
