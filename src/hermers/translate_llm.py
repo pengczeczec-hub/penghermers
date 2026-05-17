@@ -75,6 +75,37 @@ def llm_batch_en_to_zh(paragraphs: list[str]) -> list[str] | None:
     return cleaned
 
 
+def llm_batch_zh_to_en(paragraphs: list[str]) -> list[str] | None:
+    """繁→英：一次傳多段，回傳同長度英文列表；失敗回傳 None。"""
+    if not paragraphs:
+        return []
+    if not llm_translate_available():
+        return None
+    user = json.dumps({"paragraphs": paragraphs}, ensure_ascii=False)
+    system = """你是專業新聞編譯。使用者會傳入 JSON：{"paragraphs":["繁體中文段落", ...]}。
+請把每段翻成英文，簡潔通順，適合科技／新聞剪報。保留專有名詞、產品名、縮寫與 URL。
+段落數量必須與輸入相同：不可刪段、不可合併、不可拆成更多段。
+僅輸出一個 JSON 物件，格式：{"paragraphs":["英文段落", ...]}，不要 markdown 或其他說明。"""
+    try:
+        result = cursor_chat(user, system=system, history=None, timeout_sec=180)
+    except (RuntimeError, OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
+        return None
+    text = str(result.get("text") or "")
+    obj = _extract_json_dict(text)
+    if not obj:
+        return None
+    out = obj.get("paragraphs")
+    if not isinstance(out, list) or len(out) != len(paragraphs):
+        return None
+    cleaned: list[str] = []
+    for x in out:
+        s = (str(x) if x is not None else "").strip()
+        if not s:
+            return None
+        cleaned.append(s)
+    return cleaned
+
+
 def llm_en_to_zh_title(title: str) -> str | None:
     if not title.strip():
         return None

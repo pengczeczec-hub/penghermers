@@ -5,7 +5,12 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from hermers.draft import legacy_minimal_article_inner_body, render_article_page
+from hermers.draft import (
+    bilingual_headings_plain,
+    build_bilingual_body_block_from_fragment,
+    legacy_minimal_article_inner_body,
+    render_article_page,
+)
 from hermers.i18n_ui import (
     i18n_runtime_script,
     lang_switcher_css,
@@ -19,6 +24,28 @@ from hermers.paths import dist_dir, pending_dir, posts_dir
 from hermers.static_skin import css_base, css_index_specific, css_review_specific, css_shell
 
 
+def _repair_duplicate_bilingual_article(page_html: str, meta: dict) -> str | None:
+    """若 .hermers-i18n-zh 與 .hermers-i18n-en 正文相同（舊版升級遺留），改為繁中／英文各一份。"""
+    from bs4 import BeautifulSoup
+
+    soup = BeautifulSoup(page_html, "html.parser")
+    zh = soup.find("div", class_="hermers-i18n-zh")
+    en = soup.find("div", class_="hermers-i18n-en")
+    if not zh or not en:
+        return None
+
+    def norm(tag) -> str:
+        return " ".join(tag.get_text().split())
+
+    if norm(zh) != norm(en):
+        return None
+
+    inner = "".join(str(c) for c in zh.contents)
+    body_block = build_bilingual_body_block_from_fragment(inner)
+    pending = 'data-i18n-zh="待審草稿"' in page_html
+    return render_article_page(meta, body_block_html=body_block, pending=pending)
+
+
 def refresh_dist_article_pages() -> None:
     """將早期極簡版文章升級為與首頁相同皮膚，並校正誤標為草稿的已發布眉批／canonical。"""
     root = posts_dir()
@@ -28,17 +55,22 @@ def refresh_dist_article_pages() -> None:
         if not meta_path.is_file():
             continue
         slug = path.stem
+        meta = json.loads(meta_path.read_text(encoding="utf-8"))
         text = path.read_text(encoding="utf-8")
         needs_polish = "__CANONICAL_URL__" in text or 'data-i18n-zh="待審草稿"' in text
+
+        if '<article class="prose">' in text:
+            repaired = _repair_duplicate_bilingual_article(text, meta)
+            if repaired:
+                text = repaired
+                path.write_text(text, encoding="utf-8")
+                needs_polish = True
 
         if '<article class="prose">' not in text:
             inner = legacy_minimal_article_inner_body(text)
             if inner is None:
                 continue
-            meta = json.loads(meta_path.read_text(encoding="utf-8"))
-            body_block = f"""      <div class="hermers-i18n-zh">{inner}</div>
-      <div class="hermers-i18n-en">{inner}</div>
-"""
+            body_block = build_bilingual_body_block_from_fragment(inner)
             text = render_article_page(meta, body_block_html=body_block, pending=False)
             path.write_text(text, encoding="utf-8")
             needs_polish = True
@@ -82,8 +114,13 @@ def rebuild_index() -> None:
             if meta_line
             else '<span class="meta">—</span>\n'
         )
+        tz, te = bilingual_headings_plain(e["title"])
+        title_zh_esc = html.escape(tz)
+        title_en_esc = html.escape(te)
         items_html += (
-            f'<li><a href="{html.escape(e["href"])}">{html.escape(e["title"])}</a>{meta_block}</li>\n'
+            f'<li><a href="{html.escape(e["href"])}">'
+            f'<span class="hermers-i18n-zh">{title_zh_esc}</span>'
+            f'<span class="hermers-i18n-en">{title_en_esc}</span></a>{meta_block}</li>\n'
         )
 
     css = "".join(
@@ -97,6 +134,10 @@ def rebuild_index() -> None:
     base = public_base_url()
     index_canonical = f"{base}/" if base else ""
     og_title = "Hermers 剪報站 | Hermers Digest"
+    idx_title_zh = "Hermers 剪報站"
+    idx_title_en = "Hermers Digest"
+    idx_title_zh_attr = html.escape(idx_title_zh, quote=True)
+    idx_title_en_attr = html.escape(idx_title_en, quote=True)
     desc_zh = "已審核通過的剪報索引，版面清楚、來源可追溯。"
     desc_en = "Curated digest of approved clippings with clear layout and traceable sources."
     head_seo = seo_block(
@@ -115,12 +156,12 @@ def rebuild_index() -> None:
         else f"<ul class=\"post-list\">\n{items_html}</ul>"
     )
     content = f"""<!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-hermers-title-zh="{idx_title_zh_attr}" data-hermers-title-en="{idx_title_en_attr}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
-{head_seo}  <title>{html.escape(og_title)}</title>
+{head_seo}  <title>{html.escape(idx_title_zh)}</title>
   <style>{css}
   </style>
 </head>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-hermers-title-zh="Epiq：終端原生議題追蹤" data-hermers-title-en="Epiq — terminal-native issue tracking">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,7 +10,12 @@
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:locale:alternate" content="en_US" />
-  <title>Epiq — terminal-native issue tracking</title>
+  <link rel="canonical" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-show-hn-epiq-distributed-git-based-issue.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-show-hn-epiq-distributed-git-based-issue.html" />
+  <link rel="alternate" hreflang="en" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-show-hn-epiq-distributed-git-based-issue.html" />
+  <link rel="alternate" hreflang="x-default" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-show-hn-epiq-distributed-git-based-issue.html" />
+  <meta property="og:url" content="https://penghermers.pengczeczec.workers.dev/posts/20260516-show-hn-epiq-distributed-git-based-issue.html" />
+  <title>Epiq：終端原生議題追蹤</title>
   <style>
   :root {
     --bg: #f4f2ee;
@@ -155,10 +160,10 @@
   <main>
     <article class="prose">
       <p class="eyebrow">科技熱門 · <span data-i18n-zh="已發布" data-i18n-en="Published"></span></p>
-      <h1><span class="hermers-i18n-zh">Epiq — terminal-native issue tracking</span><span class="hermers-i18n-en">Epiq — terminal-native issue tracking</span></h1>
+      <h1><span class="hermers-i18n-zh">Epiq：終端原生議題追蹤</span><span class="hermers-i18n-en">Epiq — terminal-native issue tracking</span></h1>
       <div class="source-box"><span data-i18n-zh="來源：" data-i18n-en="Source:"></span><a href="https://ljtn.github.io/epiq/" rel="noopener noreferrer">https://ljtn.github.io/epiq/</a></div>
       <hr />
-      <div class="hermers-i18n-zh"><p>Epiq optimizes for flow: keyboard navigation, command history, filters, autocompletion, and plain Git synchronization.</p><p>Navigate boards, issues, swimlanes, and contexts with vim-like movement. Or cheat with arrow keys.</p><p>Epiq uses Git under the hood, with isolated worktrees and state branches, so teams can collaborate without introducing another central service.</p><p>Changes are appended as events, replayed deterministically, and designed to converge. Inspect what happened yesterday, last week, or one year ago.</p><p>Create, move, filter, close, reopen, and sync issues without tab-switching. Epiq keeps local interaction instant while allowing you to sync explicitly or automatically.</p><p>Install globally, enter any Git repository, and run Epiq. First launch opens an interactive setup wizard.</p></div>
+      <div class="hermers-i18n-zh"><p>Epiq 為順暢操作優化：鍵盤導覽、指令歷史、篩選、自動完成，以及純 Git 同步。</p><p>可用類 vim 操作在面板、議題、泳道與脈絡間移動，或用方向鍵代步。</p><p>Epiq 底層使用 Git，搭配獨立的 worktree 與狀態分支，讓團隊協作無須再引入另一套中央服務。</p><p>變更以事件追加，可決定性重播並設計為收斂；可查昨天、上週或一年前發生了什麼。</p><p>無須切換分頁即可建立、移動、篩選、關閉、重新開啟與同步議題；Epiq 讓本機互動維持即時，並可手動或自動同步。</p><p>全域安裝後進入任一 Git 儲存庫即可執行 Epiq；首次啟動會開啟互動式設定精靈。</p></div>
       <div class="hermers-i18n-en"><p>Epiq optimizes for flow: keyboard navigation, command history, filters, autocompletion, and plain Git synchronization.</p><p>Navigate boards, issues, swimlanes, and contexts with vim-like movement. Or cheat with arrow keys.</p><p>Epiq uses Git under the hood, with isolated worktrees and state branches, so teams can collaborate without introducing another central service.</p><p>Changes are appended as events, replayed deterministically, and designed to converge. Inspect what happened yesterday, last week, or one year ago.</p><p>Create, move, filter, close, reopen, and sync issues without tab-switching. Epiq keeps local interaction instant while allowing you to sync explicitly or automatically.</p><p>Install globally, enter any Git repository, and run Epiq. First launch opens an interactive setup wizard.</p></div>
 
       <footer class="note"><span data-i18n-zh="已審核發布於 Hermers 剪報站；可追溯原文連結。" data-i18n-en="Published on Hermers Digest; original source linked above."></span></footer>
@@ -179,6 +184,11 @@
   function apply() {
     var lang = localStorage.getItem(K) || "zh-Hant"; // en | zh-Hant
     document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+    var zht = document.documentElement.getAttribute("data-hermers-title-zh");
+    var ent = document.documentElement.getAttribute("data-hermers-title-en");
+    if (zht !== null && ent !== null && zht !== "" && ent !== "") {
+      document.title = lang === "en" ? ent : zht;
+    }
     document.querySelectorAll("[data-i18n-zh][data-i18n-en]").forEach(function (el) {
       var zh = el.getAttribute("data-i18n-zh") || "";
       var en = el.getAttribute("data-i18n-en") || "";

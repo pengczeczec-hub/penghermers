@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-hermers-title-zh="Erlang／OTP 29.0 正式發布" data-hermers-title-en="Erlang/OTP 29.0 - Erlang/OTP">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,7 +10,12 @@
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:locale:alternate" content="en_US" />
-  <title>Erlang/OTP 29.0 - Erlang/OTP</title>
+  <link rel="canonical" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-erlang-otp-29-0.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-erlang-otp-29-0.html" />
+  <link rel="alternate" hreflang="en" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-erlang-otp-29-0.html" />
+  <link rel="alternate" hreflang="x-default" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-erlang-otp-29-0.html" />
+  <meta property="og:url" content="https://penghermers.pengczeczec.workers.dev/posts/20260516-erlang-otp-29-0.html" />
+  <title>Erlang／OTP 29.0 正式發布</title>
   <style>
   :root {
     --bg: #f4f2ee;
@@ -155,10 +160,10 @@
   <main>
     <article class="prose">
       <p class="eyebrow">科技熱門 · <span data-i18n-zh="已發布" data-i18n-en="Published"></span></p>
-      <h1><span class="hermers-i18n-zh">Erlang/OTP 29.0 - Erlang/OTP</span><span class="hermers-i18n-en">Erlang/OTP 29.0 - Erlang/OTP</span></h1>
+      <h1><span class="hermers-i18n-zh">Erlang／OTP 29.0 正式發布</span><span class="hermers-i18n-en">Erlang/OTP 29.0 - Erlang/OTP</span></h1>
       <div class="source-box"><span data-i18n-zh="來源：" data-i18n-en="Source:"></span><a href="https://www.erlang.org/news/188" rel="noopener noreferrer">https://www.erlang.org/news/188</a></div>
       <hr />
-      <div class="hermers-i18n-zh"><p>Erlang/OTP 29 is a new major release with new features, improvements as well as a few incompatibilities. Some of the new features are highlighted below.</p><p>Added support for -unsafe attributes for marking functions as unsafe to use. The compiler will by default now generate warnings for calls to functions in Erlang/OTP known to be always unsafe. Furthermore, xref can now be used to find calls to unsafe functions and functions that lack documentation.</p><p>The SSH daemon now defaults to disabled for shell and exec services, implementing the “secure by default” principle. This prevents authenticated users from executing arbitrary Erlang code unless explicitly configured.</p><p>The SFTP subsystem is no longer enabled by default when starting an SSH daemon.</p><p>In SSL, the post quantum hybrid algorithm x25519mlkem768 is now the most preferred key exchange group in the default configuration.</p><p>The module io_ansi allows the user to emit Virtual Terminal Sequences (also known as ANSI sequences) to the terminal in order to add colors/styling to text or to create fully fledged terminal applications.</p><p>The new ct_doctest module allows the user to test documentation examples in Erlang module docs and documentation files.</p><p>The ignore_xref attribute has been handled as a post-analysis filter by build tools such as Rebar3. In this release, [xref] itself does the filtering, ensuring that all tooling that calls xref for any purpose can rely on these declarations to just work.</p></div>
+      <div class="hermers-i18n-zh"><p>Erlang/OTP 29 為新版重大更新，納入新功能與改進，亦有若干不相容之處；以下摘錄部分新功能重點。</p><p>新增 `-unsafe` 屬性支援，可標示函式為使用上不安全的函式；編譯器預設會對呼叫 Erlang/OTP 中已知一律不安全的函式發出警告。此外，`xref` 現在可用來找出對不安全函式的呼叫，以及缺少文件的函式。</p><p>SSH daemon 針對 shell 與 exec 服務現預設為停用，落實「預設安全」原則；除非另行設定，否則已認證使用者無法執行任意 Erlang 程式碼。</p><p>啟動 SSH daemon 時，SFTP 子系統不再預設啟用。</p><p>在 SSL 方面，後量子混合演算法 `x25519mlkem768` 在預設組態中已成為最優先的金鑰交換群組（key exchange group）。</p><p>模組 `io_ansi` 可讓使用者向終端機送出虛擬終端序列（亦稱 ANSI 序列），以為文字加上色彩／樣式，或建構完整的終端應用程式。</p><p>新模組 `ct_doctest` 可測試 Erlang 模組文件與文件檔中的範例程式。</p><p>`ignore_xref` 屬性過往由 Rebar3 等建置工具在後分析階段過濾；本版改由 `xref` 本身負責過濾，任何會呼叫 `xref` 的工具皆可仰賴這些宣告正常運作。</p></div>
       <div class="hermers-i18n-en"><p>Erlang/OTP 29 is a new major release with new features, improvements as well as a few incompatibilities. Some of the new features are highlighted below.</p><p>Added support for -unsafe attributes for marking functions as unsafe to use. The compiler will by default now generate warnings for calls to functions in Erlang/OTP known to be always unsafe. Furthermore, xref can now be used to find calls to unsafe functions and functions that lack documentation.</p><p>The SSH daemon now defaults to disabled for shell and exec services, implementing the “secure by default” principle. This prevents authenticated users from executing arbitrary Erlang code unless explicitly configured.</p><p>The SFTP subsystem is no longer enabled by default when starting an SSH daemon.</p><p>In SSL, the post quantum hybrid algorithm x25519mlkem768 is now the most preferred key exchange group in the default configuration.</p><p>The module io_ansi allows the user to emit Virtual Terminal Sequences (also known as ANSI sequences) to the terminal in order to add colors/styling to text or to create fully fledged terminal applications.</p><p>The new ct_doctest module allows the user to test documentation examples in Erlang module docs and documentation files.</p><p>The ignore_xref attribute has been handled as a post-analysis filter by build tools such as Rebar3. In this release, [xref] itself does the filtering, ensuring that all tooling that calls xref for any purpose can rely on these declarations to just work.</p></div>
 
       <footer class="note"><span data-i18n-zh="已審核發布於 Hermers 剪報站；可追溯原文連結。" data-i18n-en="Published on Hermers Digest; original source linked above."></span></footer>
@@ -179,6 +184,11 @@
   function apply() {
     var lang = localStorage.getItem(K) || "zh-Hant"; // en | zh-Hant
     document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+    var zht = document.documentElement.getAttribute("data-hermers-title-zh");
+    var ent = document.documentElement.getAttribute("data-hermers-title-en");
+    if (zht !== null && ent !== null && zht !== "" && ent !== "") {
+      document.title = lang === "en" ? ent : zht;
+    }
     document.querySelectorAll("[data-i18n-zh][data-i18n-en]").forEach(function (el) {
       var zh = el.getAttribute("data-i18n-zh") || "";
       var en = el.getAttribute("data-i18n-en") || "";

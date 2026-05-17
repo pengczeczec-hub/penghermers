@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-hermers-title-zh="我破解 AppLovin 廣告中介加密協定" data-hermers-title-en="I broke AppLovin&#x27;s mediation cipher protocol.">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -10,7 +10,12 @@
   <meta property="og:type" content="article" />
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:locale:alternate" content="en_US" />
-  <title>I broke AppLovin&#x27;s mediation cipher protocol.</title>
+  <link rel="canonical" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html" />
+  <link rel="alternate" hreflang="zh-Hant" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html" />
+  <link rel="alternate" hreflang="en" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html" />
+  <link rel="alternate" hreflang="x-default" href="https://penghermers.pengczeczec.workers.dev/posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html" />
+  <meta property="og:url" content="https://penghermers.pengczeczec.workers.dev/posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html" />
+  <title>我破解 AppLovin 廣告中介加密協定</title>
   <style>
   :root {
     --bg: #f4f2ee;
@@ -155,10 +160,10 @@
   <main>
     <article class="prose">
       <p class="eyebrow">科技熱門 · <span data-i18n-zh="已發布" data-i18n-en="Published"></span></p>
-      <h1><span class="hermers-i18n-zh">I broke AppLovin&#x27;s mediation cipher protocol.</span><span class="hermers-i18n-en">I broke AppLovin&#x27;s mediation cipher protocol.</span></h1>
+      <h1><span class="hermers-i18n-zh">我破解 AppLovin 廣告中介加密協定</span><span class="hermers-i18n-en">I broke AppLovin&#x27;s mediation cipher protocol.</span></h1>
       <div class="source-box"><span data-i18n-zh="來源：" data-i18n-en="Source:"></span><a href="https://www.buchodi.com/i-broke-applovins-mediation-cipher-protocol/" rel="noopener noreferrer">https://www.buchodi.com/i-broke-applovins-mediation-cipher-protocol/</a></div>
       <hr />
-      <div class="hermers-i18n-zh"><p>I broke the cipher AppLovin wraps around its ad-mediation traffic and decrypted several thousand real requests captured on my consented mobile-traffic research panel. The conclusion is straightforward: The encrypted bid request carries enough device data to deterministically re-identify the same iPhone across apps from different publishers, even when user denies ATT. That payload reaches AppLovin plus around 12 downstream ad networks on every banner load, every ~30 seconds, for as long as the user is playing. The assumption that ATT is the only way to deterministically identify a user is wrong. Fingerprinting the device works just as well.</p><p>Every AppLovin mediation request is HTTPS POST sent to ms4.applovin.com/1.0/mediate. Inside the TLS layer, the payload is wrapped in a second cipher AppLovin built. After base64 decoding, the wire envelope is:</p><p>Three colon-separated fields then ciphertext:</p><p>The cipher takes two ingredients: a salt and that SDK key. The salt is a 32-byte constant baked into every AppLovin SDK binary, 21 meaningful bytes followed by 11 zero bytes. The bytes are identical across every IPA and APK I checked (Solitaire Associations Journey, Hypermarket3D, Ludo Star, Yik Yak on iOS; Hypermarket3D on Android). The 40-character protocol-id field on the wire is sha1(salt).hex().</p><p>The decrypted plaintext is gzip-compressed JSON with about thirty top-level keys. Two of them carry the privacy weight:</p><p>A real device_info from one ATT-denied request:</p><p>Plus another 35 fields: screen safe-area insets, free memory, carrier code, country code, locale, orientation, status bar height, monotonic clock, battery flags, secure-connection state. Effectively every system property iOS exposes to third-party code.</p><p>The user denied ATT. IDFA is zeroed. Everything else flows.</p></div>
+      <div class="hermers-i18n-zh"><p>我破解了 AppLovin 包住廣告中介流量的加密並解密數千則在研究用、經同意的行動網路面板上擷取之真實請求。結論很直接：這份經加密之 bid request 所含的裝置資料足夠在跨不同發行者 app 上以決定性方式再次辨識同一支 iPhone，即使用戶拒絕 ATT。該 payload 在每次載入 banner、約每三十秒會送達 AppLovin 及約十二家下游廣告聯盟，使用者持續遊玩就送不停。若以為只有 ATT 能決定性識別用戶是錯的；對裝置做指紋辨識同樣有效。</p><p>每一次 AppLovin 中介請求皆為對 ms4.applovin.com/1.0/mediate 的 HTTPS POST。在 TLS 層內，payload 外再包一層 AppLovin 自建的密碼。經 base64 解碼後，線上封包外殼為：</p><p>三個以冒號分隔的欄位，接著密文：</p><p>該密碼需兩項材料：salt 與該 SDK key。salt 為寫死在每份 AppLovin SDK 二進位檔中的 32 位元組常數，前 21 個有意義位元組後接 11 個零位元組。我檢查過的每份 IPA、APK 位元組皆相同（iOS：Solitaire Associations Journey、Hypermarket3D、Ludo Star、Yik Yak；Android：Hypermarket3D）。線上 40 字元的 protocol-id 欄位為 sha1(salt).hex()。</p><p>解密後的明文為經 gzip 壓縮的 JSON，約三十個頂層鍵。其中兩個與隱私影響最大：</p><p>一則遭拒 ATT 之請求中的實際 device_info：</p><p>另有三十五個欄位：螢幕安全區 inset、可用記憶體、電信商代碼、國別代碼、語系設定、方向、狀態列高度、monotonic clock、電池旗標、安全連線狀態等。實質上涵蓋 iOS 對第三方程式碼公開的各式系統屬性。</p><p>使用者拒絕 ATT。IDFA 已歸零。其餘照常流出。</p></div>
       <div class="hermers-i18n-en"><p>I broke the cipher AppLovin wraps around its ad-mediation traffic and decrypted several thousand real requests captured on my consented mobile-traffic research panel. The conclusion is straightforward: The encrypted bid request carries enough device data to deterministically re-identify the same iPhone across apps from different publishers, even when user denies ATT. That payload reaches AppLovin plus around 12 downstream ad networks on every banner load, every ~30 seconds, for as long as the user is playing. The assumption that ATT is the only way to deterministically identify a user is wrong. Fingerprinting the device works just as well.</p><p>Every AppLovin mediation request is HTTPS POST sent to ms4.applovin.com/1.0/mediate. Inside the TLS layer, the payload is wrapped in a second cipher AppLovin built. After base64 decoding, the wire envelope is:</p><p>Three colon-separated fields then ciphertext:</p><p>The cipher takes two ingredients: a salt and that SDK key. The salt is a 32-byte constant baked into every AppLovin SDK binary, 21 meaningful bytes followed by 11 zero bytes. The bytes are identical across every IPA and APK I checked (Solitaire Associations Journey, Hypermarket3D, Ludo Star, Yik Yak on iOS; Hypermarket3D on Android). The 40-character protocol-id field on the wire is sha1(salt).hex().</p><p>The decrypted plaintext is gzip-compressed JSON with about thirty top-level keys. Two of them carry the privacy weight:</p><p>A real device_info from one ATT-denied request:</p><p>Plus another 35 fields: screen safe-area insets, free memory, carrier code, country code, locale, orientation, status bar height, monotonic clock, battery flags, secure-connection state. Effectively every system property iOS exposes to third-party code.</p><p>The user denied ATT. IDFA is zeroed. Everything else flows.</p></div>
 
       <footer class="note"><span data-i18n-zh="已審核發布於 Hermers 剪報站；可追溯原文連結。" data-i18n-en="Published on Hermers Digest; original source linked above."></span></footer>
@@ -179,6 +184,11 @@
   function apply() {
     var lang = localStorage.getItem(K) || "zh-Hant"; // en | zh-Hant
     document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+    var zht = document.documentElement.getAttribute("data-hermers-title-zh");
+    var ent = document.documentElement.getAttribute("data-hermers-title-en");
+    if (zht !== null && ent !== null && zht !== "" && ent !== "") {
+      document.title = lang === "en" ? ent : zht;
+    }
     document.querySelectorAll("[data-i18n-zh][data-i18n-en]").forEach(function (el) {
       var zh = el.getAttribute("data-i18n-zh") || "";
       var en = el.getAttribute("data-i18n-en") || "";

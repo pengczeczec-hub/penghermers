@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-hermers-title-zh="Hermers 剪報站" data-hermers-title-en="Hermers Digest">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -15,7 +15,7 @@
   <link rel="alternate" hreflang="en" href="https://penghermers.pengczeczec.workers.dev/" />
   <link rel="alternate" hreflang="x-default" href="https://penghermers.pengczeczec.workers.dev/" />
   <meta property="og:url" content="https://penghermers.pengczeczec.workers.dev/" />
-  <title>Hermers 剪報站 | Hermers Digest</title>
+  <title>Hermers 剪報站</title>
   <style>
   :root {
     --bg: #f4f2ee;
@@ -208,22 +208,22 @@
       data-i18n-en="This page lists live posts only; drafts and pending items stay in staging and admin flows."></span></p>
     <div class="list-wrap">
       <ul class="post-list">
-<li><a href="posts/20260516-the-main-thing-about-p2p-meth-is-that-th.html">The main thing about P2P meth is that there’s so much of it</a><span class="meta">科技熱門 · 2026-05-16</span>
+<li><a href="posts/20260516-the-main-thing-about-p2p-meth-is-that-th.html"><span class="hermers-i18n-zh">P2P製冰毒氾濫 重點在於供應量驚人</span><span class="hermers-i18n-en">The main thing about P2P meth is that there’s so much of it</span></a><span class="meta">科技熱門 · 2026-05-16</span>
 </li>
-<li><a href="posts/20260516-show-hn-epiq-distributed-git-based-issue.html">Epiq — terminal-native issue tracking</a><span class="meta">科技熱門 · 2026-05-16</span>
+<li><a href="posts/20260516-show-hn-epiq-distributed-git-based-issue.html"><span class="hermers-i18n-zh">Epiq：終端原生議題追蹤</span><span class="hermers-i18n-en">Epiq — terminal-native issue tracking</span></a><span class="meta">科技熱門 · 2026-05-16</span>
 </li>
-<li><a href="posts/20260516-nyt-and-vaping-how-to-lie-by-saying-only.html">NYT and Vaping: How To Lie By Saying Only True Things · Gwern.net</a><span class="meta">科技熱門 · 2026-05-16</span>
+<li><a href="posts/20260516-nyt-and-vaping-how-to-lie-by-saying-only.html"><span class="hermers-i18n-zh">紐約時報與電子菸：句句真話如何說謊 · Gwern.net</span><span class="hermers-i18n-en">NYT and Vaping: How To Lie By Saying Only True Things · Gwern.net</span></a><span class="meta">科技熱門 · 2026-05-16</span>
 </li>
-<li><a href="posts/20260516-no-way-to-prevent-this-says-only-package.html">‘No Way To Prevent This,’ Says Only Package Manager Where This Regularly Happens | Kevin Patel</a><span class="meta">科技熱門 · 2026-05-16</span>
+<li><a href="posts/20260516-no-way-to-prevent-this-says-only-package.html"><span class="hermers-i18n-zh">唯一常出事的套件管理器稱「防不了」｜Kevin Patel</span><span class="hermers-i18n-en">‘No Way To Prevent This,’ Says Only Package Manager Where This Regularly Happens | Kevin Patel</span></a><span class="meta">科技熱門 · 2026-05-16</span>
 </li>
-<li><a href="posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html">I broke AppLovin&#x27;s mediation cipher protocol.</a><span class="meta">科技熱門 · 2026-05-16</span>
+<li><a href="posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html"><span class="hermers-i18n-zh">我破解 AppLovin 中介加密協議</span><span class="hermers-i18n-en">I broke AppLovin&#x27;s mediation cipher protocol.</span></a><span class="meta">科技熱門 · 2026-05-16</span>
 </li>
-<li><a href="posts/20260516-erlang-otp-29-0.html">Erlang/OTP 29.0 - Erlang/OTP</a><span class="meta">科技熱門 · 2026-05-16</span>
+<li><a href="posts/20260516-erlang-otp-29-0.html"><span class="hermers-i18n-zh">Erlang／OTP 29.0 正式發布</span><span class="hermers-i18n-en">Erlang/OTP 29.0 - Erlang/OTP</span></a><span class="meta">科技熱門 · 2026-05-16</span>
 </li>
 </ul>
     </div>
     <footer class="time"><span data-i18n-zh="更新時間（UTC）·" data-i18n-en="Last update (UTC)·"></span>
-      2026-05-17T03:47:20</footer>
+      2026-05-17T03:53:01</footer>
   </main>
 <script>
 (function () {
@@ -240,6 +240,11 @@
   function apply() {
     var lang = localStorage.getItem(K) || "zh-Hant"; // en | zh-Hant
     document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+    var zht = document.documentElement.getAttribute("data-hermers-title-zh");
+    var ent = document.documentElement.getAttribute("data-hermers-title-en");
+    if (zht !== null && ent !== null && zht !== "" && ent !== "") {
+      document.title = lang === "en" ? ent : zht;
+    }
     document.querySelectorAll("[data-i18n-zh][data-i18n-en]").forEach(function (el) {
       var zh = el.getAttribute("data-i18n-zh") || "";
       var en = el.getAttribute("data-i18n-en") || "";

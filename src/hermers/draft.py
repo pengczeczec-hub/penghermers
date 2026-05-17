@@ -57,7 +57,7 @@ def _cursor_task(meta: dict, summary: str) -> str:
 """
 
 
-def _paragraph_chunks_to_ps(parts: list[str]) -> str:
+def paragraph_chunks_to_ps(parts: list[str]) -> str:
     chunks: list[str] = []
     for raw in parts:
         for piece in (s.strip() for s in raw.split("\n\n")):
@@ -66,20 +66,60 @@ def _paragraph_chunks_to_ps(parts: list[str]) -> str:
     return "".join(chunks)
 
 
-def _bilingual_headings(title_raw: str) -> tuple[str, str]:
-    """回傳 (title_zh_esc, title_en_esc)。英文來源：繁中／原文；中文來源：原文／英譯（LLM 可備援）。"""
-    esc = html.escape(title_raw)
-    if any("\u4e00" <= c <= "\u9fff" for c in title_raw):
-        en_plain = title_raw.strip()
+def bilingual_headings_plain(title_raw: str) -> tuple[str, str]:
+    """回傳 (title_zh_plain, title_en_plain)。英文來源：繁中標題／英文原文；中文來源：原文／英譯標題。"""
+    raw = title_raw.strip()
+    if any("\u4e00" <= c <= "\u9fff" for c in raw):
+        zh_plain = raw
+        en_plain = raw
         from hermers.translate_llm import llm_translate_available, llm_zh_to_en_title
 
         if llm_translate_available():
-            e = llm_zh_to_en_title(en_plain[:500])
-            if e and e != en_plain:
+            e = llm_zh_to_en_title(zh_plain[:500])
+            if e and e != zh_plain:
                 en_plain = e
-        return esc, html.escape(en_plain)
-    zh_plain = zh_title_from_extract(title_raw) or title_raw
-    return html.escape(zh_plain), esc
+        return zh_plain, en_plain
+    zh_plain = zh_title_from_extract(raw) or raw
+    en_plain = raw
+    return zh_plain, en_plain
+
+
+def build_bilingual_body_block_from_fragment(inner_html: str) -> str:
+    """由 legacy 正文 HTML 產生中英各一份 body block（含 div.hermers-i18n-*）。"""
+    from bs4 import BeautifulSoup
+
+    soup = BeautifulSoup(inner_html, "html.parser")
+    paras: list[str] = []
+    for p in soup.find_all("p"):
+        t = " ".join(p.stripped_strings)
+        if t:
+            paras.append(t)
+    if not paras:
+        plain = soup.get_text("\n", strip=True)
+        paras = [x.strip() for x in plain.split("\n\n") if x.strip()]
+    if not paras:
+        inner_esc = inner_html.strip()
+        return f"""      <div class="hermers-i18n-zh">{inner_esc}</div>
+      <div class="hermers-i18n-en">{inner_esc}</div>
+"""
+    joined = "\n".join(paras)
+    cjk = sum(1 for c in joined if "\u4e00" <= c <= "\u9fff")
+    latin_primary = cjk < max(12, max(8, len(joined) // 50))
+    if latin_primary:
+        body_zh = paragraph_chunks_to_ps(zh_paragraphs_from_extract(paras))
+        body_en = paragraph_chunks_to_ps(list(paras))
+    else:
+        from hermers.translate_llm import llm_batch_zh_to_en, llm_translate_available
+
+        body_zh = paragraph_chunks_to_ps(list(paras))
+        filled = llm_batch_zh_to_en(paras) if llm_translate_available() else None
+        if filled is not None and len(filled) == len(paras):
+            body_en = paragraph_chunks_to_ps(filled)
+        else:
+            body_en = body_zh
+    return f"""      <div class="hermers-i18n-zh">{body_zh}</div>
+      <div class="hermers-i18n-en">{body_en}</div>
+"""
 
 
 def render_article_page(
@@ -91,7 +131,11 @@ def render_article_page(
 ) -> str:
     """共用單頁版面：RSS 草稿、手動重建或升級 legacy dist 文章皆可呼叫。"""
     t_raw = title_raw if title_raw is not None else str(meta["title"])
-    title_zh_esc, title_en_esc = _bilingual_headings(t_raw)
+    tz_plain, te_plain = bilingual_headings_plain(t_raw)
+    title_zh_esc = html.escape(tz_plain)
+    title_en_esc = html.escape(te_plain)
+    title_zh_attr = html.escape(tz_plain, quote=True)
+    title_en_attr = html.escape(te_plain, quote=True)
     url = html.escape(meta["url"])
     domain = html.escape(meta["domain_name"])
     if pending:
@@ -120,9 +164,9 @@ def render_article_page(
     css_full = "".join(
         [css_base(), lang_switcher_css(), css_shell(narrow=True), css_article_specific()]
     )
-    title_tab = html.escape(t_raw)
+    title_tab = title_zh_esc
     return f"""<!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-Hant" data-hermers-title-zh="{title_zh_attr}" data-hermers-title-en="{title_en_attr}">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -152,8 +196,8 @@ def render_article_page(
 def _draft_html(meta: dict, extract: ArticleExtract) -> str:
     title_raw = meta["title"]
     paras_en = extract.paragraphs[:8]
-    body_en = _paragraph_chunks_to_ps(list(paras_en))
-    body_zh = _paragraph_chunks_to_ps(zh_paragraphs_from_extract(paras_en)) if paras_en else ""
+    body_en = paragraph_chunks_to_ps(list(paras_en))
+    body_zh = paragraph_chunks_to_ps(zh_paragraphs_from_extract(paras_en)) if paras_en else ""
     empty_inner = (
         "<p><em><span data-i18n-zh=\"（未能擷取內文，請依上方原文連結手動撰寫後再送審。）\""
         ' data-i18n-en="(No body extracted—please draft from the source link above before review.)">'

@@ -81,6 +81,11 @@ def i18n_runtime_script() -> str:
   function apply() {
     var lang = localStorage.getItem(K) || "zh-Hant"; // en | zh-Hant
     document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+    var zht = document.documentElement.getAttribute("data-hermers-title-zh");
+    var ent = document.documentElement.getAttribute("data-hermers-title-en");
+    if (zht !== null && ent !== null && zht !== "" && ent !== "") {
+      document.title = lang === "en" ? ent : zht;
+    }
     document.querySelectorAll("[data-i18n-zh][data-i18n-en]").forEach(function (el) {
       var zh = el.getAttribute("data-i18n-zh") || "";
       var en = el.getAttribute("data-i18n-en") || "";
