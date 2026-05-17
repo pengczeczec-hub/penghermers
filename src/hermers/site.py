@@ -3,7 +3,7 @@ from __future__ import annotations
 import html
 import json
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 from hermers.draft import (
@@ -27,7 +27,7 @@ from hermers.home_index import (
     enrich_entry,
     entry_calendar_date,
     in_archive_window,
-    pick_weekly_top5,
+    pick_weekly_top5_for_segment,
     week_start,
 )
 from hermers.paths import dist_dir, pending_dir, posts_dir
@@ -102,14 +102,6 @@ def _index_date_filter_script(
       var show = weekMode ? inWeek : (dayIso && d === dayIso);
       card.hidden = !show;
     }});
-    var spotlight = document.getElementById("hermers-weekly-spotlight");
-    if (spotlight) {{
-      var anyCard = false;
-      spotlight.querySelectorAll(".spotlight-card").forEach(function (c) {{
-        if (!c.hidden) anyCard = true;
-      }});
-      spotlight.hidden = !anyCard;
-    }}
     document.querySelectorAll(".list-wrap .category-block").forEach(function (block) {{
       var lis = block.querySelectorAll("li[data-hermers-date]");
       var showBlock = false;
@@ -199,22 +191,65 @@ def _spotlight_card_html(rank: int, e: dict) -> str:
     )
 
 
-def _weekly_spotlight_html(top5: list[dict]) -> str:
+_SPOTLIGHT_HEADINGS: dict[str, tuple[str, str]] = {
+    "tw": ("台股本週精選（Top 5）", "TW stocks — Weekly Top 5"),
+    "us": ("美股本週精選（Top 5）", "US stocks — Weekly Top 5"),
+    "crypto": ("加密貨幣本週精選（Top 5）", "Crypto — Weekly Top 5"),
+}
+
+
+def _weekly_spotlight_section_html(seg_key: str, top5: list[dict]) -> str:
     if not top5:
         return ""
+    zh, en = _SPOTLIGHT_HEADINGS.get(seg_key, ("本週精選", "Weekly highlights"))
+    zh_esc = html.escape(zh, quote=True)
+    en_esc = html.escape(en, quote=True)
+    seg_esc = html.escape(seg_key, quote=True)
     cards = "".join(_spotlight_card_html(i + 1, e) for i, e in enumerate(top5))
     return (
-        '<section class="weekly-spotlight" id="hermers-weekly-spotlight">\n'
-        '  <h2><span data-i18n-zh="本週焦點精選（Weekly Top 5）" '
-        'data-i18n-en="Weekly Top 5 Highlights"></span></h2>\n'
+        f'<section class="weekly-spotlight" data-hermers-spotlight-market="{seg_esc}">\n'
+        f'  <h2><span data-i18n-zh="{zh_esc}" data-i18n-en="{en_esc}"></span></h2>\n'
         f'  <ol class="spotlight-grid">\n{cards}  </ol>\n'
         "</section>\n"
     )
 
 
+def _weekly_spotlights_html_all(entries: list[dict], *, today: date) -> str:
+    parts: list[str] = []
+    for sk in ("tw", "us", "crypto"):
+        top5 = pick_weekly_top5_for_segment(entries, sk, today=today)
+        parts.append(_weekly_spotlight_section_html(sk, top5))
+    inner = "".join(parts)
+    if not inner.strip():
+        return ""
+    return f'<div class="spotlight-stack">\n{inner}</div>\n'
+
+
 def _index_segment_tabs_script() -> str:
     return """<script>
 (function () {
+  function syncSpotlightSections() {
+    var tab = "all";
+    try { tab = sessionStorage.getItem("hermers_market_tab") || "all"; } catch (e0) { tab = "all"; }
+    document.querySelectorAll(".weekly-spotlight[data-hermers-spotlight-market]").forEach(function (sec) {
+      var m = sec.getAttribute("data-hermers-spotlight-market") || "";
+      var marketOk = tab === "all" || m === tab;
+      var anyCard = false;
+      sec.querySelectorAll(".spotlight-card").forEach(function (c) {
+        if (!c.hidden) anyCard = true;
+      });
+      sec.hidden = !(marketOk && anyCard);
+    });
+    var stack = document.querySelector(".spotlight-stack");
+    if (stack) {
+      var anySec = false;
+      stack.querySelectorAll(".weekly-spotlight").forEach(function (sec) {
+        if (!sec.hidden) anySec = true;
+      });
+      stack.hidden = !anySec;
+    }
+  }
+
   function applyMarketTab(tab) {
     var seg = tab || "all";
     var allowed = { all: 1, tw: 1, us: 1, crypto: 1 };
@@ -238,12 +273,16 @@ def _index_segment_tabs_script() -> str:
       block.hidden = !showBlock;
     });
     var emptyNote = document.getElementById("hermers-market-empty");
-    if (!emptyNote) return;
-    var blocks = document.querySelectorAll(".list-wrap .category-block");
-    var any = false;
-    blocks.forEach(function (b) { if (!b.hidden) any = true; });
-    emptyNote.hidden = any;
+    if (emptyNote) {
+      var blocks = document.querySelectorAll(".list-wrap .category-block");
+      var any = false;
+      blocks.forEach(function (b) { if (!b.hidden) any = true; });
+      emptyNote.hidden = any;
+    }
+    syncSpotlightSections();
   }
+
+  window.hermersSyncSpotlightSections = syncSpotlightSections;
 
   document.addEventListener("click", function (e) {
     var t = e.target;
@@ -455,8 +494,7 @@ def rebuild_index() -> None:
         {e["post_date_iso"] for e in entries if e.get("post_date_iso")},
         reverse=True,
     )
-    top5 = pick_weekly_top5(entries, today=today)
-    spotlight_block = _weekly_spotlight_html(top5)
+    spotlight_block = _weekly_spotlights_html_all(entries, today=today)
     date_toolbar = _index_date_toolbar_html(today_iso=today_iso)
 
     def _entry_li_html(e: dict) -> str:

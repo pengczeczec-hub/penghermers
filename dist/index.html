@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-Hant" data-hermers-title-zh="台股新聞與行情快訊" data-hermers-title-en="Taiwan Stock News &amp; Market Highlights">
+<html lang="zh-Hant" data-hermers-title-zh="Hermers 市場剪報" data-hermers-title-en="Hermers Market Digest">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
-  <meta name="description" content="台股與集中市場相關新聞剪報。 Taiwan stock-market news clippings." />
-  <meta property="og:title" content="台股新聞與行情快訊 | Taiwan Stock News &amp; Market Highlights" />
-  <meta property="og:description" content="台股與集中市場相關新聞剪報。 Taiwan stock-market news clippings." />
+  <meta name="description" content="台股、美股、加密貨幣等市場剪報提要（首頁標籤可擴充）。跨台／美題材僅於全站排序前十名內雙標籤露出。 Taiwan, U.S., and crypto market digests—tabs expand over time. Dual TW/US labeling applies only to posts in the site-wide top ten." />
+  <meta property="og:title" content="Hermers 市場剪報｜Hermers Market Digest" />
+  <meta property="og:description" content="台股、美股、加密貨幣等市場剪報提要（首頁標籤可擴充）。跨台／美題材僅於全站排序前十名內雙標籤露出。 Taiwan, U.S., and crypto market digests—tabs expand over time. Dual TW/US labeling applies only to posts in the site-wide top ten." />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="zh_TW" />
   <meta property="og:locale:alternate" content="en_US" />
@@ -15,7 +15,7 @@
   <link rel="alternate" hreflang="en" href="https://penghermers.pengczeczec.workers.dev/" />
   <link rel="alternate" hreflang="x-default" href="https://penghermers.pengczeczec.workers.dev/" />
   <meta property="og:url" content="https://penghermers.pengczeczec.workers.dev/" />
-  <title>台股新聞與行情快訊</title>
+  <title>Hermers 市場剪報</title>
   <style>
   :root {
     --bg: #f4f2ee;
@@ -197,6 +197,160 @@
     font-size: 0.78rem;
     color: var(--muted2);
   }
+  .date-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    margin: 1.25rem 0 0.5rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+  }
+  .date-toolbar label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .date-toolbar input[type="date"] {
+    font: inherit;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .date-toolbar .date-mode-btn {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.42rem 0.95rem;
+    border-radius: 999px;
+    line-height: 1.2;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .date-toolbar .date-mode-btn:hover { color: var(--accent-hover); }
+  .date-toolbar .date-mode-btn[aria-pressed="true"] {
+    background: rgba(15, 118, 110, 0.14);
+    color: var(--ink);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
+  .spotlight-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .spotlight-stack[hidden] {
+    display: none !important;
+  }
+  .spotlight-stack .weekly-spotlight {
+    margin-bottom: 0;
+  }
+  .weekly-spotlight {
+    margin-bottom: 1.5rem;
+    padding: 1.15rem 1.2rem 0.35rem;
+    background: linear-gradient(145deg, rgba(15, 118, 110, 0.1), rgba(15, 118, 110, 0.02));
+    border: 1px solid rgba(15, 118, 110, 0.22);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .weekly-spotlight h2 {
+    margin: 0 0 0.85rem;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .spotlight-grid {
+    display: grid;
+    gap: 0.65rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  @media (min-width: 640px) {
+    .spotlight-grid { grid-template-columns: 1fr; }
+  }
+  .spotlight-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.75rem;
+    align-items: start;
+    padding: 0.85rem 0.95rem;
+    background: var(--surface-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .spotlight-card:hover {
+    border-color: rgba(15, 118, 110, 0.35);
+    box-shadow: 0 2px 12px rgba(15, 118, 110, 0.08);
+  }
+  .spotlight-card a {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.35;
+  }
+  .spotlight-card a:hover { color: var(--accent-hover); }
+  .spotlight-rank {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-hover);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .spotlight-meta {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.78rem;
+    color: var(--muted2);
+  }
+  .weekly-spotlight[hidden],
+  .spotlight-card[hidden] { display: none !important; }
+  .market-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: -0.35rem 0 1.15rem;
+  }
+  .market-tabs button {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface-elev);
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.42rem 0.92rem;
+    border-radius: 999px;
+    line-height: 1.2;
+    box-shadow: var(--shadow);
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+  .market-tabs button:hover {
+    color: var(--accent-hover);
+    border-color: rgba(15, 118, 110, 0.35);
+  }
+  .market-tabs button[aria-selected="true"] {
+    background: rgba(15, 118, 110, 0.14);
+    color: var(--ink);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
 
   </style>
 </head>
@@ -207,113 +361,157 @@
 </div>
   <main>
     <header class="masthead">
-      <h1><span data-i18n-zh="台股新聞與行情快訊" data-i18n-en="Taiwan Stock News & Market Highlights"></span></h1>
-      <p class="sub"><span data-i18n-zh="台股與集中市場相關新聞剪報。"
-        data-i18n-en="Taiwan stock-market news clippings."></span></p>
-      <div class="stats">
-        <span class="pill"><span data-i18n-zh="待審" data-i18n-en="Pending"></span>
-          <strong>0</strong>
-          <span data-i18n-zh="則" data-i18n-en="items"></span></span>
-        <span class="pill"><span data-i18n-zh="已發布" data-i18n-en="Published"></span>
-          <strong>35</strong>
-          <span data-i18n-zh="則" data-i18n-en="items"></span></span>
-      </div>
+      <h1><span data-i18n-zh="Hermers 市場剪報" data-i18n-en="Hermers Market Digest"></span></h1>
+      <p class="sub"><span data-i18n-zh="台股、美股、加密貨幣新聞剪報；預設顯示近 7 日，可用日期選擇器瀏覽歷史。"
+        data-i18n-en="Taiwan, U.S., and crypto digests—last 7 days by default; use the date picker for archives."></span></p>
+      <div class="date-toolbar" aria-label="日期瀏覽">
+  <label for="hermers-date-pick"><span data-i18n-zh="選擇日期" data-i18n-en="Pick a date"></span></label>
+  <input type="date" id="hermers-date-pick" name="hermers-date" value="2026-05-17" />
+  <button type="button" class="date-mode-btn" data-hermers-date-mode="week" aria-pressed="true">
+    <span data-i18n-zh="本週精選" data-i18n-en="This week"></span>
+  </button>
+</div>
+      <nav class="market-tabs" role="tablist" aria-label="市場區塊">
+  <button type="button" role="tab" data-hermers-market="all" aria-selected="true"><span data-i18n-zh="全部" data-i18n-en="All"></span></button>
+  <button type="button" role="tab" data-hermers-market="tw" aria-selected="false"><span data-i18n-zh="台股" data-i18n-en="TW stocks"></span></button>
+  <button type="button" role="tab" data-hermers-market="us" aria-selected="false"><span data-i18n-zh="美股" data-i18n-en="US stocks"></span></button>
+  <button type="button" role="tab" data-hermers-market="crypto" aria-selected="false"><span data-i18n-zh="加密貨幣" data-i18n-en="Crypto"></span></button>
+</nav>
     </header>
+    <div class="spotlight-stack">
+<section class="weekly-spotlight" data-hermers-spotlight-market="tw">
+  <h2><span data-i18n-zh="台股本週精選（Top 5）" data-i18n-en="TW stocks — Weekly Top 5"></span></h2>
+  <ol class="spotlight-grid">
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">1</span><div><a href="posts/20260517-鴻海法說-msci調整台股權重三升-川習會登場-本周大事回顧.html"><span class="hermers-i18n-zh">本週市場提要：代工法說點題AI量能、國際指數加碼台股與兩岸外交議程</span><span class="hermers-i18n-en">Taiwan Stocks Week Ahead: MSCI Tilt, OEM Earnings, and US‑China Diplomacy</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">2</span><div><a href="posts/20260517-營收速報-2026年5月16日台股大型公司4月營收一覽-新增8家.html"><span class="hermers-i18n-zh">台股大型公司4月營收盤點：233家數據與年增強弱分布</span><span class="hermers-i18n-en">Large-Cap Taiwan Stocks Wrap Up April Revenue Picture</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">3</span><div><a href="posts/20260517-熱門股-森崴恐淪壁紙連吞2根跌停-母公司正崴爆量擺脫跌停.html"><span class="hermers-i18n-zh">森崴淨值轉負六月下市 集團股連挫、正崴爆量緩跌</span><span class="hermers-i18n-en">Senway Set to Exit Market as Spinoffs Slide; Cheng Uei Volumes Spike</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">4</span><div><a href="posts/20260517-熱門股-訊芯-ky搭cpo熱潮-連拉2根漲停周漲30-創新高.html"><span class="hermers-i18n-zh">CPO與AI光通訊題材加溫 訊芯-KY單周飆升三成創新高 首季仍陷虧損</span><span class="hermers-i18n-en">CPO frenzy lifts KY-listed optics play to a weekly high despite a soft Q1</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">5</span><div><a href="posts/20260517-熱門股-亞泰金屬訂單直透2028年-外資掃貨帶動滾量攻堅周漲10.html"><span class="hermers-i18n-zh">AI 催生 CCL 擴產潮 亞泰金屬訂單排到二〇二八年股價創高</span><span class="hermers-i18n-en">AI-Led CCL Build-Out Lifts Asia Tech Metals Into 2028 Backlog and Record Price</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+  </ol>
+</section>
+<section class="weekly-spotlight" data-hermers-spotlight-market="us">
+  <h2><span data-i18n-zh="美股本週精選（Top 5）" data-i18n-en="US stocks — Weekly Top 5"></span></h2>
+  <ol class="spotlight-grid">
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">1</span><div><a href="posts/20260517-美股13f報告-橋水q1狂押ai-新建倉台積電-大買輝達-亞馬遜-出清軟體股.html"><span class="hermers-i18n-zh">橋水第一季13F：台積電成最大新建倉，加碼亞馬遜與AI晶片並撤出軟體股</span><span class="hermers-i18n-en">Bridgewater Q1 13F Tilts Toward TSMC, Amazon and Chip Stocks While Cutting Software</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">2</span><div><a href="posts/20260517-fed最快或今年12月升息-機率接近51.html"><span class="hermers-i18n-zh">通膨數據轉強 期貨市場首度反映聯準會可能升息</span><span class="hermers-i18n-en">Markets Pivot to Earlier Fed Hike Odds as Inflation Runs Hot</span></a><span class="spotlight-meta">美股與國際市場 · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">3</span><div><a href="posts/20260517-馬斯克太空帝國進軍美股-spacex搶下-spcx-代號提前上市-最快6月12日.html"><span class="hermers-i18n-zh">傳 SpaceX 加速那斯達克首秀，最快六月中旬以 SPCX 掛牌</span><span class="hermers-i18n-en">Sources: SpaceX eyes earlier Nasdaq debut mid-June under SPCX</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">4</span><div><a href="posts/20260517-美股盤後-川習會缺乏重大突破-債市暴跌-道瓊挫逾530點.html"><span class="hermers-i18n-zh">美股上周五重挫 債息飆升與油價牽動升息疑慮</span><span class="hermers-i18n-en">U.S. Stocks Sink as Yields and Oil Stir Fed Fears</span></a><span class="spotlight-meta">重大頭條（股市相關） · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">5</span><div><a href="posts/20260517-債市崩潰-30年期美債殖利率衝破5-1-刷2025年來新高.html"><span class="hermers-i18n-zh">全球長債殖利率急速走高 通膨與地緣政治牽動市場神經</span><span class="hermers-i18n-en">Global Long-Bond Yields Spike as Inflation Worries Escalate</span></a><span class="spotlight-meta">美股與國際市場 · 2026-05-17</span></div></li>
+  </ol>
+</section>
+<section class="weekly-spotlight" data-hermers-spotlight-market="crypto">
+  <h2><span data-i18n-zh="加密貨幣本週精選（Top 5）" data-i18n-en="Crypto — Weekly Top 5"></span></h2>
+  <ol class="spotlight-grid">
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">1</span><div><a href="posts/20260517-price-predictions-5-15-btc-eth-bnb-xrp-s.html"><span class="hermers-i18n-zh">主流幣技術面：比特幣回測均線與套牢賣壓，以太幣跌破中期均線</span><span class="hermers-i18n-en">Crypto Technicals: Bitcoin Tests MAs and Overhead Supply; ETH Weakens</span></a><span class="spotlight-meta">加密貨幣與區塊鏈 · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">2</span><div><a href="posts/20260517-bitcoin-analysis-sees-bear-trap-as-btc-p.html"><span class="hermers-i18n-zh">比特幣跌破7.8萬美元 地緣與總經疑慮牽動走勢</span><span class="hermers-i18n-en">Bitcoin Slips Under $78K as Geopolitics and Macro Fears Intensify</span></a><span class="spotlight-meta">加密貨幣與區塊鏈 · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">3</span><div><a href="posts/20260517-bitcoin-price-dives-under-79k-as-us-bond.html"><span class="hermers-i18n-zh">美債殖利率攀高拖累風險意願　比特幣跌破8萬美元逼近5月低檔</span><span class="hermers-i18n-en">Bitcoin Dips Below $80K as Treasury Yield Jump Jolts Risk Markets</span></a><span class="spotlight-meta">加密貨幣與區塊鏈 · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">4</span><div><a href="posts/20260517-sharplink-ceo-points-out-3-catalysts-for.html"><span class="hermers-i18n-zh">以太幣想再強勁上漲？Sharplink 執行長點名美法案、風險意願與資產代幣化</span><span class="hermers-i18n-en">SharpLink Chief Maps Three Prerequisites for Ether’s Next Leg Higher</span></a><span class="spotlight-meta">加密貨幣與區塊鏈 · 2026-05-17</span></div></li>
+<li class="spotlight-card" data-hermers-date="2026-05-17" data-hermers-in-week="1"><span class="spotlight-rank" aria-hidden="true">5</span><div><a href="posts/20260517-ethereum-analysts-see-downside-risks-as.html"><span class="hermers-i18n-zh">以太幣下行風險升溫：分析師關注交易所存量與一千七百美元價區</span><span class="hermers-i18n-en">ETH Downside Risks Rise as Analysts Watch Exchange Supply and $1,700</span></a><span class="spotlight-meta">加密貨幣與區塊鏈 · 2026-05-17</span></div></li>
+  </ol>
+</section>
+</div>
+
     <div class="list-wrap">
-          <section class="category-block">
+      <p id="hermers-market-empty" class="empty" hidden>
+      <span data-i18n-zh="目前此市場標籤下沒有文章，請改選「全部」或試其他區塊。"
+        data-i18n-en="No posts under this market tab. Switch to All or try another beat."></span>
+    </p><p id="hermers-day-empty" class="empty" hidden>
+      <span data-i18n-zh="此日期沒有剪報，請選其他日期或返回本週。"
+        data-i18n-en="No clippings on this date. Pick another day or return to this week."></span>
+    </p>    <section class="category-block">
       <h2 class="category-title"><span data-i18n-zh="重大頭條" data-i18n-en="Major headlines"></span></h2>
       <ul class="post-list">
-<li><a href="posts/20260517-鴻海法說-msci調整台股權重三升-川習會登場-本周大事回顧.html"><span class="hermers-i18n-zh">本週市場提要：代工法說點題AI量能、國際指數加碼台股與兩岸外交議程</span><span class="hermers-i18n-en">Taiwan Stocks Week Ahead: MSCI Tilt, OEM Earnings, and US‑China Diplomacy</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="tw" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-鴻海法說-msci調整台股權重三升-川習會登場-本周大事回顧.html"><span class="hermers-i18n-zh">本週市場提要：代工法說點題AI量能、國際指數加碼台股與兩岸外交議程</span><span class="hermers-i18n-en">Taiwan Stocks Week Ahead: MSCI Tilt, OEM Earnings, and US‑China Diplomacy</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-馬斯克太空帝國進軍美股-spacex搶下-spcx-代號提前上市-最快6月12日.html"><span class="hermers-i18n-zh">傳 SpaceX 加速那斯達克首秀，最快六月中旬以 SPCX 掛牌</span><span class="hermers-i18n-en">Sources: SpaceX eyes earlier Nasdaq debut mid-June under SPCX</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-馬斯克太空帝國進軍美股-spacex搶下-spcx-代號提前上市-最快6月12日.html"><span class="hermers-i18n-zh">傳 SpaceX 加速那斯達克首秀，最快六月中旬以 SPCX 掛牌</span><span class="hermers-i18n-en">Sources: SpaceX eyes earlier Nasdaq debut mid-June under SPCX</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-美著名投資者建議-清空美股-示警全球金融風暴將至-喊抱緊黃金與白銀.html"><span class="hermers-i18n-zh">羅傑斯示警債務與AI風險，稱已出清美股並加碼陸股</span><span class="hermers-i18n-en">Jim Rogers warns on debt and AI risk, exits U.S. stocks for China</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-美著名投資者建議-清空美股-示警全球金融風暴將至-喊抱緊黃金與白銀.html"><span class="hermers-i18n-zh">羅傑斯示警債務與AI風險，稱已出清美股並加碼陸股</span><span class="hermers-i18n-en">Jim Rogers warns on debt and AI risk, exits U.S. stocks for China</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-美股行情恐-只剩一個月-高盛-動量股狂飆25-歷史僅11次-隨後將轉為下行.html"><span class="hermers-i18n-zh">高盛：美股創高背後AI集中度拉滿，動量過熱後歷史常先續漲再回落</span><span class="hermers-i18n-en">Goldman: AI-heavy S&amp;P rally and hot momentum often extend briefly, then fade</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-美股行情恐-只剩一個月-高盛-動量股狂飆25-歷史僅11次-隨後將轉為下行.html"><span class="hermers-i18n-zh">高盛：美股創高背後AI集中度拉滿，動量過熱後歷史常先續漲再回落</span><span class="hermers-i18n-en">Goldman: AI-heavy S&amp;P rally and hot momentum often extend briefly, then fade</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-美股盤後-川習會缺乏重大突破-債市暴跌-道瓊挫逾530點.html"><span class="hermers-i18n-zh">美股上周五重挫 債息飆升與油價牽動升息疑慮</span><span class="hermers-i18n-en">U.S. Stocks Sink as Yields and Oil Stir Fed Fears</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-美股盤後-川習會缺乏重大突破-債市暴跌-道瓊挫逾530點.html"><span class="hermers-i18n-zh">美股上周五重挫 債息飆升與油價牽動升息疑慮</span><span class="hermers-i18n-en">U.S. Stocks Sink as Yields and Oil Stir Fed Fears</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-美股13f報告-橋水q1狂押ai-新建倉台積電-大買輝達-亞馬遜-出清軟體股.html"><span class="hermers-i18n-zh">橋水第一季13F：台積電成最大新建倉，加碼亞馬遜與AI晶片並撤出軟體股</span><span class="hermers-i18n-en">Bridgewater Q1 13F Tilts Toward TSMC, Amazon and Chip Stocks While Cutting Software</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-美股13f報告-橋水q1狂押ai-新建倉台積電-大買輝達-亞馬遜-出清軟體股.html"><span class="hermers-i18n-zh">橋水第一季13F：台積電成最大新建倉，加碼亞馬遜與AI晶片並撤出軟體股</span><span class="hermers-i18n-en">Bridgewater Q1 13F Tilts Toward TSMC, Amazon and Chip Stocks While Cutting Software</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-美股13f報告-大舉轉向微軟-艾克曼自曝2月進場抄底-且近月另已清倉alphab.html"><span class="hermers-i18n-zh">艾克曼轉押微軟：自2月起加碼、申報約24億美元部位，並出清 Alphabet</span><span class="hermers-i18n-en">Ackman Rotates Into Microsoft, Exits Alphabet as 13F Reveals $2.4B Stake</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-美股13f報告-大舉轉向微軟-艾克曼自曝2月進場抄底-且近月另已清倉alphab.html"><span class="hermers-i18n-zh">艾克曼轉押微軟：自2月起加碼、申報約24億美元部位，並出清 Alphabet</span><span class="hermers-i18n-en">Ackman Rotates Into Microsoft, Exits Alphabet as 13F Reveals $2.4B Stake</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-索羅斯q1加碼輝達-台積電-巴菲特退休後首買波克夏.html"><span class="hermers-i18n-zh">索羅斯首季新建波克夏、加碼AI晶片鏈並調節大型科技股</span><span class="hermers-i18n-en">Soros opens Berkshire stake, lifts chip picks, trims megacaps in Q1</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-索羅斯q1加碼輝達-台積電-巴菲特退休後首買波克夏.html"><span class="hermers-i18n-zh">索羅斯首季新建波克夏、加碼AI晶片鏈並調節大型科技股</span><span class="hermers-i18n-en">Soros opens Berkshire stake, lifts chip picks, trims megacaps in Q1</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-營收速報-2026年5月16日台股大型公司4月營收一覽-新增8家.html"><span class="hermers-i18n-zh">台股大型公司4月營收盤點：233家數據與年增強弱分布</span><span class="hermers-i18n-en">Large-Cap Taiwan Stocks Wrap Up April Revenue Picture</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="tw" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-營收速報-2026年5月16日台股大型公司4月營收一覽-新增8家.html"><span class="hermers-i18n-zh">台股大型公司4月營收盤點：233家數據與年增強弱分布</span><span class="hermers-i18n-en">Large-Cap Taiwan Stocks Wrap Up April Revenue Picture</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-熱門股-訊芯-ky搭cpo熱潮-連拉2根漲停周漲30-創新高.html"><span class="hermers-i18n-zh">CPO與AI光通訊題材加溫 訊芯-KY單周飆升三成創新高 首季仍陷虧損</span><span class="hermers-i18n-en">CPO frenzy lifts KY-listed optics play to a weekly high despite a soft Q1</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="tw" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-熱門股-訊芯-ky搭cpo熱潮-連拉2根漲停周漲30-創新高.html"><span class="hermers-i18n-zh">CPO與AI光通訊題材加溫 訊芯-KY單周飆升三成創新高 首季仍陷虧損</span><span class="hermers-i18n-en">CPO frenzy lifts KY-listed optics play to a weekly high despite a soft Q1</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-熱門股-森崴恐淪壁紙連吞2根跌停-母公司正崴爆量擺脫跌停.html"><span class="hermers-i18n-zh">森崴淨值轉負六月下市 集團股連挫、正崴爆量緩跌</span><span class="hermers-i18n-en">Senway Set to Exit Market as Spinoffs Slide; Cheng Uei Volumes Spike</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="tw" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-熱門股-森崴恐淪壁紙連吞2根跌停-母公司正崴爆量擺脫跌停.html"><span class="hermers-i18n-zh">森崴淨值轉負六月下市 集團股連挫、正崴爆量緩跌</span><span class="hermers-i18n-en">Senway Set to Exit Market as Spinoffs Slide; Cheng Uei Volumes Spike</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-熱門股-微星q1-eps飆出16季新高-站穩百元關卡周漲12.html"><span class="hermers-i18n-zh">微星首季獲利強彈創逾四年新高，周線守穩百元上方</span><span class="hermers-i18n-en">MSI Q1 earnings surge to a multi-year peak as shares hold above NT$100</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="tw" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-熱門股-微星q1-eps飆出16季新高-站穩百元關卡周漲12.html"><span class="hermers-i18n-zh">微星首季獲利強彈創逾四年新高，周線守穩百元上方</span><span class="hermers-i18n-en">MSI Q1 earnings surge to a multi-year peak as shares hold above NT$100</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-熱門股-亞泰金屬訂單直透2028年-外資掃貨帶動滾量攻堅周漲10.html"><span class="hermers-i18n-zh">AI 催生 CCL 擴產潮 亞泰金屬訂單排到二〇二八年股價創高</span><span class="hermers-i18n-en">AI-Led CCL Build-Out Lifts Asia Tech Metals Into 2028 Backlog and Record Price</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="tw" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-熱門股-亞泰金屬訂單直透2028年-外資掃貨帶動滾量攻堅周漲10.html"><span class="hermers-i18n-zh">AI 催生 CCL 擴產潮 亞泰金屬訂單排到二〇二八年股價創高</span><span class="hermers-i18n-en">AI-Led CCL Build-Out Lifts Asia Tech Metals Into 2028 Backlog and Record Price</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-日本30年債殖利率飆破4-創26年新高-股匯同步重挫-再現-三殺.html"><span class="hermers-i18n-zh">日債長端利率創多年新高，股匯同步走弱折射財政與緊縮預期</span><span class="hermers-i18n-en">Japan Long-Bond Yields Spike as Stocks and Yen Slide on Fiscal Fears</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
+<li data-hermers-segment="other" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-日本30年債殖利率飆破4-創26年新高-股匯同步重挫-再現-三殺.html"><span class="hermers-i18n-zh">日債長端利率創多年新高，股匯同步走弱折射財政與緊縮預期</span><span class="hermers-i18n-en">Japan Long-Bond Yields Spike as Stocks and Yen Slide on Fiscal Fears</span></a><span class="meta">重大頭條（股市相關） · 2026-05-17</span>
 </li>
       </ul>
     </section>
     <section class="category-block">
       <h2 class="category-title"><span data-i18n-zh="市場消息" data-i18n-en="Market news"></span></h2>
       <ul class="post-list">
-<li><a href="posts/20260517-營收速報-2026年5月16日台股中小型公司4月營收一覽-新增5家.html"><span class="hermers-i18n-zh">中小型股4月營收快報：逾二千檔揭露，強弱家數分明</span><span class="hermers-i18n-en">Taiwan Small Caps’ April Revenue: 2,039 Names, Wide Winners–Losers Split</span></a><span class="meta">台股與集中市場 · 2026-05-17</span>
+<li data-hermers-segment="tw" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-營收速報-2026年5月16日台股中小型公司4月營收一覽-新增5家.html"><span class="hermers-i18n-zh">中小型股4月營收快報：逾二千檔揭露，強弱家數分明</span><span class="hermers-i18n-en">Taiwan Small Caps’ April Revenue: 2,039 Names, Wide Winners–Losers Split</span></a><span class="meta">台股與集中市場 · 2026-05-17</span>
 </li>
       </ul>
     </section>
     <section class="category-block">
       <h2 class="category-title"><span data-i18n-zh="加密貨幣" data-i18n-en="Cryptocurrencies"></span></h2>
       <ul class="post-list">
-<li><a href="posts/20260517-sharplink-ceo-points-out-3-catalysts-for.html"><span class="hermers-i18n-zh">以太幣想再強勁上漲？Sharplink 執行長點名美法案、風險意願與資產代幣化</span><span class="hermers-i18n-en">SharpLink Chief Maps Three Prerequisites for Ether’s Next Leg Higher</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
+<li data-hermers-segment="crypto" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-sharplink-ceo-points-out-3-catalysts-for.html"><span class="hermers-i18n-zh">以太幣想再強勁上漲？Sharplink 執行長點名美法案、風險意願與資產代幣化</span><span class="hermers-i18n-en">SharpLink Chief Maps Three Prerequisites for Ether’s Next Leg Higher</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-price-predictions-5-15-btc-eth-bnb-xrp-s.html"><span class="hermers-i18n-zh">主流幣技術面：比特幣回測均線與套牢賣壓，以太幣跌破中期均線</span><span class="hermers-i18n-en">Crypto Technicals: Bitcoin Tests MAs and Overhead Supply; ETH Weakens</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
+<li data-hermers-segment="crypto" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-price-predictions-5-15-btc-eth-bnb-xrp-s.html"><span class="hermers-i18n-zh">主流幣技術面：比特幣回測均線與套牢賣壓，以太幣跌破中期均線</span><span class="hermers-i18n-en">Crypto Technicals: Bitcoin Tests MAs and Overhead Supply; ETH Weakens</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-ethereum-analysts-see-downside-risks-as.html"><span class="hermers-i18n-zh">以太幣下行風險升溫：分析師關注交易所存量與一千七百美元價區</span><span class="hermers-i18n-en">ETH Downside Risks Rise as Analysts Watch Exchange Supply and $1,700</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
+<li data-hermers-segment="crypto" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-ethereum-analysts-see-downside-risks-as.html"><span class="hermers-i18n-zh">以太幣下行風險升溫：分析師關注交易所存量與一千七百美元價區</span><span class="hermers-i18n-en">ETH Downside Risks Rise as Analysts Watch Exchange Supply and $1,700</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-bitcoin-price-dives-under-79k-as-us-bond.html"><span class="hermers-i18n-zh">美債殖利率攀高拖累風險意願　比特幣跌破8萬美元逼近5月低檔</span><span class="hermers-i18n-en">Bitcoin Dips Below $80K as Treasury Yield Jump Jolts Risk Markets</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
+<li data-hermers-segment="crypto" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-bitcoin-price-dives-under-79k-as-us-bond.html"><span class="hermers-i18n-zh">美債殖利率攀高拖累風險意願　比特幣跌破8萬美元逼近5月低檔</span><span class="hermers-i18n-en">Bitcoin Dips Below $80K as Treasury Yield Jump Jolts Risk Markets</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-bitcoin-analysis-sees-bear-trap-as-btc-p.html"><span class="hermers-i18n-zh">比特幣跌破7.8萬美元 地緣與總經疑慮牽動走勢</span><span class="hermers-i18n-en">Bitcoin Slips Under $78K as Geopolitics and Macro Fears Intensify</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
+<li data-hermers-segment="crypto" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-bitcoin-analysis-sees-bear-trap-as-btc-p.html"><span class="hermers-i18n-zh">比特幣跌破7.8萬美元 地緣與總經疑慮牽動走勢</span><span class="hermers-i18n-en">Bitcoin Slips Under $78K as Geopolitics and Macro Fears Intensify</span></a><span class="meta">加密貨幣與區塊鏈 · 2026-05-17</span>
 </li>
       </ul>
     </section>
     <section class="category-block">
       <h2 class="category-title"><span data-i18n-zh="美股消息" data-i18n-en="U.S. &amp; global equities"></span></h2>
       <ul class="post-list">
-<li><a href="posts/20260517-鉅亨速報-factset-最新調查-戴文能源-dvn-us-eps預估下修至5.html"><span class="hermers-i18n-zh">戴文能源 2026 獲利預估小幅下修，分析師目標價約 60 美元</span><span class="hermers-i18n-en">Devon Energy 2026 EPS outlook nudged lower; analysts target near $60</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-鉅亨速報-factset-最新調查-戴文能源-dvn-us-eps預估下修至5.html"><span class="hermers-i18n-zh">戴文能源 2026 獲利預估小幅下修，分析師目標價約 60 美元</span><span class="hermers-i18n-en">Devon Energy 2026 EPS outlook nudged lower; analysts target near $60</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-通膨不會演變為2022危機-專家-油價最糟時刻已過-消費疲弱抑制漲價潮.html"><span class="hermers-i18n-zh">施羅德：油價衝擊難複製疫後通膨，消費疲軟成漲價煞車</span><span class="hermers-i18n-en">Schroders: oil shock unlike post-COVID inflation as demand caps prices</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-通膨不會演變為2022危機-專家-油價最糟時刻已過-消費疲弱抑制漲價潮.html"><span class="hermers-i18n-zh">施羅德：油價衝擊難複製疫後通膨，消費疲軟成漲價煞車</span><span class="hermers-i18n-en">Schroders: oil shock unlike post-COVID inflation as demand caps prices</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-日本砸錢救日元仍失守-美元買盤太強-155防線成關鍵-日元恐重返160.html"><span class="hermers-i18n-zh">日圓救市紅利多消退？進口商美元承接把155打成攻防線</span><span class="hermers-i18n-en">Japan’s yen-defense bump fades as corporate dollar bids pin price near 155</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-日本砸錢救日元仍失守-美元買盤太強-155防線成關鍵-日元恐重返160.html"><span class="hermers-i18n-zh">日圓救市紅利多消退？進口商美元承接把155打成攻防線</span><span class="hermers-i18n-en">Japan’s yen-defense bump fades as corporate dollar bids pin price near 155</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-微軟引發多空對決-大賺避險基金清倉80億-ackman24億美元逆向抄底-護城河.html"><span class="hermers-i18n-zh">微軟多空亮劍：一方憂 AI 侵蝕辦公雲、一方逆勢加碼辯護護城河</span><span class="hermers-i18n-en">Microsoft Splits Big Money: AI Bear Exit vs. Moat-First Contrarian Bet</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-微軟引發多空對決-大賺避險基金清倉80億-ackman24億美元逆向抄底-護城河.html"><span class="hermers-i18n-zh">微軟多空亮劍：一方憂 AI 侵蝕辦公雲、一方逆勢加碼辯護護城河</span><span class="hermers-i18n-en">Microsoft Splits Big Money: AI Bear Exit vs. Moat-First Contrarian Bet</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-川普關稅遭判違法-亞馬遜遭消費者提告未退款.html"><span class="hermers-i18n-zh">美高院認定川普大規模關稅越權後 消費者於西雅圖集體控告亞馬遜退款</span><span class="hermers-i18n-en">Shoppers sue Amazon in Seattle after court rejects Trump IEEPA tariff push</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-川普關稅遭判違法-亞馬遜遭消費者提告未退款.html"><span class="hermers-i18n-zh">美高院認定川普大規模關稅越權後 消費者於西雅圖集體控告亞馬遜退款</span><span class="hermers-i18n-en">Shoppers sue Amazon in Seattle after court rejects Trump IEEPA tariff push</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-半導體授權風暴-安謀遭美ftc反壟斷調查-涉濫用cpu架構卡位自研晶片.html"><span class="hermers-i18n-zh">美 FTC 查安謀授權 關切自研晶片與 CPU 藍圖公平性</span><span class="hermers-i18n-en">FTC Probes Arm Licensing as Custom-Chip Push Draws Scrutiny</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-半導體授權風暴-安謀遭美ftc反壟斷調查-涉濫用cpu架構卡位自研晶片.html"><span class="hermers-i18n-zh">美 FTC 查安謀授權 關切自研晶片與 CPU 藍圖公平性</span><span class="hermers-i18n-en">FTC Probes Arm Licensing as Custom-Chip Push Draws Scrutiny</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-全球債市集體慘崩-通膨升溫引爆投資人恐慌.html"><span class="hermers-i18n-zh">油價飆漲與通膨疑慮升溫 全球主要指標債殖利率全面走高</span><span class="hermers-i18n-en">Global Bond Yields Jump on Oil Shock and Inflation Fears</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-全球債市集體慘崩-通膨升溫引爆投資人恐慌.html"><span class="hermers-i18n-zh">油價飆漲與通膨疑慮升溫 全球主要指標債殖利率全面走高</span><span class="hermers-i18n-en">Global Bond Yields Jump on Oil Shock and Inflation Fears</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-債市崩潰-30年期美債殖利率衝破5-1-刷2025年來新高.html"><span class="hermers-i18n-zh">全球長債殖利率急速走高 通膨與地緣政治牽動市場神經</span><span class="hermers-i18n-en">Global Long-Bond Yields Spike as Inflation Worries Escalate</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-債市崩潰-30年期美債殖利率衝破5-1-刷2025年來新高.html"><span class="hermers-i18n-zh">全球長債殖利率急速走高 通膨與地緣政治牽動市場神經</span><span class="hermers-i18n-en">Global Long-Bond Yields Spike as Inflation Worries Escalate</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-伊朗-利率成市場最大風險-高盛-市場已透支2027年樂觀預期.html"><span class="hermers-i18n-zh">高盛提醒美中東再起與債息並列缺口，資產已搶先看二○二七</span><span class="hermers-i18n-en">Goldman Signals Gulf Risks and Bond Yields May Top the Relief Rally</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-伊朗-利率成市場最大風險-高盛-市場已透支2027年樂觀預期.html"><span class="hermers-i18n-zh">高盛提醒美中東再起與債息並列缺口，資產已搶先看二○二七</span><span class="hermers-i18n-en">Goldman Signals Gulf Risks and Bond Yields May Top the Relief Rally</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-三星電子18天大罷工倒數-工會拒絕讓步-南韓政府罕見警告-半導體供應鏈恐遭重擊.html"><span class="hermers-i18n-zh">三星韓國廠勞資僵持：18天總罷工在即，政府高调介入</span><span class="hermers-i18n-en">Samsung Korea Faces 18-Day Strike Threat as Seoul Steps In</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-三星電子18天大罷工倒數-工會拒絕讓步-南韓政府罕見警告-半導體供應鏈恐遭重擊.html"><span class="hermers-i18n-zh">三星韓國廠勞資僵持：18天總罷工在即，政府高调介入</span><span class="hermers-i18n-en">Samsung Korea Faces 18-Day Strike Threat as Seoul Steps In</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-一頓飯台幣2-8億-巴菲特睽違4年重啟慈善午餐拍賣.html"><span class="hermers-i18n-zh">巴菲特慈善午餐復拍，匿名買家九百萬美元得標</span><span class="hermers-i18n-en">Buffett Charity Lunch Auction Returns With a $9M Winning Bid</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-一頓飯台幣2-8億-巴菲特睽違4年重啟慈善午餐拍賣.html"><span class="hermers-i18n-zh">巴菲特慈善午餐復拍，匿名買家九百萬美元得標</span><span class="hermers-i18n-en">Buffett Charity Lunch Auction Returns With a $9M Winning Bid</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-spacex傳6月ipo-估值上看2兆美元-cramer示警-恐脫離基本面並引爆.html"><span class="hermers-i18n-zh">傳 SpaceX 六月前後掛牌、估值天價預期，Cramer 示警 IPO 狂熱與籌碼供給恐牽動全市</span><span class="hermers-i18n-en">Analyst flags SpaceX listing talk as a catalyst for IPO fever, stretched valuations, and fragile market balance</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-spacex傳6月ipo-估值上看2兆美元-cramer示警-恐脫離基本面並引爆.html"><span class="hermers-i18n-zh">傳 SpaceX 六月前後掛牌、估值天價預期，Cramer 示警 IPO 狂熱與籌碼供給恐牽動全市</span><span class="hermers-i18n-en">Analyst flags SpaceX listing talk as a catalyst for IPO fever, stretched valuations, and fragile market balance</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-fed理事會正式任命鮑爾擔任-臨時主席-2名理事罕見公開反對.html"><span class="hermers-i18n-zh">聯準會設鮑爾暫代主席銜接華許　兩理事罕見表態反對</span><span class="hermers-i18n-en">Fed taps Powell as interim chair before Warsh; two board members publicly dissent</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-fed理事會正式任命鮑爾擔任-臨時主席-2名理事罕見公開反對.html"><span class="hermers-i18n-zh">聯準會設鮑爾暫代主席銜接華許　兩理事罕見表態反對</span><span class="hermers-i18n-en">Fed taps Powell as interim chair before Warsh; two board members publicly dissent</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-fed最快或今年12月升息-機率接近51.html"><span class="hermers-i18n-zh">通膨數據轉強 期貨市場首度反映聯準會可能升息</span><span class="hermers-i18n-en">Markets Pivot to Earlier Fed Hike Odds as Inflation Runs Hot</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-fed最快或今年12月升息-機率接近51.html"><span class="hermers-i18n-zh">通膨數據轉強 期貨市場首度反映聯準會可能升息</span><span class="hermers-i18n-en">Markets Pivot to Earlier Fed Hike Odds as Inflation Runs Hot</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
-<li><a href="posts/20260517-ai紅利分配不均引爆罷工-三星記憶體部門狂歡-邏輯晶片部門心寒-全球半導體供應蒙.html"><span class="hermers-i18n-zh">三星史上最大罷工威脅 記憶體與邏輯部門獎金落差牽動全球供應鏈</span><span class="hermers-i18n-en">Samsung Threatens Historic Strike as AI-Era Bonus Gap Splits Divisions</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
+<li data-hermers-segment="us" data-hermers-date="2026-05-17" data-hermers-in-week="1"><a href="posts/20260517-ai紅利分配不均引爆罷工-三星記憶體部門狂歡-邏輯晶片部門心寒-全球半導體供應蒙.html"><span class="hermers-i18n-zh">三星史上最大罷工威脅 記憶體與邏輯部門獎金落差牽動全球供應鏈</span><span class="hermers-i18n-en">Samsung Threatens Historic Strike as AI-Era Bonus Gap Splits Divisions</span></a><span class="meta">美股與國際市場 · 2026-05-17</span>
 </li>
       </ul>
     </section>
 
     </div>
     <footer class="time"><span data-i18n-zh="更新時間（UTC）·" data-i18n-en="Last update (UTC)·"></span>
-      2026-05-17T09:16:52</footer>
+      2026-05-17T09:20:01+00:00</footer>
   </main>
 <script>
 (function () {
@@ -363,6 +561,161 @@
   });
 
   apply();
+})();
+</script>
+<script>
+(function () {
+  var WEEK_START = "2026-05-11";
+  var TODAY = "2026-05-17";
+  var DATES = ["2026-05-17"];
+
+  function applyDateFilter(mode, dayIso) {
+    var weekMode = mode === "week";
+    document.querySelectorAll(".post-list li[data-hermers-date]").forEach(function (li) {
+      var d = li.getAttribute("data-hermers-date") || "";
+      var inWeek = li.getAttribute("data-hermers-in-week") === "1";
+      var show = weekMode ? inWeek : (dayIso && d === dayIso);
+      li.hidden = !show;
+    });
+    document.querySelectorAll(".spotlight-card[data-hermers-date]").forEach(function (card) {
+      var d = card.getAttribute("data-hermers-date") || "";
+      var inWeek = card.getAttribute("data-hermers-in-week") === "1";
+      var show = weekMode ? inWeek : (dayIso && d === dayIso);
+      card.hidden = !show;
+    });
+    document.querySelectorAll(".list-wrap .category-block").forEach(function (block) {
+      var lis = block.querySelectorAll("li[data-hermers-date]");
+      var showBlock = false;
+      lis.forEach(function (li) { if (!li.hidden) showBlock = true; });
+      block.hidden = !showBlock;
+    });
+    var emptyDay = document.getElementById("hermers-day-empty");
+    if (emptyDay) {
+      var hasVisible = document.querySelector(".post-list li[data-hermers-date]:not([hidden])");
+      emptyDay.hidden = weekMode || !dayIso || !!hasVisible;
+    }
+    if (window.hermersApplyMarketTab) window.hermersApplyMarketTab(
+      (function () {
+        try { return sessionStorage.getItem("hermers_market_tab") || "all"; } catch (e) { return "all"; }
+      })()
+    );
+  }
+
+  function setModeButtons(weekOn) {
+    document.querySelectorAll("[data-hermers-date-mode]").forEach(function (btn) {
+      var m = btn.getAttribute("data-hermers-date-mode");
+      btn.setAttribute("aria-pressed", (weekOn && m === "week") || (!weekOn && m === "day") ? "true" : "false");
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var input = document.getElementById("hermers-date-pick");
+    var minD = DATES.length ? DATES[DATES.length - 1] : WEEK_START;
+    var maxD = DATES.length ? DATES[0] : TODAY;
+    if (input) {
+      input.min = minD;
+      input.max = maxD;
+      input.value = TODAY;
+    }
+    applyDateFilter("week", null);
+    setModeButtons(true);
+
+    document.querySelectorAll("[data-hermers-date-mode]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var mode = btn.getAttribute("data-hermers-date-mode");
+        if (mode === "week") {
+          if (input) input.value = TODAY;
+          applyDateFilter("week", null);
+          setModeButtons(true);
+        }
+      });
+    });
+
+    if (input) {
+      input.addEventListener("change", function () {
+        var v = input.value;
+        if (!v) return;
+        applyDateFilter("day", v);
+        setModeButtons(false);
+      });
+    }
+  });
+})();
+</script>
+<script>
+(function () {
+  function syncSpotlightSections() {
+    var tab = "all";
+    try { tab = sessionStorage.getItem("hermers_market_tab") || "all"; } catch (e0) { tab = "all"; }
+    document.querySelectorAll(".weekly-spotlight[data-hermers-spotlight-market]").forEach(function (sec) {
+      var m = sec.getAttribute("data-hermers-spotlight-market") || "";
+      var marketOk = tab === "all" || m === tab;
+      var anyCard = false;
+      sec.querySelectorAll(".spotlight-card").forEach(function (c) {
+        if (!c.hidden) anyCard = true;
+      });
+      sec.hidden = !(marketOk && anyCard);
+    });
+    var stack = document.querySelector(".spotlight-stack");
+    if (stack) {
+      var anySec = false;
+      stack.querySelectorAll(".weekly-spotlight").forEach(function (sec) {
+        if (!sec.hidden) anySec = true;
+      });
+      stack.hidden = !anySec;
+    }
+  }
+
+  function applyMarketTab(tab) {
+    var seg = tab || "all";
+    var allowed = { all: 1, tw: 1, us: 1, crypto: 1 };
+    if (!allowed[seg]) seg = "all";
+    try { sessionStorage.setItem("hermers_market_tab", seg); } catch (e) {}
+    document.querySelectorAll(".market-tabs [data-hermers-market]").forEach(function (btn) {
+      var id = btn.getAttribute("data-hermers-market");
+      btn.setAttribute("aria-selected", id === seg ? "true" : "false");
+    });
+    document.querySelectorAll(".list-wrap .category-block").forEach(function (block) {
+      var lis = block.querySelectorAll("li[data-hermers-segment]");
+      var showBlock = false;
+      lis.forEach(function (li) {
+        var lseg = li.getAttribute("data-hermers-segment") || "other";
+        var dual = li.getAttribute("data-hermers-tw-us-cross") === "1";
+        var show = seg === "all" || lseg === seg ||
+          (dual && (seg === "tw" || seg === "us"));
+        li.hidden = !show;
+        if (show) showBlock = true;
+      });
+      block.hidden = !showBlock;
+    });
+    var emptyNote = document.getElementById("hermers-market-empty");
+    if (emptyNote) {
+      var blocks = document.querySelectorAll(".list-wrap .category-block");
+      var any = false;
+      blocks.forEach(function (b) { if (!b.hidden) any = true; });
+      emptyNote.hidden = any;
+    }
+    syncSpotlightSections();
+  }
+
+  window.hermersSyncSpotlightSections = syncSpotlightSections;
+
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var btn = t.closest("[data-hermers-market]");
+    if (!btn || !btn.classList) return;
+    if (!btn.closest(".market-tabs")) return;
+    e.preventDefault();
+    applyMarketTab(btn.getAttribute("data-hermers-market"));
+  });
+
+  window.hermersApplyMarketTab = applyMarketTab;
+  document.addEventListener("DOMContentLoaded", function () {
+    var init = "all";
+    try { init = sessionStorage.getItem("hermers_market_tab") || "all"; } catch (e2) {}
+    applyMarketTab(init);
+  });
 })();
 </script>
 </body>

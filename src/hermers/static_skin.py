@@ -207,6 +207,18 @@ def css_index_specific() -> str:
     color: var(--ink);
     border-color: rgba(15, 118, 110, 0.45);
   }
+  .spotlight-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .spotlight-stack[hidden] {
+    display: none !important;
+  }
+  .spotlight-stack .weekly-spotlight {
+    margin-bottom: 0;
+  }
   .weekly-spotlight {
     margin-bottom: 1.5rem;
     padding: 1.15rem 1.2rem 0.35rem;
