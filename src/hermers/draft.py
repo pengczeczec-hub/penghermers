@@ -7,6 +7,7 @@ from pathlib import Path
 
 from hermers.discover import FeedItem
 from hermers.fetch import ArticleExtract
+from hermers.i18n_ui import i18n_runtime_script, lang_switcher_css, lang_switcher_html, seo_block
 from hermers.static_skin import css_article_specific, css_base, css_shell
 
 
@@ -56,34 +57,53 @@ def _cursor_task(meta: dict, summary: str) -> str:
 
 
 def _draft_html(meta: dict, extract: ArticleExtract) -> str:
-    title = html.escape(meta["title"])
+    title_raw = meta["title"]
+    title_esc = html.escape(title_raw)
     url = html.escape(meta["url"])
     domain = html.escape(meta["domain_name"])
     body = "".join(f"<p>{html.escape(p)}</p>" for p in extract.paragraphs[:8])
     if not body:
-        body = "<p><em>（未能擷取內文，請依上方原文連結手動撰寫後再送審。）</em></p>"
-    css_a = "".join([css_base(), css_shell(narrow=True), css_article_specific()])
+        body = (
+            "<p><em><span data-i18n-zh=\"（未能擷取內文，請依上方原文連結手動撰寫後再送審。）\""
+            ' data-i18n-en="(No body extracted—please draft from the source link above before review.)">'
+            "</span></em></p>"
+        )
+    desc_zh = f"「{title_raw}」剪報草稿（待審），來源連結於文內。"
+    desc_en = f'Clipping draft (pending): "{title_raw}". Source link inside.'
+    head_seo = seo_block(
+        canonical_url="__CANONICAL_URL__",
+        og_title=title_raw,
+        description_zh=desc_zh[:220],
+        description_en=desc_en[:220],
+        og_type="article",
+    )
+    css_a = "".join(
+        [css_base(), lang_switcher_css(), css_shell(narrow=True), css_article_specific()]
+    )
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
-  <title>{title}</title>
+{head_seo}  <title>{title_esc}</title>
   <style>{css_a}
   </style>
 </head>
 <body>
+  {lang_switcher_html(compact=True)}
   <main>
     <article class="prose">
-      <p class="eyebrow">{domain} · 待審草稿</p>
-      <h1>{title}</h1>
-      <div class="source-box">來源：<a href="{url}" rel="noopener noreferrer">{url}</a></div>
+      <p class="eyebrow">{domain} · <span data-i18n-zh="待審草稿" data-i18n-en="Pending draft"></span></p>
+      <h1>{title_esc}</h1>
+      <div class="source-box"><span data-i18n-zh="來源：" data-i18n-en="Source:"></span><a href="{url}" rel="noopener noreferrer">{url}</a></div>
       <hr />
       {body}
-      <footer class="note">自動擷取摘要；通過審核後會進入 dist/ 並可部署上線。</footer>
+      <footer class="note"><span data-i18n-zh="自動擷取摘要；通過審核後會進入 dist/ 並可部署上線。"
+        data-i18n-en="Auto-extracted summary; after approval this goes to dist/ for deploy."></span></footer>
     </article>
   </main>
+{i18n_runtime_script()}
 </body>
 </html>
 """

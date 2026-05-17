@@ -4,7 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light" />
-  <title>Hermers 剪報站</title>
+  <meta name="description" content="已審核通過的剪報索引，版面清楚、來源可追溯。 Curated digest of approved clippings with clear layout and traceable sources." />
+  <meta property="og:title" content="Hermers 剪報站 | Hermers Digest" />
+  <meta property="og:description" content="已審核通過的剪報索引，版面清楚、來源可追溯。 Curated digest of approved clippings with clear layout and traceable sources." />
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="zh_TW" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <title>Hermers 剪報站 | Hermers Digest</title>
   <style>
   :root {
     --bg: #f4f2ee;
@@ -49,6 +55,37 @@
     background: rgba(28, 25, 23, 0.06);
     padding: 0.12em 0.35em;
     border-radius: 4px;
+  }
+
+  .lang-switch {
+    position: fixed;
+    top: 0.75rem;
+    right: 0.75rem;
+    z-index: 50;
+    display: flex;
+    gap: 0.35rem;
+    background: var(--surface-elev, #fff);
+    border: 1px solid var(--border, #e7e5e0);
+    border-radius: 999px;
+    padding: 0.2rem;
+    box-shadow: var(--shadow, 0 2px 8px rgba(0,0,0,0.08));
+  }
+  .lang-switch .lang-btn {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted, #78716c);
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    line-height: 1;
+  }
+  .lang-switch .lang-btn:hover { color: var(--accent-hover, #0d5c56); }
+  .lang-switch .lang-btn[aria-pressed="true"] {
+    background: var(--accent-soft, rgba(15, 118, 110, 0.12));
+    color: var(--ink, #1c1917);
   }
 
   main {
@@ -142,16 +179,26 @@
   </style>
 </head>
 <body>
+  <div class="lang-switch" role="group" aria-label="介面語言 / Language">
+  <button type="button" class="lang-btn" data-set-lang="zh-Hant" aria-pressed="true">繁中</button>
+  <button type="button" class="lang-btn" data-set-lang="en" aria-pressed="false">English</button>
+</div>
   <main>
     <header class="masthead">
-      <h1>Hermers 剪報站</h1>
-      <p class="sub">已審核通過的剪報條目；版面清楚、來源可追溯。</p>
+      <h1><span data-i18n-zh="Hermers 剪報站" data-i18n-en="Hermers Digest"></span></h1>
+      <p class="sub"><span data-i18n-zh="已審核通過的剪報條目；版面清楚、來源可追溯。"
+        data-i18n-en="Approved clippings only—clean layout with traceable sources."></span></p>
       <div class="stats">
-        <span class="pill">待審 <strong>0</strong> 則</span>
-        <span class="pill">已發布 <strong>9</strong> 則</span>
+        <span class="pill"><span data-i18n-zh="待審" data-i18n-en="Pending"></span>
+          <strong>0</strong>
+          <span data-i18n-zh="則" data-i18n-en="items"></span></span>
+        <span class="pill"><span data-i18n-zh="已發布" data-i18n-en="Published"></span>
+          <strong>9</strong>
+          <span data-i18n-zh="則" data-i18n-en="items"></span></span>
       </div>
     </header>
-    <p class="sub" style="margin-bottom: 1rem">本頁僅列出已上線文章；草稿與待審在管理流程／本機 staging 目錄處理，不會出現於此。</p>
+    <p class="sub" style="margin-bottom: 1rem"><span data-i18n-zh="本頁僅列出已上線文章；草稿與待審在管理流程／本機 staging 目錄處理，不會出現於此。"
+      data-i18n-en="This page lists live posts only; drafts and pending items stay in staging and admin flows."></span></p>
     <div class="list-wrap">
       <ul class="post-list">
 <li><a href="posts/20260516-the-main-thing-about-p2p-meth-is-that-th.html">The main thing about P2P meth is that there’s so much of it</a><span class="meta">科技熱門 · 2026-05-16</span>
@@ -174,7 +221,53 @@
 </li>
 </ul>
     </div>
-    <footer class="time">更新時間（UTC）· 2026-05-17T02:14:57</footer>
+    <footer class="time"><span data-i18n-zh="更新時間（UTC）·" data-i18n-en="Last update (UTC)·"></span>
+      2026-05-17T02:19:33</footer>
   </main>
+<script>
+(function () {
+  var K = "hermers_lang";
+  function norm(q) {
+    if (q === "en" || q === "en-US") return "en";
+    if (q === "zh" || q === "zh-Hant" || q === "zh-TW" || q === "tw") return "zh-Hant";
+    return null;
+  }
+  var sp = new URLSearchParams(location.search).get("lang");
+  var n = norm(sp);
+  if (n) localStorage.setItem(K, n);
+
+  function apply() {
+    var lang = localStorage.getItem(K) || "zh-Hant"; // en | zh-Hant
+    document.documentElement.lang = lang === "en" ? "en" : "zh-Hant";
+    document.querySelectorAll("[data-i18n-zh][data-i18n-en]").forEach(function (el) {
+      var zh = el.getAttribute("data-i18n-zh") || "";
+      var en = el.getAttribute("data-i18n-en") || "";
+      el.textContent = lang === "en" ? en : zh;
+    });
+    document.querySelectorAll(".lang-switch .lang-btn").forEach(function (btn) {
+      var v = btn.getAttribute("data-set-lang");
+      var on = (v === "en" && lang === "en") || (v === "zh-Hant" && lang !== "en");
+      btn.setAttribute("aria-pressed", on ? "true" : "false");
+    });
+  }
+
+  window.hermersSetLang = function (l) {
+    localStorage.setItem(K, l === "en" ? "en" : "zh-Hant");
+    apply();
+  };
+
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.getAttribute) return;
+    var v = t.getAttribute("data-set-lang");
+    if (v === "en" || v === "zh-Hant") {
+      e.preventDefault();
+      window.hermersSetLang(v);
+    }
+  });
+
+  apply();
+})();
+</script>
 </body>
 </html>

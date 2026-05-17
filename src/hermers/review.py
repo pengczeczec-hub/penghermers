@@ -6,6 +6,7 @@ import shutil
 from datetime import datetime, timezone
 from pathlib import Path
 
+from hermers.i18n_ui import polish_published_post
 from hermers.paths import pending_dir, posts_dir, rejected_dir
 from hermers.site import rebuild_index, write_review_page
 from hermers.telegram_notify import notify_review_action
@@ -42,6 +43,7 @@ def approve(draft_id: str, *, notify: bool = True) -> int:
     out_html = posts_dir() / f"{draft_id}.html"
     out_meta = posts_dir() / f"{draft_id}.json"
     shutil.copy2(draft_html, out_html)
+    polish_published_post(out_html, slug=draft_id)
     meta["status"] = "approved"
     meta["approved_at"] = datetime.now(timezone.utc).isoformat()
     out_meta.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
