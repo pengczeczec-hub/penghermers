@@ -62,3 +62,11 @@ domains:
       - 00919
     rss:
       - https://news.cnyes.com/rss/v1/news/category/headline
+  # 鉅亨 wd_stock＝國際／美股等全球市場新聞匯流（RSS 已由站方分類）
+  - id: us_stock
+    name: 美股與國際市場
+    section_zh: 美股消息
+    section_en: U.S. & global equities
+    keywords: []
+    rss:
+      - https://news.cnyes.com/rss/v1/news/category/wd_stock
