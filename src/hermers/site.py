@@ -561,9 +561,9 @@ def rebuild_index() -> None:
     )
     base = public_base_url()
     index_canonical = f"{base}/" if base else ""
-    og_title = "Hermers 市場剪報｜Hermers Market Digest"
-    idx_title_zh = "Hermers 市場剪報"
-    idx_title_en = "Hermers Market Digest"
+    og_title = "AI 國際財經新聞摘要站 | AI International Finance News Digest"
+    idx_title_zh = "AI 國際財經新聞摘要站"
+    idx_title_en = "AI International Finance News Digest"
     idx_title_zh_attr = html.escape(idx_title_zh, quote=True)
     idx_title_en_attr = html.escape(idx_title_en, quote=True)
     desc_zh = "台股、美股、加密貨幣等市場剪報提要（首頁標籤可擴充）。跨台／美題材僅於全站排序前十名內雙標籤露出。"
@@ -608,7 +608,7 @@ def rebuild_index() -> None:
   {lang_switcher_html()}
   <main>
     <header class="masthead">
-      <h1><span data-i18n-zh="Hermers 市場剪報" data-i18n-en="Hermers Market Digest"></span></h1>
+      <h1><span data-i18n-zh="{idx_title_zh_attr}" data-i18n-en="{idx_title_en_attr}"></span></h1>
       <p class="sub"><span data-i18n-zh="台股、美股、加密貨幣新聞剪報；預設顯示近 7 日，可用日期選擇器瀏覽歷史。"
         data-i18n-en="Taiwan, U.S., and crypto digests—last 7 days by default; use the date picker for archives."></span></p>
       {date_toolbar}
