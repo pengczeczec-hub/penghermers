@@ -23,6 +23,7 @@ from hermers.i18n_ui import (
     strip_empty_seo_placeholders,
 )
 from hermers.paths import dist_dir, pending_dir, posts_dir
+from hermers.segment import analyze_site_segment, dual_tw_us_for_home, infer_site_segment
 from hermers.static_skin import css_base, css_index_specific, css_review_specific, css_shell
 
 # 首頁分類順序（對應 domains.yaml 的 section_*）；舊稿無欄位時依 domain_id 回退。
@@ -52,6 +53,69 @@ def _section_sort_key(key: tuple[str, str]) -> tuple[int, str]:
     except ValueError:
         idx = len(_SECTION_ORDER)
     return (idx, key[0])
+
+
+def _index_market_tabs_html() -> str:
+    """可擴充：另增標籤時加 role=tab + data-hermers-market 並更新腳本 allowed。"""
+    return """<nav class="market-tabs" role="tablist" aria-label="市場區塊">
+  <button type="button" role="tab" data-hermers-market="all" aria-selected="true"><span data-i18n-zh="全部" data-i18n-en="All"></span></button>
+  <button type="button" role="tab" data-hermers-market="tw" aria-selected="false"><span data-i18n-zh="台股" data-i18n-en="TW stocks"></span></button>
+  <button type="button" role="tab" data-hermers-market="us" aria-selected="false"><span data-i18n-zh="美股" data-i18n-en="US stocks"></span></button>
+  <button type="button" role="tab" data-hermers-market="crypto" aria-selected="false"><span data-i18n-zh="加密貨幣" data-i18n-en="Crypto"></span></button>
+</nav>"""
+
+
+def _index_segment_tabs_script() -> str:
+    return """<script>
+(function () {
+  function applyMarketTab(tab) {
+    var seg = tab || "all";
+    var allowed = { all: 1, tw: 1, us: 1, crypto: 1 };
+    if (!allowed[seg]) seg = "all";
+    try { sessionStorage.setItem("hermers_market_tab", seg); } catch (e) {}
+    document.querySelectorAll(".market-tabs [data-hermers-market]").forEach(function (btn) {
+      var id = btn.getAttribute("data-hermers-market");
+      btn.setAttribute("aria-selected", id === seg ? "true" : "false");
+    });
+    document.querySelectorAll(".list-wrap .category-block").forEach(function (block) {
+      var lis = block.querySelectorAll("li[data-hermers-segment]");
+      var showBlock = false;
+      lis.forEach(function (li) {
+        var lseg = li.getAttribute("data-hermers-segment") || "other";
+        var dual = li.getAttribute("data-hermers-tw-us-cross") === "1";
+        var show = seg === "all" || lseg === seg ||
+          (dual && (seg === "tw" || seg === "us"));
+        li.hidden = !show;
+        if (show) showBlock = true;
+      });
+      block.hidden = !showBlock;
+    });
+    var emptyNote = document.getElementById("hermers-market-empty");
+    if (!emptyNote) return;
+    var blocks = document.querySelectorAll(".list-wrap .category-block");
+    var any = false;
+    blocks.forEach(function (b) { if (!b.hidden) any = true; });
+    emptyNote.hidden = any;
+  }
+
+  document.addEventListener("click", function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var btn = t.closest("[data-hermers-market]");
+    if (!btn || !btn.classList) return;
+    if (!btn.closest(".market-tabs")) return;
+    e.preventDefault();
+    applyMarketTab(btn.getAttribute("data-hermers-market"));
+  });
+
+  window.hermersApplyMarketTab = applyMarketTab;
+  document.addEventListener("DOMContentLoaded", function () {
+    var init = "all";
+    try { init = sessionStorage.getItem("hermers_market_tab") || "all"; } catch (e2) {}
+    applyMarketTab(init);
+  });
+})();
+</script>"""
 
 
 def _repair_duplicate_bilingual_article(page_html: str, meta: dict) -> str | None:
@@ -218,6 +282,7 @@ def rebuild_index() -> None:
             if isinstance(te, str) and te.strip():
                 title_en_meta = te.strip()
         sec_zh, sec_en = _resolved_section_labels(meta)
+        analysis = analyze_site_segment(meta, slug=path.stem)
         entries.append(
             {
                 "href": f"posts/{path.name}",
@@ -227,8 +292,13 @@ def rebuild_index() -> None:
                 "domain": domain,
                 "section_zh": sec_zh,
                 "section_en": sec_en,
+                "segment": infer_site_segment(meta, slug=path.stem),
+                "cross_tw_us": dual_tw_us_for_home(analysis),
             }
         )
+
+    for ri, row in enumerate(entries):
+        row["global_rank"] = ri + 1
 
     pending_count = len(list(pending_dir().glob("*/meta.json"))) if pending_dir().is_dir() else 0
 
@@ -247,8 +317,15 @@ def rebuild_index() -> None:
         )
         title_zh_esc = html.escape(tz)
         title_en_esc = html.escape(te)
+        seg = e.get("segment") or "other"
+        if seg not in ("tw", "us", "crypto", "other"):
+            seg = "other"
+        seg_esc = html.escape(seg)
+        cross_attr = ""
+        if e.get("cross_tw_us") and int(e.get("global_rank") or 999) <= 10:
+            cross_attr = ' data-hermers-tw-us-cross="1"'
         return (
-            f'<li><a href="{html.escape(e["href"])}">'
+            f'<li data-hermers-segment="{seg_esc}"{cross_attr}><a href="{html.escape(e["href"])}">'
             f'<span class="hermers-i18n-zh">{title_zh_esc}</span>'
             f'<span class="hermers-i18n-en">{title_en_esc}</span></a>{meta_block}</li>\n'
         )
@@ -286,13 +363,16 @@ def rebuild_index() -> None:
     )
     base = public_base_url()
     index_canonical = f"{base}/" if base else ""
-    og_title = "台股新聞與行情快訊 | Taiwan Stock News & Market Highlights"
-    idx_title_zh = "台股新聞與行情快訊"
-    idx_title_en = "Taiwan Stock News & Market Highlights"
+    og_title = "Hermers 市場剪報｜Hermers Market Digest"
+    idx_title_zh = "Hermers 市場剪報"
+    idx_title_en = "Hermers Market Digest"
     idx_title_zh_attr = html.escape(idx_title_zh, quote=True)
     idx_title_en_attr = html.escape(idx_title_en, quote=True)
-    desc_zh = "台股與集中市場相關新聞剪報。"
-    desc_en = "Taiwan stock-market news clippings."
+    desc_zh = "台股、美股、加密貨幣等市場剪報提要（首頁標籤可擴充）。跨台／美題材僅於全站排序前十名內雙標籤露出。"
+    desc_en = (
+        "Taiwan, U.S., and crypto market digests—tabs expand over time. "
+        "Dual TW/US labeling applies only to posts in the site-wide top ten."
+    )
     head_seo = seo_block(
         canonical_url=index_canonical,
         og_title=og_title,
@@ -303,7 +383,15 @@ def rebuild_index() -> None:
         "<p class=\"empty\"><span data-i18n-zh=\"尚無已發布文章。請先完成待審流程。\""
         ' data-i18n-en="No published items yet. Complete the review workflow first."></span></p>'
     )
-    list_block = empty_msg if not entries else list_inner
+    market_empty_hint = """<p id="hermers-market-empty" class="empty" hidden>
+      <span data-i18n-zh="目前此市場標籤下沒有文章，請改選「全部」或試其他區塊。"
+        data-i18n-en="No posts under this market tab. Switch to All or try another beat."></span>
+    </p>"""
+    if entries:
+        list_block = market_empty_hint + list_inner
+    else:
+        list_block = empty_msg
+    tabs_strip = _index_market_tabs_html() if entries else ""
     content = f"""<!DOCTYPE html>
 <html lang="zh-Hant" data-hermers-title-zh="{idx_title_zh_attr}" data-hermers-title-en="{idx_title_en_attr}">
 <head>
@@ -318,9 +406,9 @@ def rebuild_index() -> None:
   {lang_switcher_html()}
   <main>
     <header class="masthead">
-      <h1><span data-i18n-zh="台股新聞與行情快訊" data-i18n-en="Taiwan Stock News & Market Highlights"></span></h1>
-      <p class="sub"><span data-i18n-zh="台股與集中市場相關新聞剪報。"
-        data-i18n-en="Taiwan stock-market news clippings."></span></p>
+      <h1><span data-i18n-zh="Hermers 市場剪報" data-i18n-en="Hermers Market Digest"></span></h1>
+      <p class="sub"><span data-i18n-zh="台股、美股、加密貨幣新聞剪報；標籤可依區塊擴充。兼涉台／美兩市之重點稿若名列全站前十名，會於兩標籤並列。"
+        data-i18n-en="Taiwan, U.S., and crypto headlines—tabs scale with more beats. Stories strongly tied to both TW and US equity markets also appear under both tabs when in the site-wide top ten."></span></p>
       <div class="stats">
         <span class="pill"><span data-i18n-zh="待審" data-i18n-en="Pending"></span>
           <strong>{pending_count}</strong>
@@ -329,6 +417,7 @@ def rebuild_index() -> None:
           <strong>{len(entries)}</strong>
           <span data-i18n-zh="則" data-i18n-en="items"></span></span>
       </div>
+      {tabs_strip}
     </header>
     <div class="list-wrap">
       {list_block}
@@ -337,6 +426,7 @@ def rebuild_index() -> None:
       {html.escape(datetime.utcnow().isoformat(timespec="seconds"))}</footer>
   </main>
 {i18n_runtime_script()}
+{_index_segment_tabs_script()}
 </body>
 </html>
 """

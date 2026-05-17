@@ -11,6 +11,7 @@ from hermers.discover import FeedItem
 from hermers.fetch import ArticleExtract
 from hermers.i18n_ui import i18n_runtime_script, lang_switcher_css, lang_switcher_html, seo_block
 from hermers.static_skin import css_article_specific, css_base, css_shell
+from hermers.segment import infer_site_segment
 from hermers.title_clean import clean_news_title
 from hermers.translate_body import (
     en_paragraphs_from_zh_sequence,
@@ -200,6 +201,7 @@ def write_pending(
         "rss_source": item.source,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
+    meta["site_segment"] = infer_site_segment(meta, slug=draft_id)
     (folder / "meta.json").write_text(
         json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8"
     )

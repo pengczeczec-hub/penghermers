@@ -162,6 +162,35 @@ def css_index_specific() -> str:
     font-size: 0.78rem;
     color: var(--muted2);
   }
+  .market-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin: -0.35rem 0 1.15rem;
+  }
+  .market-tabs button {
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface-elev);
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.42rem 0.92rem;
+    border-radius: 999px;
+    line-height: 1.2;
+    box-shadow: var(--shadow);
+    transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+  }
+  .market-tabs button:hover {
+    color: var(--accent-hover);
+    border-color: rgba(15, 118, 110, 0.35);
+  }
+  .market-tabs button[aria-selected="true"] {
+    background: rgba(15, 118, 110, 0.14);
+    color: var(--ink);
+    border-color: rgba(15, 118, 110, 0.45);
+  }
 """
 
 
