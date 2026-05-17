@@ -5,10 +5,12 @@ import json
 from datetime import datetime
 from pathlib import Path
 
+from hermers.draft import legacy_minimal_article_inner_body, render_article_page
 from hermers.i18n_ui import (
     i18n_runtime_script,
     lang_switcher_css,
     lang_switcher_html,
+    polish_published_post,
     public_base_url,
     seo_block,
     strip_empty_seo_placeholders,
@@ -17,7 +19,36 @@ from hermers.paths import dist_dir, pending_dir, posts_dir
 from hermers.static_skin import css_base, css_index_specific, css_review_specific, css_shell
 
 
+def refresh_dist_article_pages() -> None:
+    """將早期極簡版文章升級為與首頁相同皮膚，並校正誤標為草稿的已發布眉批／canonical。"""
+    root = posts_dir()
+    root.mkdir(parents=True, exist_ok=True)
+    for path in sorted(root.glob("*.html")):
+        meta_path = path.with_suffix(".json")
+        if not meta_path.is_file():
+            continue
+        slug = path.stem
+        text = path.read_text(encoding="utf-8")
+        needs_polish = "__CANONICAL_URL__" in text or 'data-i18n-zh="待審草稿"' in text
+
+        if '<article class="prose">' not in text:
+            inner = legacy_minimal_article_inner_body(text)
+            if inner is None:
+                continue
+            meta = json.loads(meta_path.read_text(encoding="utf-8"))
+            body_block = f"""      <div class="hermers-i18n-zh">{inner}</div>
+      <div class="hermers-i18n-en">{inner}</div>
+"""
+            text = render_article_page(meta, body_block_html=body_block, pending=False)
+            path.write_text(text, encoding="utf-8")
+            needs_polish = True
+
+        if needs_polish:
+            polish_published_post(path, slug=slug)
+
+
 def rebuild_index() -> None:
+    refresh_dist_article_pages()
     posts_dir().mkdir(parents=True, exist_ok=True)
     entries: list[dict] = []
     for path in sorted(posts_dir().glob("*.html"), reverse=True):

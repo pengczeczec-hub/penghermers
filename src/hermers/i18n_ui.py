@@ -161,11 +161,23 @@ def strip_empty_seo_placeholders(page_html: str) -> str:
 
 
 def polish_published_post(path: Path, *, slug: str) -> None:
-    """核准後寫入 dist：替換 canonical 佔位，並在無網址時清掉空 rel/meta。"""
+    """核准後寫入 dist：替換 canonical 佔位、眉批／頁尾由「草稿」→「已發布」，並在無網址時清掉空 rel/meta。"""
     text = path.read_text(encoding="utf-8")
     base = public_base_url()
     canonical = f"{base}/posts/{slug}.html" if base else ""
     if "__CANONICAL_URL__" in text:
         text = text.replace("__CANONICAL_URL__", html.escape(canonical))
+    text = text.replace(
+        'data-i18n-zh="待審草稿" data-i18n-en="Pending draft"',
+        'data-i18n-zh="已發布" data-i18n-en="Published"',
+    )
+    text = text.replace(
+        'data-i18n-zh="自動擷取摘要；通過審核後會進入 dist/ 並可部署上線。"',
+        'data-i18n-zh="已審核發布於 Hermers 剪報站；可追溯原文連結。"',
+    )
+    text = text.replace(
+        'data-i18n-en="Auto-extracted summary; after approval this goes to dist/ for deploy."',
+        'data-i18n-en="Published on Hermers Digest; original source linked above."',
+    )
     text = strip_empty_seo_placeholders(text)
     path.write_text(text, encoding="utf-8")

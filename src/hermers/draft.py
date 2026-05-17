@@ -75,11 +75,75 @@ def _bilingual_headings(title_raw: str) -> tuple[str, str]:
     return html.escape(zh_plain), esc
 
 
-def _draft_html(meta: dict, extract: ArticleExtract) -> str:
-    title_raw = meta["title"]
-    title_zh_esc, title_en_esc = _bilingual_headings(title_raw)
+def render_article_page(
+    meta: dict,
+    *,
+    body_block_html: str,
+    pending: bool,
+    title_raw: str | None = None,
+) -> str:
+    """共用單頁版面：RSS 草稿、手動重建或升級 legacy dist 文章皆可呼叫。"""
+    t_raw = title_raw if title_raw is not None else str(meta["title"])
+    title_zh_esc, title_en_esc = _bilingual_headings(t_raw)
     url = html.escape(meta["url"])
     domain = html.escape(meta["domain_name"])
+    if pending:
+        desc_zh = f"「{t_raw}」剪報草稿（待審），來源連結於文內。"
+        desc_en = f'Clipping draft (pending): "{t_raw}". Source link inside.'
+        eyebrow = f'{domain} · <span data-i18n-zh="待審草稿" data-i18n-en="Pending draft"></span>'
+        foot = (
+            '<span data-i18n-zh="自動擷取摘要；通過審核後會進入 dist/ 並可部署上線。"'
+            ' data-i18n-en="Auto-extracted summary; after approval this goes to dist/ for deploy."></span>'
+        )
+    else:
+        desc_zh = f"「{t_raw}」剪報（已發布），來源連結於文內。"
+        desc_en = f'Published clipping: "{t_raw}". Source link inside.'
+        eyebrow = f'{domain} · <span data-i18n-zh="已發布" data-i18n-en="Published"></span>'
+        foot = (
+            '<span data-i18n-zh="已審核發布於 Hermers 剪報站；可追溯原文連結。"'
+            ' data-i18n-en="Published on Hermers Digest; original source linked above."></span>'
+        )
+    head_seo = seo_block(
+        canonical_url="__CANONICAL_URL__",
+        og_title=t_raw,
+        description_zh=desc_zh[:220],
+        description_en=desc_en[:220],
+        og_type="article",
+    )
+    css_full = "".join(
+        [css_base(), lang_switcher_css(), css_shell(narrow=True), css_article_specific()]
+    )
+    title_tab = html.escape(t_raw)
+    return f"""<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+{head_seo}  <title>{title_tab}</title>
+  <style>{css_full}
+  </style>
+</head>
+<body>
+  {lang_switcher_html(compact=True)}
+  <main>
+    <article class="prose">
+      <p class="eyebrow">{eyebrow}</p>
+      <h1><span class="hermers-i18n-zh">{title_zh_esc}</span><span class="hermers-i18n-en">{title_en_esc}</span></h1>
+      <div class="source-box"><span data-i18n-zh="來源：" data-i18n-en="Source:"></span><a href="{url}" rel="noopener noreferrer">{url}</a></div>
+      <hr />
+{body_block_html}
+      <footer class="note">{foot}</footer>
+    </article>
+  </main>
+{i18n_runtime_script()}
+</body>
+</html>
+"""
+
+
+def _draft_html(meta: dict, extract: ArticleExtract) -> str:
+    title_raw = meta["title"]
     paras_en = extract.paragraphs[:8]
     body_en = _paragraph_chunks_to_ps(list(paras_en))
     body_zh = _paragraph_chunks_to_ps(zh_paragraphs_from_extract(paras_en)) if paras_en else ""
@@ -92,44 +156,15 @@ def _draft_html(meta: dict, extract: ArticleExtract) -> str:
         body_zh = empty_inner
         body_en = empty_inner
     body = f"""      <div class="hermers-i18n-zh">{body_zh}</div>
-      <div class="hermers-i18n-en">{body_en}</div>"""
-    desc_zh = f"「{title_raw}」剪報草稿（待審），來源連結於文內。"
-    desc_en = f'Clipping draft (pending): "{title_raw}". Source link inside.'
-    head_seo = seo_block(
-        canonical_url="__CANONICAL_URL__",
-        og_title=title_raw,
-        description_zh=desc_zh[:220],
-        description_en=desc_en[:220],
-        og_type="article",
-    )
-    css_a = "".join(
-        [css_base(), lang_switcher_css(), css_shell(narrow=True), css_article_specific()]
-    )
-    title_tab = html.escape(title_raw)
-    return f"""<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
-{head_seo}  <title>{title_tab}</title>
-  <style>{css_a}
-  </style>
-</head>
-<body>
-  {lang_switcher_html(compact=True)}
-  <main>
-    <article class="prose">
-      <p class="eyebrow">{domain} · <span data-i18n-zh="待審草稿" data-i18n-en="Pending draft"></span></p>
-      <h1><span class="hermers-i18n-zh">{title_zh_esc}</span><span class="hermers-i18n-en">{title_en_esc}</span></h1>
-      <div class="source-box"><span data-i18n-zh="來源：" data-i18n-en="Source:"></span><a href="{url}" rel="noopener noreferrer">{url}</a></div>
-      <hr />
-      {body}
-      <footer class="note"><span data-i18n-zh="自動擷取摘要；通過審核後會進入 dist/ 並可部署上線。"
-        data-i18n-en="Auto-extracted summary; after approval this goes to dist/ for deploy."></span></footer>
-    </article>
-  </main>
-{i18n_runtime_script()}
-</body>
-</html>
+      <div class="hermers-i18n-en">{body_en}</div>
 """
+    return render_article_page(meta, body_block_html=body, pending=True, title_raw=title_raw)
+
+
+def legacy_minimal_article_inner_body(page_html: str) -> str | None:
+    """從早期 system-ui 版型擷取 <hr /> 之間正文（連續段落 HTML）。"""
+    parts = page_html.split("<hr />")
+    if len(parts) < 3:
+        return None
+    inner = parts[1].strip()
+    return inner if inner else None
