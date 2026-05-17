@@ -18,6 +18,8 @@ class FeedItem:
     url: str
     published: datetime | None
     source: str
+    section_zh: str | None = None
+    section_en: str | None = None
 
 
 def _parse_date_text(text: str | None) -> datetime | None:
@@ -116,6 +118,8 @@ def discover_domain(domain: DomainConfig, *, limit: int) -> list[FeedItem]:
                         url=url,
                         published=_entry_published(node),
                         source=source,
+                        section_zh=domain.section_zh,
+                        section_en=domain.section_en,
                     )
                 )
     items.sort(

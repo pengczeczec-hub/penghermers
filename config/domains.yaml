@@ -4,6 +4,8 @@ max_items: 10
 domains:
   - id: tw_stock
     name: 台股與集中市場
+    section_zh: 市場消息
+    section_en: Market news
     keywords:
       - 台股
       - 股價
@@ -35,6 +37,8 @@ domains:
       - https://news.cnyes.com/rss/v1/news/category/tw_stock
   - id: tw_market_extra
     name: 重大頭條（股市相關）
+    section_zh: 重大頭條
+    section_en: Major headlines
     keywords:
       - 股
       - 台股

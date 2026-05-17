@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import html
 import json
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
@@ -22,6 +23,34 @@ from hermers.i18n_ui import (
 )
 from hermers.paths import dist_dir, pending_dir, posts_dir
 from hermers.static_skin import css_base, css_index_specific, css_review_specific, css_shell
+
+# 首頁分類順序（對應 domains.yaml 的 section_*）；舊稿無欄位時依 domain_id 回退。
+_SECTION_FALLBACK: dict[str, tuple[str, str]] = {
+    "tw_market_extra": ("重大頭條", "Major headlines"),
+    "tw_stock": ("市場消息", "Market news"),
+    "manual": ("市場消息", "Market news"),
+}
+_SECTION_ORDER: list[tuple[str, str]] = [
+    ("重大頭條", "Major headlines"),
+    ("市場消息", "Market news"),
+]
+
+
+def _resolved_section_labels(meta: dict) -> tuple[str, str]:
+    sz = (meta.get("section_zh") or "").strip()
+    se = (meta.get("section_en") or "").strip()
+    if sz and se:
+        return (sz, se)
+    did = (meta.get("domain_id") or "").strip()
+    return _SECTION_FALLBACK.get(did, ("市場消息", "Market news"))
+
+
+def _section_sort_key(key: tuple[str, str]) -> tuple[int, str]:
+    try:
+        idx = _SECTION_ORDER.index(key)
+    except ValueError:
+        idx = len(_SECTION_ORDER)
+    return (idx, key[0])
 
 
 def _repair_duplicate_bilingual_article(page_html: str, meta: dict) -> str | None:
@@ -88,23 +117,27 @@ def rebuild_index() -> None:
         title = path.stem
         published = ""
         domain = ""
+        meta: dict = {}
         if meta_path.is_file():
             meta = json.loads(meta_path.read_text(encoding="utf-8"))
             title = meta.get("title") or title
             published = meta.get("approved_at") or ""
             domain = meta.get("domain_name") or ""
+        sec_zh, sec_en = _resolved_section_labels(meta)
         entries.append(
             {
                 "href": f"posts/{path.name}",
                 "title": title,
                 "published": published,
                 "domain": domain,
+                "section_zh": sec_zh,
+                "section_en": sec_en,
             }
         )
 
     pending_count = len(list(pending_dir().glob("*/meta.json"))) if pending_dir().is_dir() else 0
-    items_html = ""
-    for e in entries:
+
+    def _entry_li_html(e: dict) -> str:
         date = e["published"][:10] if e["published"] else ""
         tag = html.escape(e["domain"]) if e["domain"] else ""
         sep = " · " if tag and date else ""
@@ -117,11 +150,34 @@ def rebuild_index() -> None:
         tz, te = bilingual_headings_plain(e["title"])
         title_zh_esc = html.escape(tz)
         title_en_esc = html.escape(te)
-        items_html += (
+        return (
             f'<li><a href="{html.escape(e["href"])}">'
             f'<span class="hermers-i18n-zh">{title_zh_esc}</span>'
             f'<span class="hermers-i18n-en">{title_en_esc}</span></a>{meta_block}</li>\n'
         )
+
+    grouped: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    for e in entries:
+        grouped[(e["section_zh"], e["section_en"])].append(e)
+
+    section_blocks: list[str] = []
+    for sec_key in sorted(grouped.keys(), key=_section_sort_key):
+        rows = grouped[sec_key]
+        if not rows:
+            continue
+        sz, se = sec_key
+        zh_attr = html.escape(sz, quote=True)
+        en_attr = html.escape(se, quote=True)
+        lis = "".join(_entry_li_html(row) for row in rows)
+        section_blocks.append(
+            f'    <section class="category-block">\n'
+            f'      <h2 class="category-title"><span data-i18n-zh="{zh_attr}" '
+            f'data-i18n-en="{en_attr}"></span></h2>\n'
+            f'      <ul class="post-list">\n{lis}      </ul>\n'
+            f"    </section>\n"
+        )
+
+    list_inner = "".join(section_blocks)
 
     css = "".join(
         [
@@ -150,11 +206,7 @@ def rebuild_index() -> None:
         "<p class=\"empty\"><span data-i18n-zh=\"尚無已發布文章。請先完成待審流程。\""
         ' data-i18n-en="No published items yet. Complete the review workflow first."></span></p>'
     )
-    list_block = (
-        empty_msg
-        if not entries
-        else f"<ul class=\"post-list\">\n{items_html}</ul>"
-    )
+    list_block = empty_msg if not entries else list_inner
     content = f"""<!DOCTYPE html>
 <html lang="zh-Hant" data-hermers-title-zh="{idx_title_zh_attr}" data-hermers-title-en="{idx_title_en_attr}">
 <head>

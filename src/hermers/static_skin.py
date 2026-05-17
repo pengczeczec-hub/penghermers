@@ -110,6 +110,21 @@ def css_index_specific() -> str:
     box-shadow: var(--shadow);
     overflow: hidden;
   }
+  .category-block + .category-block {
+    border-top: 1px solid var(--border);
+  }
+  .category-title {
+    margin: 0;
+    padding: 0.85rem 1.15rem 0.45rem;
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    background: rgba(15, 118, 110, 0.06);
+    border-bottom: 1px solid var(--border);
+  }
+  .category-title span { display: inline-block; }
   .post-list {
     list-style: none;
     margin: 0;

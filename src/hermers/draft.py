@@ -26,6 +26,8 @@ def write_pending(
         "status": "pending",
         "domain_id": item.domain_id,
         "domain_name": item.domain_name,
+        "section_zh": item.section_zh,
+        "section_en": item.section_en,
         "title": extract.title or item.title,
         "source_title": item.title,
         "url": item.url,
