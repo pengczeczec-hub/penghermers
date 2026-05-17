@@ -138,8 +138,8 @@ def rebuild_index() -> None:
     idx_title_en = "Hermers · Taiwan Equities"
     idx_title_zh_attr = html.escape(idx_title_zh, quote=True)
     idx_title_en_attr = html.escape(idx_title_en, quote=True)
-    desc_zh = "台股與集中市場相關剪報，已審核、版面清楚、來源可追溯。"
-    desc_en = "Curated Taiwan stock-market clippings—reviewed, readable, with traceable sources."
+    desc_zh = "台股與集中市場相關新聞剪報。"
+    desc_en = "Taiwan stock-market news clippings."
     head_seo = seo_block(
         canonical_url=index_canonical,
         og_title=og_title,
@@ -170,8 +170,8 @@ def rebuild_index() -> None:
   <main>
     <header class="masthead">
       <h1><span data-i18n-zh="Hermers 台股資訊" data-i18n-en="Hermers · Taiwan Equities"></span></h1>
-      <p class="sub"><span data-i18n-zh="台股與集中市場相關剪報；已審核、版面清楚、來源可追溯。"
-        data-i18n-en="Taiwan stock-market clippings—reviewed, readable, traceable sources."></span></p>
+      <p class="sub"><span data-i18n-zh="台股與集中市場相關新聞剪報。"
+        data-i18n-en="Taiwan stock-market news clippings."></span></p>
       <div class="stats">
         <span class="pill"><span data-i18n-zh="待審" data-i18n-en="Pending"></span>
           <strong>{pending_count}</strong>
@@ -181,8 +181,6 @@ def rebuild_index() -> None:
           <span data-i18n-zh="則" data-i18n-en="items"></span></span>
       </div>
     </header>
-    <p class="sub" style="margin-bottom: 1rem"><span data-i18n-zh="本頁僅列出已上線文章；草稿與待審在管理流程／本機 staging 目錄處理，不會出現於此。"
-      data-i18n-en="This page lists live posts only; drafts and pending items stay in staging and admin flows."></span></p>
     <div class="list-wrap">
       {list_block}
     </div>
