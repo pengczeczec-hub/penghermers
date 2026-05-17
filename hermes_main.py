@@ -7,10 +7,19 @@ Telegram Bot 與 CLI 皆呼叫此模組。
 from __future__ import annotations
 
 import argparse
+import os
 import re
 import sys
 
+from hermers.env_load import load_dotenv
 from hermers.executor import HermesExecutor
+
+load_dotenv()
+# 若 .env 未設 SITE_PUBLIC_URL，使用已上線的 Workers 網址（.env 可覆寫）
+os.environ.setdefault(
+    "SITE_PUBLIC_URL",
+    "https://penghermers.pengczeczec.workers.dev",
+)
 
 
 def _extract_urls(text: str) -> list[str]:

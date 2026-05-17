@@ -67,10 +67,17 @@ def _paragraph_chunks_to_ps(parts: list[str]) -> str:
 
 
 def _bilingual_headings(title_raw: str) -> tuple[str, str]:
-    """回傳 (title_zh_esc, title_en_esc)。中文來源標題時兩側先相同，留待人工補英文。"""
+    """回傳 (title_zh_esc, title_en_esc)。英文來源：繁中／原文；中文來源：原文／英譯（LLM 可備援）。"""
     esc = html.escape(title_raw)
     if any("\u4e00" <= c <= "\u9fff" for c in title_raw):
-        return esc, esc
+        en_plain = title_raw.strip()
+        from hermers.translate_llm import llm_translate_available, llm_zh_to_en_title
+
+        if llm_translate_available():
+            e = llm_zh_to_en_title(en_plain[:500])
+            if e and e != en_plain:
+                en_plain = e
+        return esc, html.escape(en_plain)
     zh_plain = zh_title_from_extract(title_raw) or title_raw
     return html.escape(zh_plain), esc
 

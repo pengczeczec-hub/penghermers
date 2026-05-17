@@ -42,7 +42,12 @@ def _max_rounds() -> int:
 class AgentRunner:
     """萬用 Agent：規則路由 + 可選 LLM 選工具，一律直接執行。"""
 
-    def handle(self, user_text: str) -> RunResult:
+    def handle(
+        self,
+        user_text: str,
+        *,
+        history: list[dict[str, str]] | None = None,
+    ) -> RunResult:
         text = (user_text or "").strip()
         if not text:
             return RunResult(True, "請告訴我您要做什麼。")
@@ -50,6 +55,8 @@ class AgentRunner:
         ruled = rules_route(text)
         if ruled is not None:
             return ruled
+
+        session_history = list(history or [])
 
         if not brain.llm_available():
             from hermers.agent.cursor_brain import cursor_ready
@@ -70,8 +77,13 @@ class AgentRunner:
 
         tools_txt = tools_schema_text()
         persona = _persona()
-        history: list[dict[str, str]] = []
+        tool_round: list[dict[str, str]] = []
         current = text
+        if session_history:
+            current = (
+                "（以下為近期對話，請延續上下文回覆與執行，勿忽略先前約定。）\n\n"
+                f"目前訊息：{text}"
+            )
 
         for _ in range(_max_rounds()):
             try:
@@ -79,7 +91,7 @@ class AgentRunner:
                     current,
                     tools_text=tools_txt,
                     persona=persona,
-                    history=history,
+                    history=session_history + tool_round,
                 )
             except Exception as exc:  # noqa: BLE001
                 return RunResult(
@@ -99,8 +111,8 @@ class AgentRunner:
                 result = run_tool(name, args)
                 if not result.ok:
                     return result
-                history.append({"role": "user", "content": current})
-                history.append(
+                tool_round.append({"role": "user", "content": current})
+                tool_round.append(
                     {
                         "role": "assistant",
                         "content": f"工具 {name} 結果：{result.message[:500]}",

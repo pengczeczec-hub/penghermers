@@ -1,4 +1,4 @@
-"""英文摘要 → 繁體中文：選用 LibreTranslate 相容 API（可自建或用公開節點）。"""
+"""英文摘要 → 繁體中文：LibreTranslate 優先，失敗段落由 Cursor LLM batch 備援。"""
 
 from __future__ import annotations
 
@@ -47,27 +47,37 @@ def translate_en_to_zh(text: str, *, timeout: float = 28.0) -> str | None:
 
 
 def zh_paragraphs_from_extract(paragraphs: Sequence[str]) -> list[str]:
-    """逐段嘗試翻譯；失敗則標註並保留原文供編輯。"""
+    """逐段 LibreTranslate；失敗段落改由 Cursor LLM batch 補齊；仍失敗則標註並保留原文。"""
     paras = [p.strip() for p in paragraphs if p and p.strip()]
     if not paras:
         return []
 
     translated: list[str | None] = []
-    any_ok = False
     fail_tag_zh = "〔此段自動繁體翻譯未成功，下方為英文原文；請於送審前改寫為繁體剪報體。〕"
     for p in paras:
         clip = p[:12000]
-        t = translate_en_to_zh(clip)
+        t = translate_en_to_zh(clip) if _translate_enabled() else None
         if t and t != clip:
             translated.append(t)
-            any_ok = True
         else:
             translated.append(None)
 
+    if any(z is None for z in translated):
+        from hermers.translate_llm import llm_batch_en_to_zh, llm_translate_available
+
+        if llm_translate_available():
+            miss_idx = [i for i, z in enumerate(translated) if z is None]
+            batch_in = [paras[i] for i in miss_idx]
+            filled = llm_batch_en_to_zh(batch_in)
+            if filled is not None and len(filled) == len(miss_idx):
+                for j, idx in enumerate(miss_idx):
+                    translated[idx] = filled[j]
+
+    any_ok = any(z is not None for z in translated)
     if not any_ok:
         banner = (
-            "（目前無法連線自動翻譯服務；中文版區塊暫附英文原文，請於通過審核前改寫為繁體中文，"
-            "或設定 LIBRETRANSLATE_URL／API。）"
+            "（未能完成自動中譯：可檢查 LIBRETRANSLATE_URL，或設定 CURSOR_API_KEY "
+            "並保留 HERMERS_TRANSLATE_LLM=1 以啟用 LLM 備援。中文版暫附英文原文，於送審前改寫為繁體。）"
         )
         return [banner, *paras]
 
@@ -81,5 +91,14 @@ def zh_paragraphs_from_extract(paragraphs: Sequence[str]) -> list[str]:
 
 
 def zh_title_from_extract(title: str) -> str:
-    t = translate_en_to_zh(title.strip()[:500])
-    return t if t else title.strip()
+    s = title.strip()[:500]
+    if not s:
+        return ""
+    if _translate_enabled():
+        t = translate_en_to_zh(s)
+        if t and t.strip() and t.strip() != s:
+            return t.strip()
+    from hermers.translate_llm import llm_en_to_zh_title
+
+    lt = llm_en_to_zh_title(s)
+    return lt if lt else s

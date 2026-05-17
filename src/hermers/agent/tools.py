@@ -10,6 +10,7 @@ from hermers.env_load import load_dotenv
 from hermers.executor import HermesExecutor, RunResult
 from hermers.hermes_config import load_hermes_config
 from hermers.site_live import check_site_live, public_site_url, site_live_html_block
+from hermers.local_actions import beautify_site_ui, remove_articles
 from hermers.url_policy import is_own_site_url
 
 ToolFn = Callable[[dict[str, Any]], RunResult]
@@ -93,6 +94,23 @@ def _tool_site_url(_: dict) -> RunResult:
     return RunResult(True, "\n".join(lines))
 
 
+def _tool_beautify(_: dict) -> RunResult:
+    return beautify_site_ui()
+
+
+def _tool_remove_post(args: dict) -> RunResult:
+    hint = str(args.get("title_or_id") or args.get("query") or "").strip()
+    if not hint:
+        return RunResult(False, "缺少 title_or_id")
+    return remove_articles(f"刪除 {hint}")
+
+
+_register("beautify_site", "重建 dist 首頁與文章皮膚（美化 UI）", _tool_beautify)
+_register(
+    "remove_post",
+    "刪除已發布文章（args: title_or_id 為 ID 或標題關鍵字）",
+    _tool_remove_post,
+)
 _register("deploy_site", "推送 GitHub 並執行 Cloudflare 部署流程", _tool_deploy)
 _register("publish_git", "將目前專案推送到 GitHub", _tool_publish)
 _register("run_digest_pipeline", "從 RSS 抓取熱門新聞、生成剪報並寫入 dist", _tool_pipeline)

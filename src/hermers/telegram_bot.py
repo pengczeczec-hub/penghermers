@@ -8,6 +8,7 @@ import time
 import httpx
 
 from hermers.agent.runner import AgentRunner
+from hermers.chat_memory import ChatMemory
 from hermers.env_load import load_dotenv
 from hermers.executor import HermesExecutor
 from hermers.paths import data_dir
@@ -22,6 +23,8 @@ HELP_TEXT = """<b>Hermes · 您的專屬員工</b>
 /publish — 推 GitHub
 /pipeline — 自動剪報
 /status — 狀態
+/beautify — 美化首頁 UI
+/reset — 清空對話記憶（20 則）
 
 <b>自然語言</b>（例）
 「幫我部署網站」「抓今日熱門科技新聞」「這則新聞做成剪報」+ 網址
@@ -30,6 +33,7 @@ HELP_TEXT = """<b>Hermes · 您的專屬員工</b>
 
 _EXEC = HermesExecutor()
 _AGENT = AgentRunner()
+_MEMORY = ChatMemory(max_messages=20)
 
 
 def _offset_path():
@@ -64,7 +68,14 @@ def _extract_urls(text: str) -> list[str]:
     return re.findall(r"https?://\S+", text)
 
 
-def handle_message(text: str) -> str:
+def _remember(chat_id: int | str | None, user_text: str, reply: str) -> str:
+    if chat_id is not None:
+        _MEMORY.append(chat_id, "user", user_text)
+        _MEMORY.append(chat_id, "assistant", reply)
+    return reply
+
+
+def handle_message(text: str, *, chat_id: int | str | None = None) -> str:
     text = (text or "").strip()
 
     if text.startswith("/"):
@@ -73,27 +84,40 @@ def handle_message(text: str) -> str:
         arg = parts[1].strip() if len(parts) > 1 else ""
 
         if cmd in ("/help", "/start"):
-            return HELP_TEXT
+            return _remember(chat_id, text, HELP_TEXT)
         if cmd == "/status":
-            return _EXEC.status().message
+            return _remember(chat_id, text, _EXEC.status().message)
         if cmd == "/pipeline":
-            return _EXEC.run_pipeline(push=False).message
+            return _remember(chat_id, text, _EXEC.run_pipeline(push=False).message)
         if cmd == "/publish":
-            return _EXEC.publish().message
+            return _remember(chat_id, text, _EXEC.publish().message)
         if cmd == "/deploy":
             urls = _extract_urls(arg)
             if urls:
-                return _EXEC.ingest_url(urls[0], push=True).message
-            return _EXEC.deploy().message
+                msg = _EXEC.ingest_url(urls[0], push=True).message
+            else:
+                msg = _EXEC.deploy().message
+            return _remember(chat_id, text, msg)
+        if cmd == "/beautify":
+            from hermers.local_actions import beautify_site_ui
+
+            return _remember(chat_id, text, beautify_site_ui().message)
         if cmd in ("/cancel", "/reset"):
+            if chat_id is not None:
+                _MEMORY.clear(chat_id)
             return (
                 "<b>已重置</b>\n"
-                "本輪不會再重跑舊指令。一般對話可直接輸入需求；"
-                "查網址請傳 <code>/status</code> 或問「網站網址」。"
+                "對話記憶已清空（最近 20 則）。可重新下指令；"
+                "查網址請傳 <code>/status</code>。"
             )
-        return "未知指令。傳 /help"
+        return _remember(chat_id, text, "未知指令。傳 /help")
 
-    return _AGENT.handle(text).message
+    return _remember(chat_id, text, _dispatch(text, chat_id=chat_id))
+
+
+def _dispatch(text: str, *, chat_id: int | str | None) -> str:
+    history = _MEMORY.get(chat_id) if chat_id is not None else []
+    return _AGENT.handle(text, history=history).message
 
 
 def run_bot(*, poll_seconds: float = 2.0) -> None:
@@ -127,7 +151,7 @@ def run_bot(*, poll_seconds: float = 2.0) -> None:
                 continue
             print(f"← {text[:80]}")
             try:
-                reply = handle_message(text)
+                reply = handle_message(text, chat_id=int(chat_id))
             except Exception as exc:  # noqa: BLE001
                 reply = f"<b>系統錯誤，需介入</b>\n<code>{html.escape(str(exc))}</code>"
             if send_message(reply):

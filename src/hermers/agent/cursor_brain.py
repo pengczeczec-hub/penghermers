@@ -56,7 +56,7 @@ def cursor_chat(
 
     parts: list[str] = []
     if history:
-        for msg in history[-6:]:
+        for msg in history[-20:]:
             role = msg.get("role", "user")
             parts.append(f"[{role}]\n{msg.get('content', '')}")
     parts.append(f"[user]\n{user_text}")

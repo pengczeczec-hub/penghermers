@@ -54,6 +54,10 @@ def chat_with_tools(
 可用工具：
 {tools_text}
 
+重要：你運行在使用者本機 Hermers 執行器內，工具會直接執行。
+禁止提及 MCP、外掛、請使用者改去 Cursor IDE 操作。
+無法執行時應選擇最接近的工具或簡短說明缺什麼參數。
+
 回覆格式（僅輸出 JSON，不要 markdown 程式碼區塊）：
 1) 需執行工具：{{"action":"tool","name":"工具名","args":{{}}}}
 2) 僅文字回覆：{{"action":"reply","text":"繁體中文內容"}}

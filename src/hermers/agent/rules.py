@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 from hermers.agent.tools import extract_urls, run_tool
+from hermers.local_actions import try_local_action
 from hermers.url_policy import is_own_site_url
 from hermers.executor import RunResult
 
@@ -39,6 +40,10 @@ def route(text: str) -> RunResult | None:
     if not t or t.startswith("/"):
         return None
 
+    local = try_local_action(t)
+    if local is not None:
+        return local
+
     urls = extract_urls(t)
     if urls and not _PIPELINE.search(t):
         news_urls = [u for u in urls if not is_own_site_url(u)]
@@ -53,8 +58,6 @@ def route(text: str) -> RunResult | None:
         if urls and all(is_own_site_url(u) for u in urls):
             return run_tool("site_url_info", {})
 
-    if _DEPLOY.search(t):
-        return run_tool("deploy_site", {})
     if _PUBLISH.search(t):
         return run_tool("publish_git", {})
     if _PIPELINE.search(t):
