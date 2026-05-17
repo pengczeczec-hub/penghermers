@@ -157,6 +157,8 @@ class HermesExecutor:
             except (SystemExit, Exception):  # noqa: BLE001
                 continue
 
+        rebuild_index()
+
         msg = (
             "<b>管線完成</b>\n"
             "已依「全市場候選＋市場影響力加權」精選並發布 "
