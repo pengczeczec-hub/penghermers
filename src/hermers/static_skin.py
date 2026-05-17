@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="color-scheme" content="light" />
-  <title>Hermers 剪報站</title>
-  <style>
+"""共用內嵌樣式：剪報站首頁、待審表、草稿／文章頁。"""
+
+
+def css_base() -> str:
+    """變數、底色、字型、連結。"""
+    return """
   :root {
     --bg: #f4f2ee;
     --surface: #fffcf7;
@@ -50,13 +48,24 @@
     padding: 0.12em 0.35em;
     border-radius: 4px;
   }
+"""
 
-  main {
-    max-width: min(54rem, 100% - 2rem);
+
+def css_shell(*, narrow: bool) -> str:
+    """主內容區寬度。"""
+    w = "40rem" if narrow else "min(54rem, 100% - 2rem)"
+    return f"""
+  main {{
+    max-width: {w};
     margin: 0 auto;
     padding: clamp(1.5rem, 4vw, 2.75rem) 1rem 3rem;
-  }
+  }}
+"""
 
+
+def css_index_specific() -> str:
+    """首頁列表、統計區塊。"""
+    return """
   .masthead {
     margin-bottom: 2rem;
     padding-bottom: 1.5rem;
@@ -138,43 +147,115 @@
     font-size: 0.78rem;
     color: var(--muted2);
   }
+"""
 
-  </style>
-</head>
-<body>
-  <main>
-    <header class="masthead">
-      <h1>Hermers 剪報站</h1>
-      <p class="sub">已審核通過的剪報條目；版面清楚、來源可追溯。</p>
-      <div class="stats">
-        <span class="pill">待審 <strong>0</strong> 則</span>
-        <span class="pill">已發布 <strong>9</strong> 則</span>
-      </div>
-    </header>
-    <p class="sub" style="margin-bottom: 1rem">本頁僅列出已上線文章；草稿與待審在管理流程／本機 staging 目錄處理，不會出現於此。</p>
-    <div class="list-wrap">
-      <ul class="post-list">
-<li><a href="posts/20260516-the-main-thing-about-p2p-meth-is-that-th.html">The main thing about P2P meth is that there’s so much of it</a><span class="meta">科技熱門 · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-show-hn-epiq-distributed-git-based-issue.html">Epiq — terminal-native issue tracking</a><span class="meta">科技熱門 · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-nyt-and-vaping-how-to-lie-by-saying-only.html">NYT and Vaping: How To Lie By Saying Only True Things · Gwern.net</a><span class="meta">科技熱門 · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-no-way-to-prevent-this-says-only-package.html">‘No Way To Prevent This,’ Says Only Package Manager Where This Regularly Happens | Kevin Patel</a><span class="meta">科技熱門 · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-i-broke-applovin-s-mediation-cipher-prot.html">I broke AppLovin&#x27;s mediation cipher protocol.</a><span class="meta">科技熱門 · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-erlang-otp-29-0.html">Erlang/OTP 29.0 - Erlang/OTP</a><span class="meta">科技熱門 · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-145552-hermers-剪報站.html">Hermers 剪報站</a><span class="meta">Telegram · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-142512-https-penghermes-pengczeczec-workers-dev.html">https://penghermes.pengczeczec.workers.dev/</a><span class="meta">Telegram · 2026-05-16</span>
-</li>
-<li><a href="posts/20260516-024336-workers-sdk-packages-wrangler-telemetry.html">workers-sdk/packages/wrangler/telemetry.md at main · cloudflare/workers-sdk</a><span class="meta">Telegram · 2026-05-16</span>
-</li>
-</ul>
-    </div>
-    <footer class="time">更新時間（UTC）· 2026-05-17T02:14:57</footer>
-  </main>
-</body>
-</html>
+
+def css_review_specific() -> str:
+    """待審表格。"""
+    return """
+  h1.page-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 3vw, 1.85rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 1rem;
+  }
+  .help {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.15rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+  .help p { margin: 0 0 0.5rem; }
+  .help p:last-child { margin-bottom: 0; line-height: 1.55; }
+  .table-card {
+    background: var(--surface-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+  }
+  thead { background: var(--accent-soft); }
+  th {
+    font-weight: 600;
+    text-align: left;
+    padding: 0.65rem 0.85rem;
+    color: var(--ink);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  td {
+    padding: 0.75rem 0.85rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    color: var(--ink);
+  }
+  tbody tr:nth-child(even) { background: rgba(28, 25, 23, 0.02); }
+  tbody tr:hover { background: rgba(15, 118, 110, 0.05); }
+  tbody tr:last-child td { border-bottom: none; }
+"""
+
+
+def css_article_specific() -> str:
+    """單篇文章／草稿。"""
+    return """
+  article.prose {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    box-shadow: var(--shadow);
+  }
+  .eyebrow {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  article.prose h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.45rem, 3.8vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    line-height: 1.22;
+    margin: 0 0 1.25rem;
+  }
+  .source-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.65rem 0.85rem;
+    font-size: 0.88rem;
+    margin-bottom: 1.35rem;
+    word-break: break-all;
+  }
+  .source-box a { word-break: break-all; }
+  hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 1.5rem 0;
+  }
+  article.prose p {
+    margin: 0 0 1rem;
+    max-width: 65ch;
+  }
+  article.prose p:last-of-type { margin-bottom: 0; }
+  footer.note {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 1.25rem;
+  }
+"""

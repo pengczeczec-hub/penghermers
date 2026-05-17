@@ -6,6 +6,7 @@ from datetime import datetime
 from pathlib import Path
 
 from hermers.paths import dist_dir, pending_dir, posts_dir
+from hermers.static_skin import css_base, css_index_specific, css_review_specific, css_shell
 
 
 def rebuild_index() -> None:
@@ -32,38 +33,54 @@ def rebuild_index() -> None:
 
     pending_count = len(list(pending_dir().glob("*/meta.json"))) if pending_dir().is_dir() else 0
     items_html = ""
-    if not entries:
-        items_html = "<p>尚無已發布文章。請先審核通過待審草稿。</p>"
-    else:
-        for e in entries:
-            date = e["published"][:10] if e["published"] else ""
-            tag = html.escape(e["domain"]) if e["domain"] else ""
-            items_html += (
-                f'<li><a href="{html.escape(e["href"])}">{html.escape(e["title"])}</a>'
-                f' <span class="meta">{html.escape(tag)} {html.escape(date)}</span></li>\n'
-            )
+    for e in entries:
+        date = e["published"][:10] if e["published"] else ""
+        tag = html.escape(e["domain"]) if e["domain"] else ""
+        sep = " · " if tag and date else ""
+        meta_line = f"{tag}{sep}{html.escape(date)}".strip()
+        meta_block = (
+            f'<span class="meta">{meta_line}</span>\n'
+            if meta_line
+            else '<span class="meta">—</span>\n'
+        )
+        items_html += (
+            f'<li><a href="{html.escape(e["href"])}">{html.escape(e["title"])}</a>{meta_block}</li>\n'
+        )
+
+    css = "".join(
+        [
+            css_base(),
+            css_shell(narrow=False),
+            css_index_specific(),
+        ]
+    )
 
     content = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
   <title>Hermers 剪報站</title>
-  <style>
-    body {{ font-family: system-ui, sans-serif; max-width: 44rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }}
-    h1 {{ font-size: 1.4rem; }}
-    .badge {{ background: #f4f4f5; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.85rem; }}
-    ul {{ padding-left: 1.2rem; }}
-    .meta {{ color: #666; font-size: 0.85rem; }}
+  <style>{css}
   </style>
 </head>
 <body>
-  <h1>Hermers 剪報站</h1>
-  <p class="badge">待審：{pending_count} 則 · 已發布：{len(entries)} 則</p>
-  <p>本頁僅含<strong>已審核通過</strong>的文章。待審內容請開啟 <code>staging/review.html</code>。</p>
-  <ul>
-{items_html}  </ul>
-  <p><small>更新時間（UTC） {html.escape(datetime.utcnow().isoformat(timespec="seconds"))}</small></p>
+  <main>
+    <header class="masthead">
+      <h1>Hermers 剪報站</h1>
+      <p class="sub">已審核通過的剪報條目；版面清楚、來源可追溯。</p>
+      <div class="stats">
+        <span class="pill">待審 <strong>{pending_count}</strong> 則</span>
+        <span class="pill">已發布 <strong>{len(entries)}</strong> 則</span>
+      </div>
+    </header>
+    <p class="sub" style="margin-bottom: 1rem">本頁僅列出已上線文章；草稿與待審在管理流程／本機 staging 目錄處理，不會出現於此。</p>
+    <div class="list-wrap">
+      {"<p class=\"empty\">尚無已發布文章。請先完成待審流程。</p>" if not entries else f"<ul class=\"post-list\">\n{items_html}</ul>"}
+    </div>
+    <footer class="time">更新時間（UTC）· {html.escape(datetime.utcnow().isoformat(timespec="seconds"))}</footer>
+  </main>
 </body>
 </html>
 """
@@ -89,33 +106,34 @@ def write_review_page() -> Path:
                 f'<td><a href="{url}">原文</a></td>'
                 f"<td><code>{html.escape(draft_id)}</code></td></tr>"
             )
-    body = "\n".join(rows) if rows else "<tr><td colspan=\"4\">目前沒有待審草稿。請執行 pipeline.bat。</td></tr>"
+    body = "\n".join(rows) if rows else "<tr><td colspan=\"4\">目前沒有待審草稿。請跑剪報／擷取流程（例如 pipeline）。</td></tr>"
+    css_r = "".join([css_base(), css_shell(narrow=False), css_review_specific()])
     page = f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
   <title>Hermers 待審清單</title>
-  <style>
-    body {{ font-family: system-ui, sans-serif; max-width: 56rem; margin: 2rem auto; padding: 0 1rem; }}
-    table {{ width: 100%; border-collapse: collapse; }}
-    th, td {{ border-bottom: 1px solid #ddd; padding: 0.5rem; text-align: left; vertical-align: top; }}
-    code {{ font-size: 0.85rem; }}
-    .help {{ background: #f8fafc; padding: 1rem; border-radius: 8px; }}
+  <style>{css_r}
   </style>
 </head>
 <body>
-  <h1>待審清單</h1>
-  <div class="help">
-    <p>1. 點草稿預覽 · 2. 不滿意可在 Cursor 改 <code>staging/pending/…/draft.html</code></p>
-    <p>3. 通過：<code>approve.bat 草稿ID</code> · 4. 拒絕：<code>reject.bat 草稿ID</code> · 5. 滿意後 <code>publish.bat</code> 推 GitHub</p>
-  </div>
-  <table>
-    <thead><tr><th>領域</th><th>草稿</th><th>原文</th><th>ID（給 approve）</th></tr></thead>
-    <tbody>
+  <main>
+    <h1 class="page-title">待審清單</h1>
+    <div class="help">
+      <p>1. 點「草稿」預覽 · 2. 需要潤稿時編輯 <code>staging/pending/&lt;草稿ID&gt;/draft.html</code></p>
+      <p>3. 通過：<code>approve.bat</code>／<code>hermes-review approve</code> · 4. 拒絕：<code>reject.bat</code> · 5. 上線前 <code>publish.bat</code> 推送 GitHub</p>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead><tr><th>領域</th><th>草稿</th><th>原文</th><th>ID（給 approve）</th></tr></thead>
+        <tbody>
 {body}
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+  </main>
 </body>
 </html>
 """

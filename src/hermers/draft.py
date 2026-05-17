@@ -7,6 +7,7 @@ from pathlib import Path
 
 from hermers.discover import FeedItem
 from hermers.fetch import ArticleExtract
+from hermers.static_skin import css_article_specific, css_base, css_shell
 
 
 def write_pending(
@@ -46,7 +47,7 @@ def _cursor_task(meta: dict, summary: str) -> str:
 待審草稿：`{meta["id"]}`
 原文：{meta["url"]}
 
-請在通過審核前，視需要改寫 `draft.html`（繁體中文、剪報體、保留來源連結）。
+請在通過審核前，視需要改寫同資料夾內 `draft.html`（繁體中文、剪報體、保留來源連結）。
 
 ## 擷取摘要（自動）
 
@@ -60,27 +61,29 @@ def _draft_html(meta: dict, extract: ArticleExtract) -> str:
     domain = html.escape(meta["domain_name"])
     body = "".join(f"<p>{html.escape(p)}</p>" for p in extract.paragraphs[:8])
     if not body:
-        body = "<p><em>（未能擷取內文，請在 Cursor 中依連結手動撰寫。）</em></p>"
+        body = "<p><em>（未能擷取內文，請依上方原文連結手動撰寫後再送審。）</em></p>"
+    css_a = "".join([css_base(), css_shell(narrow=True), css_article_specific()])
     return f"""<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
   <title>{title}</title>
-  <style>
-    body {{ font-family: system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.65; }}
-    .tag {{ color: #666; font-size: 0.9rem; }}
-    a {{ color: #06c; }}
+  <style>{css_a}
   </style>
 </head>
 <body>
-  <p class="tag">{domain} · 待審草稿</p>
-  <h1>{title}</h1>
-  <p>來源：<a href="{url}" rel="noopener noreferrer">{url}</a></p>
-  <hr />
-  {body}
-  <hr />
-  <p><small>自動擷取摘要；審核通過後才會進入 dist/ 並可推送 GitHub。</small></p>
+  <main>
+    <article class="prose">
+      <p class="eyebrow">{domain} · 待審草稿</p>
+      <h1>{title}</h1>
+      <div class="source-box">來源：<a href="{url}" rel="noopener noreferrer">{url}</a></div>
+      <hr />
+      {body}
+      <footer class="note">自動擷取摘要；通過審核後會進入 dist/ 並可部署上線。</footer>
+    </article>
+  </main>
 </body>
 </html>
 """
