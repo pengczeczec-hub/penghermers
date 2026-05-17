@@ -242,6 +242,25 @@ def llm_bilingual_clipping_digest(
         short_zh = short_zh[:150].rstrip() + "…"
     if len(short_en) > 150:
         short_en = short_en[:149].rstrip() + "…"
+    from hermers.translate_body import snippet_looks_mostly_english, translate_zh_to_en
+
+    fixed_en: list[str] = []
+    for zh_b, en_b in zip(clean_zh, clean_en):
+        if snippet_looks_mostly_english(en_b):
+            fixed_en.append(en_b)
+            continue
+        lt = translate_zh_to_en(zh_b)
+        if lt and snippet_looks_mostly_english(lt):
+            fixed_en.append(lt.strip())
+        else:
+            fixed_en.append(en_b)
+    clean_en = fixed_en
+    if short_zh and short_en and not snippet_looks_mostly_english(short_en):
+        st = translate_zh_to_en(short_zh)
+        if st and snippet_looks_mostly_english(st):
+            short_en = st.strip()[:220]
+            if len(short_en) > 150:
+                short_en = short_en[:149].rstrip() + "…"
     return {
         "title_zh": tz,
         "title_en": te,

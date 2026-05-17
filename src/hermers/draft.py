@@ -11,7 +11,12 @@ from hermers.discover import FeedItem
 from hermers.fetch import ArticleExtract
 from hermers.i18n_ui import i18n_runtime_script, lang_switcher_css, lang_switcher_html, seo_block
 from hermers.static_skin import css_article_specific, css_base, css_shell
-from hermers.translate_body import zh_paragraphs_from_extract, zh_title_from_extract
+from hermers.translate_body import (
+    en_paragraphs_from_zh_sequence,
+    snippet_looks_mostly_english,
+    zh_paragraphs_from_extract,
+    zh_title_from_extract,
+)
 
 
 def _clip_paragraphs_for_digest(paragraphs: list[str], *, total_max: int = 9000) -> list[str]:
@@ -86,14 +91,19 @@ def _fallback_bullet_lists(paras: list[str], merged: str) -> tuple[list[str], li
         bullets_zh = bullets_zh[:5]
         from hermers.translate_llm import llm_batch_zh_to_en, llm_translate_available
 
+        be: list[str] | None = None
         if llm_translate_available():
-            be = llm_batch_zh_to_en(bullets_zh)
-            if be is not None and len(be) == len(bullets_zh):
-                bullets_en = [_truncate_display(x, 160) for x in be]
-            else:
-                bullets_en = list(bullets_zh)
-        else:
-            bullets_en = list(bullets_zh)
+            cand = llm_batch_zh_to_en(bullets_zh)
+            if cand is not None and len(cand) == len(bullets_zh):
+                if all(snippet_looks_mostly_english(x) for x in cand):
+                    be = [_truncate_display(x, 160) for x in cand]
+        if be is None:
+            lt = en_paragraphs_from_zh_sequence(bullets_zh)
+            if lt is not None:
+                be = [_truncate_display(x, 160) for x in lt]
+        if be is None:
+            be = list(bullets_zh)
+        bullets_en = be
     n = min(len(bullets_zh), len(bullets_en), 5)
     return bullets_zh[:n], bullets_en[:n]
 
@@ -269,10 +279,21 @@ def build_bilingual_body_block_from_fragment(inner_html: str) -> str:
 
         body_zh = paragraph_chunks_to_ps(list(paras))
         filled = llm_batch_zh_to_en(paras) if llm_translate_available() else None
-        if filled is not None and len(filled) == len(paras):
-            body_en = paragraph_chunks_to_ps(filled)
+        use_llm = (
+            filled is not None
+            and len(filled) == len(paras)
+            and all(snippet_looks_mostly_english(x) for x in filled)
+        )
+        if use_llm:
+            body_en = paragraph_chunks_to_ps(filled)  # type: ignore[arg-type]
         else:
-            body_en = body_zh
+            lt_paras = en_paragraphs_from_zh_sequence(paras)
+            if lt_paras is not None:
+                body_en = paragraph_chunks_to_ps(lt_paras)
+            elif filled is not None and len(filled) == len(paras):
+                body_en = paragraph_chunks_to_ps(filled)
+            else:
+                body_en = body_zh
     return f"""      <div class="hermers-i18n-zh">{body_zh}</div>
       <div class="hermers-i18n-en">{body_en}</div>
 """

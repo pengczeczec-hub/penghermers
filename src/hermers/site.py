@@ -11,6 +11,7 @@ from hermers.draft import (
     build_bilingual_body_block_from_fragment,
     legacy_minimal_article_inner_body,
     render_article_page,
+    _digest_body_html,
 )
 from hermers.i18n_ui import (
     i18n_runtime_script,
@@ -75,6 +76,88 @@ def _repair_duplicate_bilingual_article(page_html: str, meta: dict) -> str | Non
     return render_article_page(meta, body_block_html=body_block, pending=pending)
 
 
+def _repair_digest_en_still_zh(page_html: str, meta: dict) -> str | None:
+    """條列剪報：英文欄仍為繁中時，依中文條目重翻英文並重組 body。"""
+    from bs4 import BeautifulSoup
+
+    from hermers.translate_body import (
+        en_paragraphs_from_zh_sequence,
+        snippet_looks_mostly_english,
+        translate_zh_to_en,
+    )
+    from hermers.translate_llm import llm_batch_zh_to_en, llm_translate_available
+
+    soup = BeautifulSoup(page_html, "html.parser")
+    zh = soup.find("div", class_="hermers-i18n-zh")
+    en = soup.find("div", class_="hermers-i18n-en")
+    if not zh or not en or not zh.select_one("ul.digest-bullets"):
+        return None
+    bullets_zh = [li.get_text(" ", strip=True) for li in zh.select("ul.digest-bullets li")]
+    bullets_en_old = [li.get_text(" ", strip=True) for li in en.select("ul.digest-bullets li")]
+    if len(bullets_zh) < 3 or len(bullets_en_old) != len(bullets_zh):
+        return None
+    if all(snippet_looks_mostly_english(x) for x in bullets_en_old):
+        return None
+
+    be: list[str] | None = None
+    if llm_translate_available():
+        cand = llm_batch_zh_to_en(bullets_zh)
+        if cand is not None and len(cand) == len(bullets_zh):
+            if all(snippet_looks_mostly_english(x) for x in cand):
+                be = cand
+    if be is None:
+        be = en_paragraphs_from_zh_sequence(bullets_zh)
+    if be is None:
+        return None
+
+    short_zh, short_en = "", ""
+    pz = zh.select_one("p.digest-short")
+    pe = en.select_one("p.digest-short")
+    if pz:
+        short_zh = pz.get_text(strip=True)
+    if pe:
+        short_en = pe.get_text(strip=True)
+    if short_zh and short_en and not snippet_looks_mostly_english(short_en):
+        st = translate_zh_to_en(short_zh)
+        if st and snippet_looks_mostly_english(st):
+            short_en = st.strip()[:220]
+            if len(short_en) > 150:
+                short_en = short_en[:149].rstrip() + "…"
+
+    digest = {
+        "bullets_zh": bullets_zh,
+        "bullets_en": be,
+        "short_zh": short_zh,
+        "short_en": short_en,
+    }
+    body_block = _digest_body_html(digest)
+    pending = 'data-i18n-zh="待審草稿"' in page_html
+    return render_article_page(meta, body_block_html=body_block, pending=pending)
+
+
+def _repair_chinese_english_column(page_html: str, meta: dict) -> str | None:
+    """長段剪報：英文欄仍像繁中時，以中文正文重產英文段落。"""
+    if "digest-bullets" in page_html:
+        return _repair_digest_en_still_zh(page_html, meta)
+
+    from bs4 import BeautifulSoup
+
+    from hermers.translate_body import passage_looks_mostly_english
+
+    soup = BeautifulSoup(page_html, "html.parser")
+    zh = soup.find("div", class_="hermers-i18n-zh")
+    en = soup.find("div", class_="hermers-i18n-en")
+    if not zh or not en:
+        return None
+    if passage_looks_mostly_english(en.get_text()):
+        return None
+
+    inner = "".join(str(c) for c in zh.contents)
+    body_block = build_bilingual_body_block_from_fragment(inner)
+    pending = 'data-i18n-zh="待審草稿"' in page_html
+    return render_article_page(meta, body_block_html=body_block, pending=pending)
+
+
 def refresh_dist_article_pages() -> None:
     """將早期極簡版文章升級為與首頁相同皮膚，並校正誤標為草稿的已發布眉批／canonical。"""
     root = posts_dir()
@@ -103,6 +186,13 @@ def refresh_dist_article_pages() -> None:
             text = render_article_page(meta, body_block_html=body_block, pending=False)
             path.write_text(text, encoding="utf-8")
             needs_polish = True
+
+        if '<article class="prose">' in text:
+            repaired_en = _repair_chinese_english_column(text, meta)
+            if repaired_en:
+                text = repaired_en
+                path.write_text(text, encoding="utf-8")
+                needs_polish = True
 
         if needs_polish:
             polish_published_post(path, slug=slug)

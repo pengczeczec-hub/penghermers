@@ -10,6 +10,34 @@ import httpx
 from hermers.env_load import load_dotenv
 
 
+def snippet_looks_mostly_english(s: str) -> bool:
+    """短句／條列：是否以英文字母為主（避免誤把英文欄填成繁中）。"""
+    s = s.strip()
+    if not s:
+        return True
+    cjk = sum(1 for c in s if "\u4e00" <= c <= "\u9fff")
+    latin = sum(1 for c in s if "a" <= c.lower() <= "z")
+    if cjk == 0 and latin == 0:
+        return True
+    if latin < 6 and cjk >= 8:
+        return False
+    return latin >= cjk * 1.1 or (latin >= 12 and cjk <= max(18, latin // 2))
+
+
+def passage_looks_mostly_english(s: str) -> bool:
+    """長篇正文：是否整體像英文（用於偵測英文欄仍為繁中的舊稿）。"""
+    s = " ".join(s.split())
+    if not s:
+        return True
+    if len(s) < 160:
+        return snippet_looks_mostly_english(s)
+    cjk = sum(1 for c in s if "\u4e00" <= c <= "\u9fff")
+    latin = sum(1 for c in s if "a" <= c.lower() <= "z")
+    if latin < 25:
+        return False
+    return cjk <= latin * 0.5
+
+
 def _translate_enabled() -> bool:
     load_dotenv()
     v = os.environ.get("HERMERS_TRANSLATE", "1").strip().lower()
@@ -44,6 +72,54 @@ def translate_en_to_zh(text: str, *, timeout: float = 28.0) -> str | None:
             return out.strip() if isinstance(out, str) and out.strip() else None
     except (httpx.HTTPError, ValueError, TypeError):
         return None
+
+
+def translate_zh_to_en(text: str, *, timeout: float = 28.0) -> str | None:
+    """單段繁中→英文（LibreTranslate）；失敗回傳 None。"""
+    text = text.strip()
+    if not text:
+        return text
+    if not _translate_enabled():
+        return None
+
+    load_dotenv()
+    url = os.environ.get("LIBRETRANSLATE_URL", "https://libretranslate.de/translate").strip()
+    api_key = os.environ.get("LIBRETRANSLATE_API_KEY", "").strip()
+    # 多數實例以 zh 為中文來源；若失敗可改環境變數
+    source = os.environ.get("HERMERS_LT_SOURCE_ZH", "zh").strip() or "zh"
+    payload: dict[str, str] = {"q": text[:12000], "source": source, "target": "en", "format": "text"}
+    if api_key:
+        payload["api_key"] = api_key
+
+    try:
+        with httpx.Client(timeout=timeout) as client:
+            r = client.post(url, json=payload)
+            if r.status_code != 200:
+                return None
+            data = r.json()
+            if not isinstance(data, dict):
+                return None
+            out = data.get("translatedText")
+            return out.strip() if isinstance(out, str) and out.strip() else None
+    except (httpx.HTTPError, ValueError, TypeError):
+        return None
+
+
+def en_paragraphs_from_zh_sequence(paragraphs: Sequence[str]) -> list[str] | None:
+    """逐段 zh→en（LibreTranslate）；任一段失敗或結果仍像中文則回傳 None。"""
+    paras = [p.strip() for p in paragraphs if p and p.strip()]
+    if not paras:
+        return []
+    out: list[str] = []
+    for p in paras:
+        clip = p[:12000]
+        t = translate_zh_to_en(clip) if _translate_enabled() else None
+        if not t or not t.strip():
+            return None
+        if not snippet_looks_mostly_english(t):
+            return None
+        out.append(t.strip())
+    return out
 
 
 def zh_paragraphs_from_extract(paragraphs: Sequence[str]) -> list[str]:
