@@ -133,9 +133,9 @@ def rebuild_index() -> None:
     )
     base = public_base_url()
     index_canonical = f"{base}/" if base else ""
-    og_title = "Hermers 台股資訊 | Taiwan Equities Digest"
-    idx_title_zh = "Hermers 台股資訊"
-    idx_title_en = "Hermers · Taiwan Equities"
+    og_title = "台股新聞與行情快訊 | Taiwan Stock News & Market Highlights"
+    idx_title_zh = "台股新聞與行情快訊"
+    idx_title_en = "Taiwan Stock News & Market Highlights"
     idx_title_zh_attr = html.escape(idx_title_zh, quote=True)
     idx_title_en_attr = html.escape(idx_title_en, quote=True)
     desc_zh = "台股與集中市場相關新聞剪報。"
@@ -169,7 +169,7 @@ def rebuild_index() -> None:
   {lang_switcher_html()}
   <main>
     <header class="masthead">
-      <h1><span data-i18n-zh="Hermers 台股資訊" data-i18n-en="Hermers · Taiwan Equities"></span></h1>
+      <h1><span data-i18n-zh="台股新聞與行情快訊" data-i18n-en="Taiwan Stock News & Market Highlights"></span></h1>
       <p class="sub"><span data-i18n-zh="台股與集中市場相關新聞剪報。"
         data-i18n-en="Taiwan stock-market news clippings."></span></p>
       <div class="stats">
