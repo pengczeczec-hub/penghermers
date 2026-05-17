@@ -1,5 +1,7 @@
 # 台股／台灣股市資訊為主（鉅亨 Anue RSS）
+# 每日精選：先從各 RSS 取 fetch_pool 則候選，再依「市場影響力」排序取 max_items
 max_items: 10
+fetch_pool: 60
 
 domains:
   - id: tw_stock

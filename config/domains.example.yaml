@@ -1,6 +1,8 @@
 # 複製為 config/domains.yaml 後依領域修改
-# max_items: 每次管線最多產生幾則待審草稿
+# max_items: 全域精選幾則（依市場影響力排序後截取）
+# fetch_pool: 各網域 RSS 先取幾則候選再做全域排序（建議為 max_items 的數倍）
 max_items: 5
+fetch_pool: 40
 
 domains:
   - id: tech

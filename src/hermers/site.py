@@ -118,16 +118,21 @@ def rebuild_index() -> None:
         published = ""
         domain = ""
         meta: dict = {}
+        title_en_meta: str | None = None
         if meta_path.is_file():
             meta = json.loads(meta_path.read_text(encoding="utf-8"))
             title = meta.get("title") or title
             published = meta.get("approved_at") or ""
             domain = meta.get("domain_name") or ""
+            te = meta.get("title_en")
+            if isinstance(te, str) and te.strip():
+                title_en_meta = te.strip()
         sec_zh, sec_en = _resolved_section_labels(meta)
         entries.append(
             {
                 "href": f"posts/{path.name}",
                 "title": title,
+                "title_en": title_en_meta,
                 "published": published,
                 "domain": domain,
                 "section_zh": sec_zh,
@@ -147,7 +152,9 @@ def rebuild_index() -> None:
             if meta_line
             else '<span class="meta">—</span>\n'
         )
-        tz, te = bilingual_headings_plain(e["title"])
+        tz, te = bilingual_headings_plain(
+            e["title"], title_en_hint=e.get("title_en")
+        )
         title_zh_esc = html.escape(tz)
         title_en_esc = html.escape(te)
         return (

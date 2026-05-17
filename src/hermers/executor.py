@@ -137,7 +137,7 @@ class HermesExecutor:
             lines.append("本機與雲端內容可能不同步；要推送請傳 <code>/deploy</code>。")
         return RunResult(True, "\n".join(lines))
 
-    def run_pipeline(self, *, push: bool = False) -> RunResult:
+    def run_pipeline(self, *, push: bool = False, deploy: bool = False) -> RunResult:
         pending_dir().mkdir(parents=True, exist_ok=True)
         before = {p.name for p in pending_dir().iterdir() if p.is_dir()}
 
@@ -157,9 +157,17 @@ class HermesExecutor:
             except (SystemExit, Exception):  # noqa: BLE001
                 continue
 
-        msg = f"<b>管線完成</b>\n已發布 {len(approved)} 則至 dist/posts/"
+        msg = (
+            "<b>管線完成</b>\n"
+            "已依「全市場候選＋市場影響力加權」精選並發布 "
+            f"{len(approved)} 則至 dist/posts/"
+        )
         if approved:
             msg += "\n" + "\n".join(f"• <code>{html.escape(i)}</code>" for i in approved[:8])
+        if deploy:
+            d = self.deploy()
+            msg += "\n\n" + d.message
+            return RunResult(d.ok, msg)
         if push:
             pub = self.publish("chore: pipeline auto publish")
             msg += "\n\n" + pub.message

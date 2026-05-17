@@ -39,7 +39,7 @@ def fetch_article(url: str, *, timeout: float = 25.0) -> ArticleExtract:
         text = re.sub(r"\s+", " ", p.get_text()).strip()
         if len(text) >= 40:
             paragraphs.append(text)
-        if len(paragraphs) >= 12:
+        if len(paragraphs) >= 10:
             break
 
     if not paragraphs:

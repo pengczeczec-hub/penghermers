@@ -1,0 +1,38 @@
+# 每日自動：從 RSS 匯入候選 → 依「市場影響力」精選 max_items 則 → 寫入剪報並推送 main
+# 台灣時間約每日 09:30（UTC 01:30）；亦可手動觸發 workflow_dispatch。
+name: Daily Taiwan market digest
+
+on:
+  schedule:
+    - cron: "30 1 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: hermers-digest-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Hermers
+        run: pip install -e .
+
+      - name: Git author (CI commits)
+        run: |
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+
+      - name: Run pipeline and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python hermes_main.py pipeline --push

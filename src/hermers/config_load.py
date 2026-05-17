@@ -20,6 +20,8 @@ class DomainConfig:
 @dataclass
 class AppConfig:
     max_items: int = 5
+    # 各網域 RSS 先取滿此上限（過濾後）再全域排序挑選 max_items；越大越容易涵蓋全市場再精選
+    fetch_pool: int = 40
     domains: list[DomainConfig] = field(default_factory=list)
 
 
@@ -40,4 +42,10 @@ def load_config() -> AppConfig:
                 section_en=str(se).strip() if se else None,
             )
         )
-    return AppConfig(max_items=int(raw.get("max_items") or 5), domains=domains)
+    max_items = int(raw.get("max_items") or 5)
+    fetch_pool = int(raw.get("fetch_pool") or max(max_items * 5, 40))
+    return AppConfig(
+        max_items=max_items,
+        fetch_pool=fetch_pool,
+        domains=domains,
+    )

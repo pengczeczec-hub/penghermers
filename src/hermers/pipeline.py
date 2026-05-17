@@ -6,7 +6,8 @@ import shutil
 from datetime import datetime, timezone
 
 from hermers.config_load import load_config
-from hermers.discover import discover_domain
+from hermers.discover import FeedItem, discover_domain
+from hermers.ranking import merge_candidates, rank_for_digest
 from hermers.draft import write_pending
 from hermers.fetch import fetch_article
 from hermers.paths import pending_dir, staging_dir
@@ -26,16 +27,17 @@ def run_pipeline(*, dry_run: bool = False) -> int:
     pending_dir().mkdir(parents=True, exist_ok=True)
     staging_dir().mkdir(parents=True, exist_ok=True)
 
-    candidates = []
-    per_domain = max(2, cfg.max_items // max(len(cfg.domains), 1))
+    pool = max(cfg.fetch_pool, cfg.max_items * 2)
+    candidates: list[FeedItem] = []
     for domain in cfg.domains:
-        found = discover_domain(domain, limit=per_domain)
+        found = discover_domain(domain, limit=pool)
         for item in found:
             if item.url in seen:
                 continue
             candidates.append(item)
 
-    candidates = candidates[: cfg.max_items]
+    candidates = merge_candidates(candidates)
+    candidates = rank_for_digest(candidates, max_items=cfg.max_items)
     if not candidates:
         print("沒有新的熱門項目（可能已全部處理過）。可編輯 data/seen_urls.json 清除舊紀錄。")
         write_review_page()

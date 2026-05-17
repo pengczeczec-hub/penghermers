@@ -91,6 +91,7 @@ def zh_paragraphs_from_extract(paragraphs: Sequence[str]) -> list[str]:
 
 
 def zh_title_from_extract(title: str) -> str:
+    """外文標題 → 繁體「改寫」標題（LibreTranslate／LLM）；若皆不可用則回退原文。"""
     s = title.strip()[:500]
     if not s:
         return ""

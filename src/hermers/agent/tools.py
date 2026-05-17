@@ -54,7 +54,8 @@ def _tool_publish(_: dict) -> RunResult:
 
 def _tool_pipeline(_: dict) -> RunResult:
     push = bool(_.get("push"))
-    return _ex().run_pipeline(push=push)
+    deploy = bool(_.get("deploy"))
+    return _ex().run_pipeline(push=push, deploy=deploy)
 
 
 def _tool_ingest_url(args: dict) -> RunResult:
@@ -113,7 +114,7 @@ _register(
 )
 _register("deploy_site", "推送 GitHub 並執行 Cloudflare 部署流程", _tool_deploy)
 _register("publish_git", "將目前專案推送到 GitHub", _tool_publish)
-_register("run_digest_pipeline", "從 RSS 抓取熱門新聞、生成剪報並寫入 dist", _tool_pipeline)
+_register("run_digest_pipeline", "從 RSS 全市場候選、依市場影響力精選並生成剪報（可選 push/deploy）", _tool_pipeline)
 _register("ingest_news_url", "擷取單一新聞網址並生成剪報頁（args: url, push?）", _tool_ingest_url)
 _register("system_status", "查看 Hermes / GitHub / 待審狀態", _tool_status)
 _register("site_url_info", "回報對外網站網址與 GitHub 目標", _tool_site_url)

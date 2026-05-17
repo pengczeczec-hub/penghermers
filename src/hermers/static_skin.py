@@ -268,6 +268,24 @@ def css_article_specific() -> str:
     max-width: 65ch;
   }
   article.prose p:last-of-type { margin-bottom: 0; }
+  .digest-kicker {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin: 0 0 0.75rem;
+    max-width: 65ch;
+  }
+  ul.digest-bullets {
+    margin: 0 0 1rem;
+    padding-left: 1.35rem;
+    max-width: 65ch;
+  }
+  ul.digest-bullets li { margin-bottom: 0.45rem; }
+  p.digest-short {
+    font-size: 0.95rem;
+    color: var(--ink);
+    margin: 0 0 1rem;
+    max-width: 65ch;
+  }
   footer.note {
     font-size: 0.8rem;
     color: var(--muted);

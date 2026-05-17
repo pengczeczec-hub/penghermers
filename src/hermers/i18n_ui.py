@@ -184,5 +184,13 @@ def polish_published_post(path: Path, *, slug: str) -> None:
         'data-i18n-en="Auto-extracted summary; after approval this goes to dist/ for deploy."',
         'data-i18n-en="Published on Hermers Digest; original source linked above."',
     )
+    text = text.replace(
+        'data-i18n-zh="內容為改寫標題與重點整理（非原文全文）；通過審核後會進入 dist/ 並可部署上線。"',
+        'data-i18n-zh="已審核發布於 Hermers 剪報站；可追溯原文連結。"',
+    )
+    text = text.replace(
+        'data-i18n-en="Rewritten headline and summarized key points (not the full original text); after approval this goes to dist/ for deploy."',
+        'data-i18n-en="Published on Hermers Digest; original source linked above."',
+    )
     text = strip_empty_seo_placeholders(text)
     path.write_text(text, encoding="utf-8")

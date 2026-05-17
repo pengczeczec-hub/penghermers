@@ -31,7 +31,9 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="cmd")
 
     sub.add_parser("status")
-    sub.add_parser("pipeline")
+    p_pipe = sub.add_parser("pipeline")
+    p_pipe.add_argument("--push", action="store_true", help="完成後推送 GitHub")
+    p_pipe.add_argument("--deploy", action="store_true", help="完成後 deploy（含 git push 與 Cloudflare）")
     sub.add_parser("publish")
     sub.add_parser("deploy")
     p_url = sub.add_parser("url")
@@ -50,7 +52,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.cmd == "status":
         r = ex.status()
     elif args.cmd == "pipeline":
-        r = ex.run_pipeline(push=False)
+        r = ex.run_pipeline(
+            push=bool(getattr(args, "push", False)),
+            deploy=bool(getattr(args, "deploy", False)),
+        )
     elif args.cmd == "publish":
         r = ex.publish()
     elif args.cmd == "deploy":
