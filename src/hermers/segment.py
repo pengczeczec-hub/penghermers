@@ -136,6 +136,10 @@ def analyze_site_segment(meta: dict, *, slug: str = "") -> SegmentAnalysis:
         tw += 0.35
     elif did == "tw_market_extra":
         tw += 0.15
+    elif did == "us_stock":
+        us += 0.35
+    elif did == "crypto_news":
+        crypto += 2.85
 
     # 強規則（沿用並略擴充）
     if "營收速報" in blob and ("台股" in blob or "台股大型" in blob or "台股中小型" in blob):

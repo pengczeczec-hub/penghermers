@@ -70,3 +70,12 @@ domains:
     keywords: []
     rss:
       - https://news.cnyes.com/rss/v1/news/category/wd_stock
+  # 鉅亨 news/category/crypto 等 endpoint 近期常為空；改採國際加密媒體 RSS 作為來源。
+  - id: crypto_news
+    name: 加密貨幣與區塊鏈
+    section_zh: 加密貨幣
+    section_en: Cryptocurrencies
+    keywords: []
+    rss:
+      - https://www.coindesk.com/arc/outboundfeeds/rss/
+      - https://cointelegraph.com/rss

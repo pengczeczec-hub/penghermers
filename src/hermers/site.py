@@ -38,6 +38,8 @@ from hermers.static_skin import css_base, css_index_specific, css_review_specifi
 _SECTION_FALLBACK: dict[str, tuple[str, str]] = {
     "tw_market_extra": ("重大頭條", "Major headlines"),
     "tw_stock": ("市場消息", "Market news"),
+    "us_stock": ("美股消息", "U.S. & global equities"),
+    "crypto_news": ("加密貨幣", "Cryptocurrencies"),
     "manual": ("市場消息", "Market news"),
 }
 _SECTION_ORDER: list[tuple[str, str]] = [

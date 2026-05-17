@@ -89,6 +89,24 @@ _MARKET_IMPACT_TERMS: tuple[tuple[str, float], ...] = (
     ("費半", 8.0),
     ("華爾街", 8.0),
     ("13F", 8.0),
+    # 加密資產／區塊鏈（中英文標題皆可累加）
+    ("Bitcoin", 12.0),
+    ("以太坊", 10.0),
+    ("Ethereum", 11.0),
+    ("BTC", 8.5),
+    ("ETH", 8.0),
+    ("Solana", 9.0),
+    ("Ripple", 7.5),
+    ("XRP", 7.5),
+    ("Stablecoin", 9.5),
+    ("crypto", 7.5),
+    ("區塊鏈", 8.5),
+    ("DeFi", 8.5),
+    ("NFT", 6.5),
+    ("加密貨幣", 10.0),
+    ("虛擬貨幣", 9.5),
+    ("數位資產", 8.5),
+    ("穩定幣", 9.5),
 )
 
 # 「重大頭條」分流：同標題下略提高權重（與本站 section 對齊）
@@ -96,6 +114,7 @@ _DOMAIN_BOOST: dict[str, float] = {
     "tw_market_extra": 6.0,
     "tw_stock": 0.0,
     "us_stock": 5.0,
+    "crypto_news": 5.0,
 }
 
 
