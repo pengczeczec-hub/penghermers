@@ -14,6 +14,8 @@ from urllib.parse import urlparse
 
 from workers import WorkerEntrypoint, Response
 
+from hermers.worker_edge import scheduled_tick
+
 _DIST = Path(__file__).resolve().parent / "dist"
 _FALLBACK_POST = "posts/20260516-nyt-and-vaping-how-to-lie-by-saying-only.html"
 
@@ -24,24 +26,6 @@ def worker_info() -> dict[str, Any]:
         "runtime": "cloudflare-python-worker",
         "role": "edge_static_and_api",
     }
-
-
-async def scheduled_tick(*, source: str, env: object | None = None) -> dict[str, Any]:
-    webhook = _env_str(env, "PIPELINE_WEBHOOK_URL")
-    if webhook:
-        try:
-            import httpx
-
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                r = await client.post(webhook)
-                return {
-                    "source": source,
-                    "webhook_status": r.status_code,
-                    "webhook_ok": r.is_success,
-                }
-        except Exception as exc:  # noqa: BLE001
-            return {"source": source, "webhook_error": str(exc)}
-    return {"source": source, "hint": "未設定 PIPELINE_WEBHOOK_URL"}
 
 
 def _env_str(env: object | None, key: str) -> str:

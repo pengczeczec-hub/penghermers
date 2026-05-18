@@ -61,7 +61,29 @@ uv tool run --from workers-py pywrangler deploy
 | `GET /api/health` | JSON 健康檢查 |
 | `POST /api/trigger` | 手動觸發與排程相同的 `scheduled_tick`；若設定 `CRON_SECRET`，需標頭 `Authorization: Bearer <CRON_SECRET>` |
 
-在 Cloudflare 儀表板為 Worker 設定 **變數／Secrets**（例如 `PIPELINE_WEBHOOK_URL`、`CRON_SECRET`），勿寫入 git。
+在 Cloudflare 儀表板為 Worker 設定 **變數／Secrets**，勿寫入 git。
+
+| 名稱 | 類型 | 說明 |
+|------|------|------|
+| `GITHUB_REPOSITORY` | 純文字變數 | 例如 `owner/repo`（觸發 Actions 用） |
+| `GITHUB_DISPATCH_TOKEN` | **Secret** | GitHub PAT（classic 建議含 `repo`），用於呼叫 `repository_dispatch` |
+| `PIPELINE_WEBHOOK_URL` | Secret（可選） | 自訂 POST 網址；若已設定上列 GitHub 變數則可留空 |
+| `CRON_SECRET` | Secret（可選） | 若設定，`POST /api/trigger` 需 `Authorization: Bearer …` |
+
+**建議：** Worker 排程改以 **`GITHUB_REPOSITORY` + `GITHUB_DISPATCH_TOKEN`** 觸發
+`.github/workflows/daily-tw-digest.yml` 的 `repository_dispatch`，事件類型為 **`hermers-digest`**（見 `worker_edge.scheduled_tick`），無需另建公開 webhook。
+
+建立 PAT：`GitHub → Settings → Developer settings → Personal access tokens`；classic 選 **repo** 即可觸發私有庫 dispatch。
+
+本機若已 `wrangler login`，可將 token 放進環境變數後設定 Secret（勿把 token 寫進指令列歷史）：
+
+```powershell
+# 1) GITHUB_REPOSITORY：Workers → penghermers → Settings → Variables（非 Secret）新增 `owner/repo`
+# 2) GITHUB_DISPATCH_TOKEN：在專案目錄執行（互動貼上 PAT，勿將 token 寫進版本庫）
+wrangler secret put GITHUB_DISPATCH_TOKEN
+```
+
+亦可在 [`wrangler.toml`](https://developers.cloudflare.com/workers/wrangler/configuration/) 的 `[vars]` 為預覽環境設定 `GITHUB_REPOSITORY`（仍不要把 token 寫進 toml）。
 
 ## 如何把「剪報／自動化」搬進 Worker：架構建議
 

@@ -1,6 +1,6 @@
 # 每日自動：從 RSS 匯入候選 → 依「市場影響力」精選 max_items 則 → 寫入剪報並推送 main
 # 台灣時間三次（UTC）：06:00、09:00、17:30 — 與 wrangler.toml Worker cron 對齊。
-# 亦可手動觸發 workflow_dispatch。
+# 亦可手動觸發 workflow_dispatch；Cloudflare Worker 以 repository_dispatch（hermers-digest）觸發。
 name: Daily Taiwan market digest
 
 on:
@@ -9,6 +9,8 @@ on:
     - cron: "0 1 * * *" # ~09:00 台灣（加密／日 K 後）
     - cron: "30 9 * * *" # ~17:30 台灣（台股盤後）
   workflow_dispatch:
+  repository_dispatch:
+    types: [hermers-digest]
 
 permissions:
   contents: write
