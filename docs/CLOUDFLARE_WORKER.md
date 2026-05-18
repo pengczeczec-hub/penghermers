@@ -15,7 +15,8 @@ Hermers 已改為以 **`uvx --from workers-py pywrangler deploy`** 部署 **Pyth
 | `wrangler.toml` | Worker 名稱、`main.py`、`compatibility_flags = ["python_workers"]`、可選 `[triggers]` cron |
 | `main.py` | Wrangler 入口；轉匯 `hermers.cf_worker.Default` |
 | `src/hermers/cf_worker.py` | `WorkerEntrypoint`：`fetch`（HTTP）、`scheduled`（定時） |
-| `src/hermers/worker_edge.py` | **僅含可在邊緣執行的輕量邏輯**；勿 import `pipeline` / `paths.repo_root` |
+| `worker_dispatch.py` | 根目錄：cron / `repository_dispatch` 觸發邏輯（`worker_app` 匯入；無 `hermers` 依賴） |
+| `src/hermers/worker_edge.py` | 輕量邏輯轉匯 `worker_dispatch`；勿 import `pipeline` / `paths.repo_root` |
 | `deploy_to_cloudflare.ps1` | 可選 git push → **`uvx --from workers-py pywrangler deploy`**（或 preview） |
 | `cloudflare-build.sh` | **Cloudflare 建置機用**：先 `rm -f requirements.txt` 再 `uvx … deploy`（可傳 `--env preview`） |
 | `pyproject.toml` | 專案依賴；可選 `[project.optional-dependencies] cloudflare` 供本機 `uv sync --extra cloudflare` 後使用 `uv run pywrangler dev`（非必須，開發可用上列 `uvx … dev`） |
@@ -71,7 +72,7 @@ uv tool run --from workers-py pywrangler deploy
 | `CRON_SECRET` | Secret（可選） | 若設定，`POST /api/trigger` 需 `Authorization: Bearer …` |
 
 **建議：** Worker 排程改以 **`GITHUB_REPOSITORY` + `GITHUB_DISPATCH_TOKEN`** 觸發
-`.github/workflows/daily-tw-digest.yml` 的 `repository_dispatch`，事件類型為 **`hermers-digest`**（見 `worker_edge.scheduled_tick`），無需另建公開 webhook。
+`.github/workflows/daily-tw-digest.yml` 的 `repository_dispatch`，事件類型為 **`hermers-digest`**（見根目錄 `worker_dispatch.scheduled_tick`），無需另建公開 webhook。
 
 建立 PAT：`GitHub → Settings → Developer settings → Personal access tokens`；classic 選 **repo** 即可觸發私有庫 dispatch。
 

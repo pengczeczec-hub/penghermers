@@ -14,7 +14,7 @@ from urllib.parse import urlparse
 
 from workers import WorkerEntrypoint, Response
 
-from hermers.worker_edge import scheduled_tick
+from worker_dispatch import scheduled_tick
 
 _DIST = Path(__file__).resolve().parent / "dist"
 _FALLBACK_POST = "posts/20260516-nyt-and-vaping-how-to-lie-by-saying-only.html"
@@ -26,15 +26,6 @@ def worker_info() -> dict[str, Any]:
         "runtime": "cloudflare-python-worker",
         "role": "edge_static_and_api",
     }
-
-
-def _env_str(env: object | None, key: str) -> str:
-    if env is None:
-        return ""
-    raw = getattr(env, key, None)
-    if raw is None:
-        return ""
-    return str(raw).strip()
 
 
 def _json(body: dict, *, status: int = 200) -> Response:
