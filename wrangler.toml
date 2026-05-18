@@ -18,5 +18,12 @@ crons = [
   "30 9 * * *",  # 每天 17:30 台灣 — 台股
 ]
 
+# Worker 觸發 GitHub Actions（repository_dispatch）時需要的 repo 識別（非機密，可進版控）
+[vars]
+GITHUB_REPOSITORY = "pengczeczec-hub/penghermers"
+
 [env.preview]
 name = "penghermers-preview"
+
+[env.preview.vars]
+GITHUB_REPOSITORY = "pengczeczec-hub/penghermers"

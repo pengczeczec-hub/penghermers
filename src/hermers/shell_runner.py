@@ -30,6 +30,24 @@ def _verify_token_raw(token: str) -> dict:
     return {"ok": True, "login": data.get("login"), "name": data.get("name")}
 
 
+def _verify_actions_github_token(token: str) -> dict:
+    """GitHub Actions 的 GITHUB_TOKEN 多數無法通過 /user；改以目前倉庫驗證。"""
+    repo = os.environ.get("GITHUB_REPOSITORY", "").strip()
+    if not repo or "/" not in repo:
+        return {"ok": False, "error": "缺少 GITHUB_REPOSITORY（owner/repo）"}
+    with httpx.Client(timeout=30.0) as client:
+        resp = client.get(
+            f"https://api.github.com/repos/{repo}",
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Accept": "application/vnd.github+json",
+            },
+        )
+    if resp.status_code == 200:
+        return {"ok": True, "login": "github-actions", "name": "GITHUB_TOKEN"}
+    return {"ok": False, "error": f"HTTP {resp.status_code}", "body": resp.text[:200]}
+
+
 def _token_from_gh() -> str:
     """取得 gh 登入 token；略過環境變數內失效的 GITHUB_TOKEN。"""
     if not shutil.which("gh"):
@@ -56,6 +74,11 @@ def resolve_github_token() -> tuple[str, str]:
         check = _verify_token_raw(env_tok)
         if check.get("ok"):
             return env_tok, "GITHUB_TOKEN"
+        # Actions 內建 token 無法通過 /user，改用 repo 讀取驗證
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+            check_ci = _verify_actions_github_token(env_tok)
+            if check_ci.get("ok"):
+                return env_tok, "GITHUB_TOKEN"
         # 失效的 .env token 會干擾 gh；暫時移出環境
         os.environ.pop("GITHUB_TOKEN", None)
 

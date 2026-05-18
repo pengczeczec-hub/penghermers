@@ -23,6 +23,14 @@ async def scheduled_tick(*, source: str, env: object | None = None) -> dict[str,
             repo=repo, token=token, source=source
         )
 
+    if repo and not token:
+        return {
+            "source": source,
+            "github_dispatch_pending": True,
+            "hint": "已設定 GITHUB_REPOSITORY；請以 Worker Secret 設定 GITHUB_DISPATCH_TOKEN（"
+            "classic PAT，含 repo），或使用 PIPELINE_WEBHOOK_URL。",
+        }
+
     webhook = _env_str(env, "PIPELINE_WEBHOOK_URL")
     if webhook:
         try:
