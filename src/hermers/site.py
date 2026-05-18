@@ -449,6 +449,8 @@ def refresh_dist_article_pages() -> None:
 
 
 def rebuild_index() -> None:
+    """寫入 dist/index.html——首頁唯一產製入口（市場標籤、日期列、三段本週精選、現行皮膚）。
+    發布／管線／美化／刪文後皆須經由此函式重建，勿以手編或舊版 HTML 覆寫。"""
     refresh_dist_article_pages()
     posts_dir().mkdir(parents=True, exist_ok=True)
     entries: list[dict] = []
