@@ -1,17 +1,17 @@
 {
   "id": "20260523-台積電擴大環保承諾-成首家獲oecm認證半導體企業",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "台積電擴大環保承諾 成首家獲OECM認證半導體企業",
   "title_en": "台積電擴大環保承諾 成首家獲OECM認證半導體企業",
   "source_title": "台積電擴大環保承諾 成首家獲OECM認證半導體企業",
   "url": "https://news.cnyes.com/news/id/6468224",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-05-23T07:40:53.960215+00:00",
-  "site_segment": "other",
-  "importance_score": 41.0,
-  "approved_at": "2026-05-23T07:41:11.197888+00:00"
+  "created_at": "2026-05-23T08:36:57.850458+00:00",
+  "site_segment": "tw",
+  "importance_score": 35.0,
+  "approved_at": "2026-05-23T08:37:39.946754+00:00"
 }
