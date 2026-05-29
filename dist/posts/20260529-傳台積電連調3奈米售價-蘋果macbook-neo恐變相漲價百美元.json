@@ -1,17 +1,17 @@
 {
   "id": "20260529-傳台積電連調3奈米售價-蘋果macbook-neo恐變相漲價百美元",
   "status": "approved",
-  "domain_id": "us_stock",
-  "domain_name": "美股與國際市場",
-  "section_zh": "美股消息",
-  "section_en": "U.S. & global equities",
+  "domain_id": "tw_market_extra",
+  "domain_name": "重大頭條（股市相關）",
+  "section_zh": "重大頭條",
+  "section_en": "Major headlines",
   "title": "傳台積電連調3奈米售價 蘋果MacBook Neo恐變相漲價百美元 |  - 美股雷達",
   "title_en": "傳台積電連調3奈米售價 蘋果MacBook Neo恐變相漲價百美元 |  - 美股雷達",
   "source_title": "傳台積電連調3奈米售價 蘋果MacBook Neo恐變相漲價百美元",
   "url": "https://news.cnyes.com/news/id/6472298",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-05-29T10:57:57.382682+00:00",
+  "created_at": "2026-05-29T12:34:05.976646+00:00",
   "site_segment": "us",
-  "importance_score": 40.0,
-  "approved_at": "2026-05-29T10:58:34.359688+00:00"
+  "importance_score": 41.0,
+  "approved_at": "2026-05-29T12:34:57.567793+00:00"
 }
