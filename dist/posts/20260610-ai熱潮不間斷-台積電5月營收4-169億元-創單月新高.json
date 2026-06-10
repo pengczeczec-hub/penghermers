@@ -1,17 +1,17 @@
 {
   "id": "20260610-ai熱潮不間斷-台積電5月營收4-169億元-創單月新高",
   "status": "approved",
-  "domain_id": "us_stock",
-  "domain_name": "美股與國際市場",
-  "section_zh": "美股消息",
-  "section_en": "U.S. & global equities",
+  "domain_id": "tw_market_extra",
+  "domain_name": "重大頭條（股市相關）",
+  "section_zh": "重大頭條",
+  "section_en": "Major headlines",
   "title": "AI熱潮不間斷 台積電5月營收4,169億元 創單月新高",
   "title_en": "AI熱潮不間斷 台積電5月營收4,169億元 創單月新高",
   "source_title": "AI熱潮不間斷 台積電5月營收4,169億元 創單月新高",
   "url": "https://news.cnyes.com/news/id/6493222",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-06-10T11:48:23.004651+00:00",
-  "site_segment": "us",
-  "importance_score": 42.0,
-  "approved_at": "2026-06-10T11:48:58.352523+00:00"
+  "created_at": "2026-06-10T12:45:51.544782+00:00",
+  "site_segment": "other",
+  "importance_score": 43.0,
+  "approved_at": "2026-06-10T12:46:19.239325+00:00"
 }
