@@ -1,17 +1,17 @@
 {
   "id": "20260610-10檔個股明除息大盤蒸發52點-台積電市值大減1555億元",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "10檔個股明除息大盤蒸發52點 台積電市值大減1555億元",
   "title_en": "10檔個股明除息大盤蒸發52點 台積電市值大減1555億元",
   "source_title": "10檔個股明除息大盤蒸發52點 台積電市值大減1555億元",
   "url": "https://news.cnyes.com/news/id/6493676",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-06-10T12:45:50.389327+00:00",
+  "created_at": "2026-06-10T18:44:26.495331+00:00",
   "site_segment": "tw",
-  "importance_score": 51.0,
-  "approved_at": "2026-06-10T12:45:54.038395+00:00"
+  "importance_score": 44.0,
+  "approved_at": "2026-06-10T18:44:32.160621+00:00"
 }
