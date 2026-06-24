@@ -1,17 +1,17 @@
 {
   "id": "20260624-亞股反彈曇花一現-台積電-sk海力士急殺逾3-kospi翻黑挫跌",
   "status": "approved",
-  "domain_id": "us_stock",
-  "domain_name": "美股與國際市場",
-  "section_zh": "美股消息",
-  "section_en": "U.S. & global equities",
+  "domain_id": "tw_market_extra",
+  "domain_name": "重大頭條（股市相關）",
+  "section_zh": "重大頭條",
+  "section_en": "Major headlines",
   "title": "亞股反彈曇花一現！台積電、SK海力士急殺逾3% Kospi翻黑挫跌  |  - 歐亞股",
   "title_en": "亞股反彈曇花一現！台積電、SK海力士急殺逾3% Kospi翻黑挫跌  |  - 歐亞股",
   "source_title": "亞股反彈曇花一現！台積電、SK海力士急殺逾3% Kospi翻黑挫跌",
   "url": "https://news.cnyes.com/news/id/6510021",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-06-24T12:04:21.824742+00:00",
-  "site_segment": "us",
-  "importance_score": 32.0,
-  "approved_at": "2026-06-24T12:06:42.339278+00:00"
+  "created_at": "2026-06-24T23:00:52.103404+00:00",
+  "site_segment": "other",
+  "importance_score": 33.0,
+  "approved_at": "2026-06-24T23:02:28.542074+00:00"
 }
