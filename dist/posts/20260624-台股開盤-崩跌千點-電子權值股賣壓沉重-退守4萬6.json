@@ -1,17 +1,17 @@
 {
   "id": "20260624-台股開盤-崩跌千點-電子權值股賣壓沉重-退守4萬6",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股開盤〉崩跌千點 電子權值股賣壓沉重 退守4萬6",
   "title_en": "〈台股開盤〉崩跌千點 電子權值股賣壓沉重 退守4萬6",
   "source_title": "〈台股開盤〉崩跌千點 電子權值股賣壓沉重 退守4萬6",
   "url": "https://news.cnyes.com/news/id/6509644",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-06-24T05:00:12.030378+00:00",
+  "created_at": "2026-06-24T12:04:23.269143+00:00",
   "site_segment": "tw",
-  "importance_score": 36.0,
-  "approved_at": "2026-06-24T05:02:38.789246+00:00"
+  "importance_score": 29.0,
+  "approved_at": "2026-06-24T12:07:49.817576+00:00"
 }
