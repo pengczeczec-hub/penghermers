@@ -1,17 +1,17 @@
 {
   "id": "20260701-上市非主管均薪前十強清一色半導體-聯發科446萬元奪冠-台積電第三",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "上市非主管均薪前十強清一色半導體 聯發科446萬元奪冠、台積電第三",
   "title_en": "上市非主管均薪前十強清一色半導體 聯發科446萬元奪冠、台積電第三",
   "source_title": "上市非主管均薪前十強清一色半導體 聯發科446萬元奪冠、台積電第三",
   "url": "https://news.cnyes.com/news/id/6518004",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-07-01T05:19:17.963039+00:00",
-  "site_segment": "other",
-  "importance_score": 41.0,
-  "approved_at": "2026-07-01T05:20:24.825136+00:00"
+  "created_at": "2026-07-01T12:18:59.328533+00:00",
+  "site_segment": "tw",
+  "importance_score": 35.0,
+  "approved_at": "2026-07-01T12:19:29.668344+00:00"
 }
