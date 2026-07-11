@@ -1,0 +1,17 @@
+{
+  "id": "20260711-ai-found-an-ethereum-bug-that-could-take",
+  "status": "approved",
+  "domain_id": "crypto_news",
+  "domain_name": "加密貨幣與區塊鏈",
+  "section_zh": "加密貨幣",
+  "section_en": "Cryptocurrencies",
+  "title": "ETH news: Ethereum Foundation says AI found bug that could take validators offline",
+  "title_en": "ETH news: Ethereum Foundation says AI found bug that could take validators offline",
+  "source_title": "AI found an Ethereum bug that could take validators offline, but humans had to prove it",
+  "url": "https://www.coindesk.com/tech/2026/07/10/ai-found-an-ethereum-bug-that-could-take-validators-offline-but-humans-had-to-prove-it",
+  "rss_source": "CoinDesk: Bitcoin, Ethereum, Crypto News and Price Data",
+  "created_at": "2026-07-11T22:41:33.430442+00:00",
+  "site_segment": "crypto",
+  "importance_score": 27.0,
+  "approved_at": "2026-07-11T22:41:33.983058+00:00"
+}
