@@ -1,17 +1,17 @@
 {
   "id": "20260715-雙代工策略生變-英特爾原定七成訂單給台積電-如今90-以上改自家生產",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "雙代工策略生變！英特爾原定七成訂單給台積電 如今90%以上改自家生產 |  - 美股雷達",
   "title_en": "雙代工策略生變！英特爾原定七成訂單給台積電 如今90%以上改自家生產 |  - 美股雷達",
   "source_title": "雙代工策略生變！英特爾原定七成訂單給台積電 如今90%以上改自家生產",
   "url": "https://news.cnyes.com/news/id/6535254",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-07-15T11:06:17.153702+00:00",
-  "site_segment": "us",
-  "importance_score": 40.0,
-  "approved_at": "2026-07-15T11:11:49.022393+00:00"
+  "created_at": "2026-07-15T22:54:25.511105+00:00",
+  "site_segment": "tw",
+  "importance_score": 34.0,
+  "approved_at": "2026-07-15T22:59:55.619299+00:00"
 }
