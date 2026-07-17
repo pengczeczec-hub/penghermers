@@ -1,17 +1,17 @@
 {
   "id": "20260717-台積電法說-利多卻票房失靈-adr盤前挫逾4-台指期夜盤崩逾千點",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台積電法說〉利多卻票房失靈？ADR盤前挫逾4%、台指期夜盤崩逾千點",
   "title_en": "〈台積電法說〉利多卻票房失靈？ADR盤前挫逾4%、台指期夜盤崩逾千點",
   "source_title": "〈台積電法說〉利多卻票房失靈？ADR盤前挫逾4%、台指期夜盤崩逾千點",
   "url": "https://news.cnyes.com/news/id/6537180",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-07-17T03:57:23.737643+00:00",
-  "site_segment": "other",
-  "importance_score": 51.0,
-  "approved_at": "2026-07-17T03:59:23.207872+00:00"
+  "created_at": "2026-07-17T11:02:10.645489+00:00",
+  "site_segment": "tw",
+  "importance_score": 45.0,
+  "approved_at": "2026-07-17T11:04:24.199194+00:00"
 }
