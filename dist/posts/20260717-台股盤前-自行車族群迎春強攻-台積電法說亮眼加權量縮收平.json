@@ -1,17 +1,17 @@
 {
   "id": "20260717-台股盤前-自行車族群迎春強攻-台積電法說亮眼加權量縮收平",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "台股盤前｜自行車族群迎春強攻，台積電法說亮眼加權量縮收平",
   "title_en": "台股盤前｜自行車族群迎春強攻，台積電法說亮眼加權量縮收平",
   "source_title": "台股盤前｜自行車族群迎春強攻，台積電法說亮眼加權量縮收平",
   "url": "https://news.cnyes.com/news/id/6537075",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-07-17T11:02:06.854781+00:00",
+  "created_at": "2026-07-17T22:42:49.825284+00:00",
   "site_segment": "tw",
-  "importance_score": 61.0,
-  "approved_at": "2026-07-17T11:09:57.072335+00:00"
+  "importance_score": 55.0,
+  "approved_at": "2026-07-17T22:47:49.776372+00:00"
 }
