@@ -1,17 +1,17 @@
 {
   "id": "20260720-台積電未來三年資本支出逾2千億美元-廠務工程第一波受惠",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "台積電未來三年資本支出逾2千億美元 廠務工程第一波受惠",
   "title_en": "台積電未來三年資本支出逾2千億美元 廠務工程第一波受惠",
   "source_title": "台積電未來三年資本支出逾2千億美元 廠務工程第一波受惠",
   "url": "https://news.cnyes.com/news/id/6538859",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-07-20T04:33:13.419384+00:00",
-  "site_segment": "other",
-  "importance_score": 40.0,
-  "approved_at": "2026-07-20T04:35:16.360681+00:00"
+  "created_at": "2026-07-20T12:00:25.008760+00:00",
+  "site_segment": "tw",
+  "importance_score": 34.0,
+  "approved_at": "2026-07-20T12:02:20.392513+00:00"
 }
