@@ -1,17 +1,17 @@
 {
   "id": "20260730-友達法說-q2轉盈eps0-18元終結連3季虧損-上半年每股賺0-03元",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈友達法說〉Q2轉盈EPS0.18元終結連3季虧損 上半年每股賺0.03元",
   "title_en": "〈友達法說〉Q2轉盈EPS0.18元終結連3季虧損 上半年每股賺0.03元",
   "source_title": "〈友達法說〉Q2轉盈EPS0.18元終結連3季虧損 上半年每股賺0.03元",
   "url": "https://news.cnyes.com/news/id/6552411",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-07-30T11:26:45.616612+00:00",
-  "site_segment": "other",
-  "importance_score": 43.0,
-  "approved_at": "2026-07-30T11:29:30.956070+00:00"
+  "created_at": "2026-07-30T22:59:45.847428+00:00",
+  "site_segment": "tw",
+  "importance_score": 36.0,
+  "approved_at": "2026-07-30T23:04:55.802873+00:00"
 }
