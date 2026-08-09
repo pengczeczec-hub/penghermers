@@ -1,0 +1,17 @@
+{
+  "id": "20260809-bip-110-bitcoin-branch-stalls-after-two",
+  "status": "approved",
+  "domain_id": "crypto_news",
+  "domain_name": "加密貨幣與區塊鏈",
+  "section_zh": "加密貨幣",
+  "section_en": "Cryptocurrencies",
+  "title": "BIP-110 Chain Falls Behind as Hashpower Support Lags",
+  "title_en": "BIP-110 Chain Falls Behind as Hashpower Support Lags",
+  "source_title": "BIP-110 Bitcoin branch stalls after two blocks as gap widens",
+  "url": "https://cointelegraph.com/news/bitcoin-bip-110-branch-stalls-miner-support?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+  "rss_source": "Cointelegraph.com News",
+  "created_at": "2026-08-09T22:23:46.986675+00:00",
+  "site_segment": "crypto",
+  "importance_score": 20.0,
+  "approved_at": "2026-08-09T22:23:47.928353+00:00"
+}

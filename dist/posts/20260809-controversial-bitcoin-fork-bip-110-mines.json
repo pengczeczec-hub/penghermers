@@ -1,0 +1,17 @@
+{
+  "id": "20260809-controversial-bitcoin-fork-bip-110-mines",
+  "status": "approved",
+  "domain_id": "crypto_news",
+  "domain_name": "加密貨幣與區塊鏈",
+  "section_zh": "加密貨幣",
+  "section_en": "Cryptocurrencies",
+  "title": "BTC news: Bitcoin split after BIP-110 fails, the new chain stopped after two blocks",
+  "title_en": "BTC news: Bitcoin split after BIP-110 fails, the new chain stopped after two blocks",
+  "source_title": "Controversial Bitcoin fork BIP-110 mines two blocks, then stops",
+  "url": "https://www.coindesk.com/tech/2026/08/09/controversial-bitcoin-fork-bip-110-mines-two-blocks-then-stops",
+  "rss_source": "CoinDesk: Bitcoin, Ethereum, Crypto News and Price Data",
+  "created_at": "2026-08-09T22:23:47.889848+00:00",
+  "site_segment": "crypto",
+  "importance_score": 20.0,
+  "approved_at": "2026-08-09T22:27:27.882665+00:00"
+}
