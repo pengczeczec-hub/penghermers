@@ -1,17 +1,17 @@
 {
   "id": "20260811-台股盤後-追價謹慎-台積電撐住紅盤收漲191點-重回4萬5大關",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股盤後〉追價謹慎 台積電撐住紅盤收漲191點 重回4萬5大關",
   "title_en": "〈台股盤後〉追價謹慎 台積電撐住紅盤收漲191點 重回4萬5大關",
   "source_title": "〈台股盤後〉追價謹慎 台積電撐住紅盤收漲191點 重回4萬5大關",
   "url": "https://news.cnyes.com/news/id/6570754",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-08-11T10:21:55.837097+00:00",
+  "created_at": "2026-08-11T22:35:24.506490+00:00",
   "site_segment": "tw",
-  "importance_score": 42.0,
-  "approved_at": "2026-08-11T10:27:34.737976+00:00"
+  "importance_score": 35.0,
+  "approved_at": "2026-08-11T22:48:41.257362+00:00"
 }
