@@ -1,17 +1,17 @@
 {
   "id": "20260820-台股盤後-量縮追高謹慎-台積電收紅-航運股力挺-漲214點站回季線",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股盤後〉量縮追高謹慎 台積電收紅、航運股力挺 漲214點站回季線 |  - 台股盤勢",
   "title_en": "〈台股盤後〉量縮追高謹慎 台積電收紅、航運股力挺 漲214點站回季線 |  - 台股盤勢",
   "source_title": "〈台股盤後〉量縮追高謹慎 台積電收紅、航運股力挺 漲214點站回季線",
   "url": "https://news.cnyes.com/news/id/6582505",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-08-20T09:56:55.682096+00:00",
+  "created_at": "2026-08-20T22:20:54.375980+00:00",
   "site_segment": "tw",
-  "importance_score": 42.0,
-  "approved_at": "2026-08-20T10:00:03.126585+00:00"
+  "importance_score": 35.0,
+  "approved_at": "2026-08-20T22:22:01.011360+00:00"
 }

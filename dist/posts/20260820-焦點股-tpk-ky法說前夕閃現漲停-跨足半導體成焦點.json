@@ -1,17 +1,17 @@
 {
   "id": "20260820-焦點股-tpk-ky法說前夕閃現漲停-跨足半導體成焦點",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈焦點股〉TPK-KY法說前夕閃現漲停 跨足半導體成焦點",
   "title_en": "〈焦點股〉TPK-KY法說前夕閃現漲停 跨足半導體成焦點",
   "source_title": "〈焦點股〉TPK-KY法說前夕閃現漲停 跨足半導體成焦點",
   "url": "https://news.cnyes.com/news/id/6582405",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-08-20T09:56:56.619387+00:00",
-  "site_segment": "other",
-  "importance_score": 36.0,
-  "approved_at": "2026-08-20T10:03:08.204461+00:00"
+  "created_at": "2026-08-20T22:20:55.979899+00:00",
+  "site_segment": "tw",
+  "importance_score": 29.0,
+  "approved_at": "2026-08-20T22:24:08.428807+00:00"
 }
