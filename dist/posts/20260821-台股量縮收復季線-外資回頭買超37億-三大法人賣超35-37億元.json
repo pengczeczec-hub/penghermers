@@ -1,17 +1,17 @@
 {
   "id": "20260821-台股量縮收復季線-外資回頭買超37億-三大法人賣超35-37億元",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "台股量縮收復季線 外資回頭買超37億、三大法人賣超35.37億元",
   "title_en": "台股量縮收復季線 外資回頭買超37億、三大法人賣超35.37億元",
   "source_title": "台股量縮收復季線 外資回頭買超37億、三大法人賣超35.37億元",
   "url": "https://news.cnyes.com/news/id/6582534",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-08-21T02:21:16.215010+00:00",
+  "created_at": "2026-08-21T09:57:54.026194+00:00",
   "site_segment": "tw",
-  "importance_score": 42.0,
-  "approved_at": "2026-08-21T02:24:47.327252+00:00"
+  "importance_score": 35.0,
+  "approved_at": "2026-08-21T10:00:04.897984+00:00"
 }
