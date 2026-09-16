@@ -1,17 +1,17 @@
 {
   "id": "20260916-台股盤前要聞-台積電除息秀登場-外資4天賣超2272億元-聯發科2奈米天璣960",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股盤前要聞〉台積電除息秀登場、外資4天賣超2272億元、聯發科2奈米天璣9600 Pro亮相",
   "title_en": "〈台股盤前要聞〉台積電除息秀登場、外資4天賣超2272億元、聯發科2奈米天璣9600 Pro亮相",
   "source_title": "〈台股盤前要聞〉台積電除息秀登場、外資4天賣超2272億元、聯發科2奈米天璣9600 Pro亮相",
   "url": "https://news.cnyes.com/news/id/6606331",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-09-16T05:35:56.182428+00:00",
+  "created_at": "2026-09-16T14:15:29.769492+00:00",
   "site_segment": "tw",
-  "importance_score": 65.0,
-  "approved_at": "2026-09-16T05:51:29.888908+00:00"
+  "importance_score": 59.0,
+  "approved_at": "2026-09-16T14:28:43.858691+00:00"
 }
