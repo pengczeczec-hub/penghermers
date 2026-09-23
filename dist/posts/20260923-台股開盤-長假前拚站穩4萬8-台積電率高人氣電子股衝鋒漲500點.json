@@ -1,17 +1,17 @@
 {
   "id": "20260923-台股開盤-長假前拚站穩4萬8-台積電率高人氣電子股衝鋒漲500點",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股開盤〉長假前拚站穩4萬8  台積電率高人氣電子股衝鋒漲500點",
   "title_en": "〈台股開盤〉長假前拚站穩4萬8  台積電率高人氣電子股衝鋒漲500點",
   "source_title": "〈台股開盤〉長假前拚站穩4萬8  台積電率高人氣電子股衝鋒漲500點",
   "url": "https://news.cnyes.com/news/id/6613754",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-09-23T05:27:37.579283+00:00",
+  "created_at": "2026-09-23T14:18:27.827114+00:00",
   "site_segment": "tw",
-  "importance_score": 42.0,
-  "approved_at": "2026-09-23T05:33:14.677402+00:00"
+  "importance_score": 35.0,
+  "approved_at": "2026-09-23T14:27:54.459825+00:00"
 }
