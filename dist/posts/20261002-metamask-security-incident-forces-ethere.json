@@ -1,0 +1,17 @@
+{
+  "id": "20261002-metamask-security-incident-forces-ethere",
+  "status": "approved",
+  "domain_id": "crypto_news",
+  "domain_name": "加密貨幣與區塊鏈",
+  "section_zh": "加密貨幣",
+  "section_en": "Cryptocurrencies",
+  "title": "MetaMask exits Ethereum validators after attacker diverts staking rewards",
+  "title_en": "MetaMask exits Ethereum validators after attacker diverts staking rewards",
+  "source_title": "MetaMask security incident forces Ethereum staking exits, no funds at risk",
+  "url": "https://www.coindesk.com/tech/2026/10/01/metamask-security-incident-forces-ethereum-staking-exits-with-lido-warning-of-lost-rewards",
+  "rss_source": "CoinDesk: Bitcoin, Ethereum, Crypto News and Price Data",
+  "created_at": "2026-10-02T01:15:10.028222+00:00",
+  "site_segment": "crypto",
+  "importance_score": 27.0,
+  "approved_at": "2026-10-02T01:20:25.481761+00:00"
+}
