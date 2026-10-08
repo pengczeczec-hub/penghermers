@@ -1,17 +1,17 @@
 {
   "id": "20261008-美股早盤-油價與美債殖利率攀升-主要指數開低-台積電adr跌近2",
   "status": "approved",
-  "domain_id": "us_stock",
-  "domain_name": "美股與國際市場",
-  "section_zh": "美股消息",
-  "section_en": "U.S. & global equities",
+  "domain_id": "tw_market_extra",
+  "domain_name": "重大頭條（股市相關）",
+  "section_zh": "重大頭條",
+  "section_en": "Major headlines",
   "title": "〈美股早盤〉油價與美債殖利率攀升 主要指數開低 台積電ADR跌近2%",
   "title_en": "〈美股早盤〉油價與美債殖利率攀升 主要指數開低 台積電ADR跌近2%",
   "source_title": "〈美股早盤〉油價與美債殖利率攀升 主要指數開低 台積電ADR跌近2%",
   "url": "https://news.cnyes.com/news/id/6623895",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-10-08T01:30:34.644425+00:00",
+  "created_at": "2026-10-08T06:57:32.968767+00:00",
   "site_segment": "us",
-  "importance_score": 53.0,
-  "approved_at": "2026-10-08T01:42:01.479697+00:00"
+  "importance_score": 54.0,
+  "approved_at": "2026-10-08T07:07:21.428997+00:00"
 }
