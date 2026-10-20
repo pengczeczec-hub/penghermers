@@ -1,17 +1,17 @@
 {
   "id": "20261020-外資再提款767億元連九賣-瞄準台積電與記憶體族群減碼",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "外資再提款767億元連九賣 瞄準台積電與記憶體族群減碼",
   "title_en": "外資再提款767億元連九賣 瞄準台積電與記憶體族群減碼",
   "source_title": "外資再提款767億元連九賣 瞄準台積電與記憶體族群減碼",
   "url": "https://news.cnyes.com/news/id/6633504",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-10-20T00:52:19.203742+00:00",
-  "site_segment": "other",
-  "importance_score": 42.0,
-  "approved_at": "2026-10-20T01:07:56.114798+00:00"
+  "created_at": "2026-10-20T05:38:23.511421+00:00",
+  "site_segment": "tw",
+  "importance_score": 36.0,
+  "approved_at": "2026-10-20T05:50:01.578789+00:00"
 }
