@@ -1,17 +1,17 @@
 {
   "id": "20261027-台股開盤-四日連假開門紅-台積電-鴻海領軍漲逾500點-記憶體-機器人走揚",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股開盤〉四日連假開門紅 台積電、鴻海領軍漲逾500點 記憶體、機器人走揚",
   "title_en": "〈台股開盤〉四日連假開門紅 台積電、鴻海領軍漲逾500點 記憶體、機器人走揚",
   "source_title": "〈台股開盤〉四日連假開門紅 台積電、鴻海領軍漲逾500點 記憶體、機器人走揚",
   "url": "https://news.cnyes.com/news/id/6638159",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-10-27T05:56:48.606328+00:00",
+  "created_at": "2026-10-27T15:27:37.508131+00:00",
   "site_segment": "tw",
-  "importance_score": 42.0,
-  "approved_at": "2026-10-27T06:05:42.070221+00:00"
+  "importance_score": 35.0,
+  "approved_at": "2026-10-27T15:51:54.004223+00:00"
 }
