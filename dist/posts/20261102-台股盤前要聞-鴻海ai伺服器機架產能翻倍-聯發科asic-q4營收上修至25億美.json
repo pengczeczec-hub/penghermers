@@ -1,17 +1,17 @@
 {
   "id": "20261102-台股盤前要聞-鴻海ai伺服器機架產能翻倍-聯發科asic-q4營收上修至25億美",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股盤前要聞〉鴻海AI伺服器機架產能翻倍、聯發科ASIC Q4營收上修至25億美元",
   "title_en": "〈台股盤前要聞〉鴻海AI伺服器機架產能翻倍、聯發科ASIC Q4營收上修至25億美元",
   "source_title": "〈台股盤前要聞〉鴻海AI伺服器機架產能翻倍、聯發科ASIC Q4營收上修至25億美元",
   "url": "https://news.cnyes.com/news/id/6643408",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-02T01:10:30.947564+00:00",
+  "created_at": "2026-11-02T07:10:01.540266+00:00",
   "site_segment": "tw",
-  "importance_score": 35.0,
-  "approved_at": "2026-11-02T01:25:05.882839+00:00"
+  "importance_score": 28.0,
+  "approved_at": "2026-11-02T07:10:02.924821+00:00"
 }
