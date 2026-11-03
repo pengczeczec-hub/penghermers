@@ -1,17 +1,17 @@
 {
   "id": "20261103-台積電供應鏈迅得對半導體設備出貨走揚-10月營收改寫歷史次高",
   "status": "approved",
-  "domain_id": "tw_stock",
-  "domain_name": "台股與集中市場",
-  "section_zh": "市場消息",
-  "section_en": "Market news",
+  "domain_id": "tw_market_extra",
+  "domain_name": "重大頭條（股市相關）",
+  "section_zh": "重大頭條",
+  "section_en": "Major headlines",
   "title": "台積電供應鏈迅得對半導體設備出貨走揚 10月營收改寫歷史次高",
   "title_en": "台積電供應鏈迅得對半導體設備出貨走揚 10月營收改寫歷史次高",
   "source_title": "台積電供應鏈迅得對半導體設備出貨走揚 10月營收改寫歷史次高",
   "url": "https://news.cnyes.com/news/id/6644200",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-03T03:15:22.199753+00:00",
-  "site_segment": "tw",
-  "importance_score": 44.0,
-  "approved_at": "2026-11-03T03:22:25.239273+00:00"
+  "created_at": "2026-11-03T07:30:49.813623+00:00",
+  "site_segment": "other",
+  "importance_score": 50.0,
+  "approved_at": "2026-11-03T07:37:37.578483+00:00"
 }
