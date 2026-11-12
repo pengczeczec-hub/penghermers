@@ -1,17 +1,17 @@
 {
   "id": "20261112-台股開盤-台積電跌逾1-大盤平盤震盪-聯發科領軍asic-光通訊股走強",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "〈台股開盤〉台積電跌逾1%大盤平盤震盪 聯發科領軍ASIC、光通訊股走強",
   "title_en": "〈台股開盤〉台積電跌逾1%大盤平盤震盪 聯發科領軍ASIC、光通訊股走強",
   "source_title": "〈台股開盤〉台積電跌逾1%大盤平盤震盪 聯發科領軍ASIC、光通訊股走強",
   "url": "https://news.cnyes.com/news/id/6660068",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-12T02:39:16.805438+00:00",
+  "created_at": "2026-11-12T07:55:45.603619+00:00",
   "site_segment": "tw",
-  "importance_score": 52.0,
-  "approved_at": "2026-11-12T02:43:22.583767+00:00"
+  "importance_score": 45.0,
+  "approved_at": "2026-11-12T08:01:45.704169+00:00"
 }
