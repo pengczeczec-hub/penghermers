@@ -1,17 +1,17 @@
 {
   "id": "20261113-股市焦點-台達電10月營收創高仍有隱憂-新光證券-外資目標價在這區間",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "【股市焦點】台達電10月營收創高仍有隱憂！新光證券：外資目標價在這區間",
   "title_en": "【股市焦點】台達電10月營收創高仍有隱憂！新光證券：外資目標價在這區間",
   "source_title": "【股市焦點】台達電10月營收創高仍有隱憂！新光證券：外資目標價在這區間",
   "url": "https://news.cnyes.com/news/id/6660463",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-13T07:33:37.968852+00:00",
-  "site_segment": "other",
-  "importance_score": 34.0,
-  "approved_at": "2026-11-13T07:41:39.092889+00:00"
+  "created_at": "2026-11-13T17:17:31.291826+00:00",
+  "site_segment": "tw",
+  "importance_score": 28.0,
+  "approved_at": "2026-11-13T17:41:27.705911+00:00"
 }
