@@ -1,17 +1,17 @@
 {
   "id": "20261116-anthropic週四ipo-募資規模最高904億美元-輝達-台積電等七巨頭砸2",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "Anthropic週四IPO！募資規模最高904億美元 輝達、台積電等七巨頭砸260億美元力挺",
   "title_en": "Anthropic週四IPO！募資規模最高904億美元 輝達、台積電等七巨頭砸260億美元力挺",
   "source_title": "Anthropic週四IPO！募資規模最高904億美元 輝達、台積電等七巨頭砸260億美元力挺",
   "url": "https://news.cnyes.com/news/id/6663102",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-16T07:35:18.634980+00:00",
-  "site_segment": "other",
-  "importance_score": 41.0,
-  "approved_at": "2026-11-16T07:35:47.186282+00:00"
+  "created_at": "2026-11-16T19:44:17.867469+00:00",
+  "site_segment": "tw",
+  "importance_score": 35.0,
+  "approved_at": "2026-11-16T19:44:26.083033+00:00"
 }
