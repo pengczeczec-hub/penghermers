@@ -1,17 +1,17 @@
 {
   "id": "20261117-美股盤後-輝達財報前ai股掀賣壓-道瓊瀉近740點-費半-台積adr重挫超5",
   "status": "approved",
-  "domain_id": "us_stock",
-  "domain_name": "美股與國際市場",
-  "section_zh": "美股消息",
-  "section_en": "U.S. & global equities",
+  "domain_id": "tw_market_extra",
+  "domain_name": "重大頭條（股市相關）",
+  "section_zh": "重大頭條",
+  "section_en": "Major headlines",
   "title": "〈美股盤後〉輝達財報前AI股掀賣壓 道瓊瀉近740點 費半、台積ADR重挫超5%",
   "title_en": "〈美股盤後〉輝達財報前AI股掀賣壓 道瓊瀉近740點 費半、台積ADR重挫超5%",
   "source_title": "〈美股盤後〉輝達財報前AI股掀賣壓 道瓊瀉近740點 費半、台積ADR重挫超5%",
   "url": "https://news.cnyes.com/news/id/6664477",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-17T04:17:11.336175+00:00",
+  "created_at": "2026-11-17T08:45:59.765924+00:00",
   "site_segment": "us",
-  "importance_score": 66.0,
-  "approved_at": "2026-11-17T04:30:35.009242+00:00"
+  "importance_score": 67.0,
+  "approved_at": "2026-11-17T09:00:05.626517+00:00"
 }
