@@ -1,0 +1,17 @@
+{
+  "id": "20261118-bitcoin-covenants-part-6-fe-covenants-en",
+  "status": "approved",
+  "domain_id": "crypto_news",
+  "domain_name": "加密貨幣與區塊鏈",
+  "section_zh": "加密貨幣",
+  "section_en": "Cryptocurrencies",
+  "title": "FE covenants would put Bitcoin’s spending rules inside the signing key, with no protocol change. The cryptography they need is not yet practical.",
+  "title_en": "FE covenants would put Bitcoin’s spending rules inside the signing key, with no protocol change. The cryptography they need is not yet practical.",
+  "source_title": "Bitcoin Covenants Part 6: FE Covenants — Enforcing covenants through cryptographically restricted signing keys",
+  "url": "https://cointelegraph.com/research/bitcoin-covenants-part-6-fe-covenants-enforcing-covenants-through-cryptographically-restricted-signing-keys?utm_source=rss_feed&utm_medium=rss&utm_campaign=rss_partner_inbound",
+  "rss_source": "Cointelegraph.com News",
+  "created_at": "2026-11-18T18:17:16.261358+00:00",
+  "site_segment": "crypto",
+  "importance_score": 28.5,
+  "approved_at": "2026-11-18T18:33:13.062937+00:00"
+}
