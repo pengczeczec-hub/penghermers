@@ -1,17 +1,17 @@
 {
   "id": "20261120-台股湧多殺多無差別賣壓-國家隊死守台積電2000元-台幣33元防線",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "台股湧多殺多無差別賣壓 國家隊死守台積電2000元、台幣33元防線",
   "title_en": "台股湧多殺多無差別賣壓 國家隊死守台積電2000元、台幣33元防線",
   "source_title": "台股湧多殺多無差別賣壓 國家隊死守台積電2000元、台幣33元防線",
   "url": "https://news.cnyes.com/news/id/6668587",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-20T08:00:22.097433+00:00",
+  "created_at": "2026-11-20T17:54:46.693006+00:00",
   "site_segment": "tw",
-  "importance_score": 51.0,
-  "approved_at": "2026-11-20T08:03:02.032392+00:00"
+  "importance_score": 44.0,
+  "approved_at": "2026-11-20T17:59:53.821995+00:00"
 }
