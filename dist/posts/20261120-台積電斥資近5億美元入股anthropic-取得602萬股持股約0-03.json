@@ -1,17 +1,17 @@
 {
   "id": "20261120-台積電斥資近5億美元入股anthropic-取得602萬股持股約0-03",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "台積電斥資近5億美元入股Anthropic 取得602萬股持股約0.03%",
   "title_en": "台積電斥資近5億美元入股Anthropic 取得602萬股持股約0.03%",
   "source_title": "台積電斥資近5億美元入股Anthropic 取得602萬股持股約0.03%",
   "url": "https://news.cnyes.com/news/id/6667671",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-20T02:48:02.088950+00:00",
-  "site_segment": "other",
-  "importance_score": 41.0,
-  "approved_at": "2026-11-20T02:49:19.780237+00:00"
+  "created_at": "2026-11-20T08:00:45.596407+00:00",
+  "site_segment": "tw",
+  "importance_score": 35.0,
+  "approved_at": "2026-11-20T08:01:58.957311+00:00"
 }
