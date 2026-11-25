@@ -1,17 +1,17 @@
 {
   "id": "20261125-台積電226億美元新廠落腳德州-能否減稅成關鍵",
   "status": "approved",
-  "domain_id": "tw_market_extra",
-  "domain_name": "重大頭條（股市相關）",
-  "section_zh": "重大頭條",
-  "section_en": "Major headlines",
+  "domain_id": "tw_stock",
+  "domain_name": "台股與集中市場",
+  "section_zh": "市場消息",
+  "section_en": "Market news",
   "title": "台積電226億美元新廠落腳德州？能否減稅成關鍵",
   "title_en": "台積電226億美元新廠落腳德州？能否減稅成關鍵",
   "source_title": "台積電226億美元新廠落腳德州？能否減稅成關鍵",
   "url": "https://news.cnyes.com/news/id/6671000",
   "rss_source": "Anue鉅亨",
-  "created_at": "2026-11-25T04:44:31.238140+00:00",
-  "site_segment": "other",
-  "importance_score": 41.0,
-  "approved_at": "2026-11-25T04:51:53.483087+00:00"
+  "created_at": "2026-11-25T09:30:26.291417+00:00",
+  "site_segment": "tw",
+  "importance_score": 35.0,
+  "approved_at": "2026-11-25T09:33:43.605611+00:00"
 }
